@@ -1,0 +1,255 @@
+/* Basic sample */
+
+/*body{
+	overflow:hidden;
+	background-color:#fcfcfc;
+	margin:0;
+	padding:0;
+}*/
+
+
+.flipbook-viewport {
+	overflow: hidden;
+	width: 100%;
+	height: 100%;
+	/*perspective: 1500px;*/ /* Add perspective to the viewport */
+}
+
+	.flipbook-viewport .container {
+		position: absolute;
+		top: 45%;
+		left: 48%;
+		margin: auto;
+		transform: translateX(-1%);
+		
+	}
+
+	.flipbook-viewport .flipbook {
+		width: 56.25rem;
+		height: 36.375rem;
+		left: -28.125rem;
+		top: -12.5rem;
+		display: grid;
+		grid-template-rows: 10% 90%;
+	}
+
+	.flipbook-viewport .page {
+		width: 31.25rem;
+		height: 36.375rem;
+		background-color: white;
+		background-repeat: no-repeat;
+		background-size: 100% 100%;
+		user-select: none;
+		overflow-y: auto;
+		/*position:relative;*/
+	}
+.next-back {
+	width: 56.25rem;
+	margin-left: 4rem;
+	
+}
+.flipbook .page {
+	-webkit-box-shadow: 0 0 20px 5px rgba(0,0,0,0.2);
+	-moz-box-shadow: 0 0 20px 5px rgba(0,0,0,0.2);
+	-ms-box-shadow: 0 0 20px 5px rgba(0,0,0,0.2);
+	-o-box-shadow: 0 0 20px 5px rgba(0,0,0,0.2);
+	box-shadow: 0 0 20px 5px rgba(0,0,0,0.2);
+	user-select: none;
+	/*transform-style: preserve-3d;*/ /* Preserve 3D transformations */
+}
+.flipbook-viewport .page img {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	/*margin: 0;*/
+	width: 420px;
+	height: 500px;
+	margin-top: 3px;
+	margin-left: 5px;
+	margin-bottom:20px;
+}
+
+.flipbook-viewport .shadow {
+	-webkit-transition: -webkit-box-shadow 0.5s;
+	-moz-transition: -moz-box-shadow 0.5s;
+	-o-transition: -webkit-box-shadow 0.5s;
+	-ms-transition: -ms-box-shadow 0.5s;
+	-webkit-box-shadow: 0 0 20px #ccc;
+	-moz-box-shadow: 0 0 20px #ccc;
+	-o-box-shadow: 0 0 20px #ccc;
+	-ms-box-shadow: 0 0 20px #ccc;
+	box-shadow: 0 0 20px #ccc;
+}
+
+.flipbook-viewport .double {
+	width: 56.25rem;
+	height: 36.375rem;
+	background-size: 100% 100%;
+	user-select: none;
+	overflow-y:auto;
+	/*position:relative;*/
+}
+.cover-image-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	grid-gap: 1rem;
+	height: 410px;
+	overflow: auto;
+}
+
+@media (max-width: 899.98px) {
+	.flipbook-viewport .flipbook {
+		width: 31.25rem;
+		/*height: 25rem;*/
+		left: -12.5rem;
+		top: -12.5rem;
+	}
+	.next-back {
+		width:31.25rem;
+		margin-left:2rem;
+	}
+	.flipbook-viewport .container {
+		position: absolute;
+		top: 45%;
+		left: 35%;
+		margin: auto;
+		transform: translateX(-1%);
+	}
+	.flipbook-viewport .page {
+		width: 31.25rem;
+		/*height: 25rem;*/
+		background-color: white;
+		background-repeat: no-repeat;
+		background-size: 100% 100%;
+		user-select: none;
+		/*position:relative;*/
+	}
+
+	.flipbook-viewport .double {
+		width: 31.25rem;
+		/*height: 25rem;*/
+		background-size: 100% 100%;
+		user-select: none;
+		/*position:relative;*/
+	}
+	.flipbook-viewport .page img {
+		width: 400px;
+		height: 500px;
+		margin:auto;
+		/*margin-top: 25px;*/
+		/*margin-left: 15px*/
+	}
+	pre {
+		font-size:97% !important;
+		
+	}
+	.cover-image-grid {
+		display: grid;
+		grid-template-columns: 1fr;
+		grid-gap: 1rem;
+		height: 410px;
+		overflow: auto;
+	}
+}
+@media (max-width: 499.98px) {
+	.flipbook-viewport .flipbook {
+		width: 25rem;
+		/*height: 25rem;*/
+		left: -12.5rem;
+		top: -12.5rem;
+	}
+	.next-back {
+		width: 25rem;
+		margin-left:0;
+	}
+	.flipbook-viewport .container {
+		position: absolute;
+		top: 45%;
+		left: 31%;
+		margin: auto;
+		transform: translateX(-1%);
+	}
+
+	.flipbook-viewport .page {
+		width: 25rem;
+		/*height: 25rem;*/
+		background-color: white;
+		background-repeat: no-repeat;
+		background-size: 100% 100%;
+		user-select: none;
+		/*position:relative;*/
+	}
+
+	.flipbook-viewport .double {
+		width: 25rem;
+		/*height: 25rem;*/
+		background-size: 100% 100%;
+		user-select: none;
+		/*position:relative;*/
+	}
+
+	.flipbook-viewport .page img {
+		width: 400px;
+		height: 500px;
+		/*margin-top: 25px;*/
+		/*margin-left: 15px*/
+	}
+}
+@media (max-height: 549px) {
+	.flipbook-viewport .flipbook {
+		height: 25rem;
+		top: -12.5rem;
+	}
+
+	.flipbook-viewport .page {
+		/*width: 31.25rem;*/
+		height: 25rem;
+		background-color: white;
+		background-repeat: no-repeat;
+		background-size: 100% 100%;
+		user-select: none;
+		/*position:relative;*/
+	}
+
+	.flipbook-viewport .double {
+		/*width: 31.25rem;*/
+		height: 25rem;
+		background-size: 100% 100%;
+		user-select: none;
+		/*position:relative;*/
+	}
+}
+
+
+/*To maintain text formatting*/
+pre {
+	font-family: "PT Sans Narrow", sans-serif !important;
+	line-height: 1.2rem !important;
+	white-space: pre-line;
+}
+/*odd pages (appear on right)*/
+.odd {
+	/*border-left: 1px solid black;*/
+	box-shadow: inset 5px 0px 12px -3px rgba(0,0,0,0.8) !important;
+	transform: rotateY(-2deg);
+}
+/*even pages (appear on left)*/
+.even {
+	/*border-right: 1px solid black;*/
+	box-shadow: inset -5px 0px 12px -3px rgba(0,0,0,0.8) !important;
+	transform: rotateY(-2deg);
+}
+
+.book-spine {
+	position: absolute;
+	width: 10px;
+	height: 100%;
+	top: 0;
+	left: 50%;
+	transform: translateX(-50%);
+	background: linear-gradient(to right, rgba(0,0,0,0.1), rgba(0,0,0,0.3), rgba(0,0,0,0.1));
+	z-index: 1;
+}

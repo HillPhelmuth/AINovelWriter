@@ -1,0 +1,23 @@
+﻿@inherits AppComponentBase
+<RadzenRow>
+	<RadzenColumn Size="12" >
+		<RadzenDataGrid Data="@AppState.UserData.SavedNovels" TItem="UserNovelData">
+			<Columns>
+				<RadzenDataGridColumn TItem="UserNovelData" Title="ID" Property="NovelId" Width="25%"></RadzenDataGridColumn>
+				<RadzenDataGridColumn TItem="UserNovelData" Title="Title" Property="Title" Width="60%"></RadzenDataGridColumn>
+				<RadzenDataGridColumn TItem="UserNovelData" Width="15%">
+					<Template Context="novel">
+						
+						<RadzenButton Size="ButtonSize.ExtraSmall" Text="Select" Click="@(() => SelectNovel(novel))"></RadzenButton>
+					</Template>
+				</RadzenDataGridColumn>
+			</Columns>
+		</RadzenDataGrid>
+	</RadzenColumn>
+	<RadzenColumn SizeLG="6" OffsetLG="3">
+		<RadzenCard Style="display:flex;justify-content:center">
+			<RadzenImage Path="@AppState.UserData.ImagePath"></RadzenImage>
+		</RadzenCard>
+	</RadzenColumn>
+</RadzenRow>
+<Login />

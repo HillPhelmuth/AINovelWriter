@@ -1,0 +1,36 @@
+﻿@page "/cover"
+@inherits AppComponentBase
+<RadzenRow>
+	<RadzenColumn SizeLG="6" OffsetLG="3" Size="12" Style="overflow:auto">
+		<RadzenText Text="Select Potential Art Styles for the Cover" TextAlign="TextAlign.Center" TextStyle="TextStyle.Subtitle1"></RadzenText>
+		<RadzenTemplateForm Data="_imageForm" TItem="ImageForm" Submit="GenerateImage">
+			<RadzenFormField Text="Art Styles" Style="width:100%">
+				<ChildContent>
+					<RadzenDropDown Style="width:100%" Name="ArtStyle" Multiple="true" @bind-Value=_imageForm.CoverArtStyles Data="ArtStyleNamesAndDescriptions"  ValueProperty="CoverArtStyle">
+						<Template Context="styleTuple">
+							<RadzenText TextStyle="TextStyle.Body2" Text="@styleTuple.DisplayName"></RadzenText>
+							<RadzenText TextStyle="TextStyle.Caption" Text="@styleTuple.Description"></RadzenText>
+						</Template>
+					</RadzenDropDown>
+				</ChildContent>
+				<Helper>
+					<RadzenText TextStyle="TextStyle.Caption" Text="Select up to 4"></RadzenText>
+					<RadzenCustomValidator Component="ArtStyle"  Validator="@(() => _imageForm.CoverArtStyles.Count <= 4)" Text="Limit is 4!"></RadzenCustomValidator>
+				</Helper>
+			</RadzenFormField>
+			<RadzenButton ButtonType="ButtonType.Submit" Text="Get me some art!" IsBusy="_isBusy" BusyText="Generating Covers..."></RadzenButton>
+		</RadzenTemplateForm>
+	</RadzenColumn>
+	
+</RadzenRow>
+<RadzenRow>
+	<RadzenColumn SizeLG="8" OffsetLG="2" Size="12" Style="overflow:auto">
+		<RadzenText Text="Select Image For Your Book Cover" TextAlign="TextAlign.Center" TextStyle="TextStyle.Subtitle1"></RadzenText>
+		<RadzenCard Style="display:grid; grid-column-gap:1rem; grid-template-columns:1fr 1fr; height:410px; overflow:auto">
+			@foreach (var image in AppState.GeneratedImages)
+			{
+				<img @onclick="@(() => SelectImage(image))" src="@image" style="height:400px;width:400px"/>
+			}
+		</RadzenCard>
+	</RadzenColumn>
+</RadzenRow>

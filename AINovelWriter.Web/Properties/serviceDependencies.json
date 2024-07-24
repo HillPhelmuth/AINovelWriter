@@ -1,0 +1,13 @@
+{
+  "dependencies": {
+    "storage1": {
+      "type": "storage",
+      "connectionId": "AzureStorageKey",
+      "dynamicId": null
+    },
+    "cosmosdb1": {
+      "type": "cosmosdb",
+      "connectionId": "Cosmos:ConnectionString"
+    }
+  }
+}

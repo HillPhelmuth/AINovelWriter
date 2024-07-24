@@ -1,0 +1,10 @@
+{
+    "AppName": "AINovelWriter",
+    "AppDescription": "Blazor Web App application created and registered via Auth0 Templates for .NET",
+    "AppType": "regular",
+    "Callbacks": "https://localhost:7265/callback",
+    "LogoutUrls": "https://localhost:7265/",
+    "AppSettingsFiles": ["./AINovelWriter/appsettings.json"],
+    "RegistrationScriptFile": "../../register-with-auth0.cmd",
+    "Verbose": false
+  }

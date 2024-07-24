@@ -1,0 +1,11 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+	"libraries": [
+		{
+			"provider": "cdnjs",
+			"library": "turn.js@3",
+			"destination": "wwwroot/lib/turn.js/"
+		}
+	]
+}

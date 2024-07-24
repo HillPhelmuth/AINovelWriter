@@ -1,0 +1,51 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<UseAppHost>false</UseAppHost>
+		<NoWarn>SKEXP0001,SKEXP0070,SKEXP0010</NoWarn>
+		<UserSecretsId>87dcc31d-2d2a-4090-929c-5c5de83f2f23</UserSecretsId>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <Compile Remove="Pages\Error.cshtml.cs" />
+	  <Compile Remove="Pages\Login.cshtml.cs" />
+	  <Compile Remove="Pages\Logout.cshtml.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Remove="Pages\Error.cshtml" />
+	  <Content Remove="Pages\Login.cshtml" />
+	  <Content Remove="Pages\Logout.cshtml" />
+	  <Content Remove="Pages\_Host.cshtml" />
+	  <Content Remove="Pages\_Layout.cshtml" />
+	  <Content Remove="Shared\AccessControl.razor" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="wwwroot\lib\compress.sh" />
+	  <None Include="wwwroot\lib\hash.js" />
+	  <None Include="wwwroot\lib\scissor.js" />
+	  <None Include="wwwroot\lib\scissor.min.js" />
+	  <None Include="wwwroot\lib\turn.html4.js" />
+	  <None Include="wwwroot\lib\turn.html4.min.js" />
+	  <None Include="wwwroot\lib\turn.js" />
+	  <None Include="wwwroot\lib\turn.min.js" />
+	  <None Include="wwwroot\lib\zoom.js" />
+	  <None Include="wwwroot\lib\zoom.min.js" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Auth0.AspNetCore.Authentication" Version="1.4.1" />
+		<PackageReference Include="Radzen.Blazor" Version="4.34.3" />
+		<PackageReference Include="Markdig" Version="0.37.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\AINovelWriter.Audio\AINovelWriter.Audio.csproj" />
+		<ProjectReference Include="..\AINovelWriter.Shared\AINovelWriter.Shared.csproj" />
+	</ItemGroup>
+
+</Project>

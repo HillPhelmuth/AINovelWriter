@@ -1,0 +1,62 @@
+﻿@page "/stream"
+@inherits AppComponentBase
+
+<RadzenRow>
+	
+	<RadzenColumn SizeLG="8" Size="12" Style="overflow:auto">
+		<RadzenText TextAlign="TextAlign.Center" TextStyle="TextStyle.Subtitle1" Text="Book"></RadzenText>
+		@if (AppState.NovelInfo.IsComplete)
+		{
+			<RadzenButton Icon="palette" Text="Choose your cover" Click="@(() => NavigationManager.NavigateTo("cover"))"></RadzenButton>
+		}
+		<RadzenButton Text="Re-write" Size="ButtonSize.ExtraSmall" BusyText="Writing" IsBusy="_isBusy" Click="@(async() =>await GenerateNovelAsync())" ></RadzenButton>
+		<RadzenCard Style="height:74vh; overflow:auto; position:relative" Variant="Variant.Text">
+			
+			<BookReader Text="@AppState.NovelInfo.Text"></BookReader>
+
+		</RadzenCard>
+
+		<RadzenButton Disabled="@(_isBusy || string.IsNullOrWhiteSpace(AppState.NovelInfo.Text))" Text="Download" Size="ButtonSize.ExtraSmall" Click="DownloadNovelToFile"></RadzenButton>
+
+		<RadzenButton Text="Cancel" Size="ButtonSize.ExtraSmall" Click="Cancel"></RadzenButton>
+		@* @if (_showBookLink)
+		{
+			<RadzenLink Path="book" Text="View Full Book"></RadzenLink>
+		} *@
+
+		<hr />
+
+
+	</RadzenColumn>
+	<RadzenColumn SizeLG="4" Size="0" Style="overflow:auto">
+		<RadzenText @ondblclick="@(Cheat)" TextAlign="TextAlign.Center" TextStyle="TextStyle.Subtitle1" Text="Chapter Outlines"></RadzenText>
+		@if (AppState.NovelInfo.ChapterOutlines.Count > 0)
+		{
+			<CascadingValue Name="Title" Value="@AppState.NovelConcepts.Title" TValue="string">
+				<RadzenAccordion>
+					<Items>
+						@foreach (var chapter in AppState.NovelInfo.ChapterOutlines)
+						{
+							<RadzenAccordionItem Text="@chapter.Title.TrimStart('#')" Style="max-height:15rem; overflow:auto">
+								<RadzenCard Style="color:black !important">
+									@((MarkupString)AsHtml(chapter.Text))
+
+								</RadzenCard>
+								<RadzenCard Style="padding:0">
+									<RadzenButton Size="ButtonSize.ExtraSmall" Disabled="@(string.IsNullOrEmpty(chapter.FullText))" Click="@(() => chapter.ShowAudio = true)" Icon="record_voice_over" Text="Too lazy even to read it"></RadzenButton>
+									@if (chapter.ShowAudio)
+									{
+										var indexString = AppState.NovelInfo.ChapterOutlines.IndexOf(chapter).ToString();
+										<BookAudio BookAudioId="@indexString" TextToAudio="@chapter.FullText" Title="@chapter.Title"></BookAudio>
+									}
+								</RadzenCard>
+							</RadzenAccordionItem>
+						}
+					</Items>
+				</RadzenAccordion>
+			</CascadingValue>
+		}
+
+
+	</RadzenColumn>
+</RadzenRow>

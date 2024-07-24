@@ -1,0 +1,61 @@
+﻿@inherits LayoutComponentBase
+
+<PageTitle>AINovelWriter</PageTitle>
+<RadzenLayout Style="height:97vh; width:99vw; ">
+	<RadzenHeader Style="min-height:2.2rem;max-height:2.2rem">
+		<RadzenRow AlignItems="AlignItems.Center">
+			<RadzenColumn Size="1">
+				<RadzenButton Icon="restart_alt" Size="ButtonSize.ExtraSmall" Text="Reset" Click="Reset"></RadzenButton>
+			</RadzenColumn>
+			<RadzenColumn Size="2">
+				<RadzenButton class="shantell-sans-default" Text="My Profile" Click="ShowProfile" title="view profile, save/load novels" Icon="person" Variant="Variant.Text"></RadzenButton>
+			</RadzenColumn>
+			<RadzenColumn Size="6">
+				@* <RadzenText Style="margin-top:.5rem" TextStyle="TextStyle.DisplayH6" TextAlign="TextAlign.Center" Text="Write Like You Mean It (But Don't Actually)" /> *@
+			</RadzenColumn>
+			<RadzenColumn Size="2">
+				<RadzenButton Icon="save" Variant="Variant.Text" Text="Save Novel" title="Save current novel progress" Click="SaveNovel"></RadzenButton>
+			</RadzenColumn>
+			<RadzenColumn Size="1">
+				<RadzenLink Style="width:32px; height:32px; margin-left:auto; margin-right:auto; display:block" Path="https://github.com/HillPhelmuth/AdventuresInSemanticKernel" Target="_blank">
+					<RadzenImage Style="width:32px; height:32px" Path="github-mark.svg"></RadzenImage>
+				</RadzenLink>
+			</RadzenColumn>
+		</RadzenRow>
+	</RadzenHeader>
+	<RadzenBody Style="@_bodyStyle">
+		<RadzenBreadCrumb Style="display:flex;justify-content:center">
+			<Template Context="item">
+				<RadzenBadge Shade="@(item.Path == AppState.CurrentPage ? Shade.Darker : Shade.Lighter)" IsPill="true">
+
+					@* <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.Center" Gap="0.25rem" Style="padding: 0 0.25rem 0 0; text-transform: none;"> *@
+					<RadzenLink Path="@item.Path">
+						<div style="display:flex; flex-direction:row; gap:0.25rem; align-items:center"><RadzenIcon Style="@(_currentMaxWidth <= 900 ? "font-size:1rem": "font-size:1.5rem")" Icon="@item.Icon" /> <div style="@(item.Path == AppState.CurrentPage ? "color:white; font-weight:bold; font-size:12px" : "color:darkblue;font-size:12px")">@(_currentMaxWidth <= 900 ? "" : item.Text)</div></div>
+					</RadzenLink>
+					@* </RadzenStack> *@
+
+				</RadzenBadge>
+			</Template>
+			<ChildContent>
+				<RadzenBreadCrumbItem Icon="home" Path="" Text="Intro"></RadzenBreadCrumbItem>
+				<RadzenBreadCrumbItem Icon="tips_and_updates" Path="concept" Text="Enter a few ideas"></RadzenBreadCrumbItem>
+				<RadzenBreadCrumbItem Icon="speaker_notes" Path="stream" Text="Sit back and watch as you 'write' a novel"></RadzenBreadCrumbItem>
+				<RadzenBreadCrumbItem Icon="palette" Visible="@AppState.NovelInfo.IsComplete" Path="cover" Text="'Create' your cover art"></RadzenBreadCrumbItem>
+				<RadzenBreadCrumbItem Icon="auto_stories" Visible="@(!string.IsNullOrEmpty(AppState.NovelInfo.ImageUrl))" Path="book" Text="Read 'your' book!"></RadzenBreadCrumbItem>
+			</ChildContent>
+		</RadzenBreadCrumb>
+		<div>
+			@Body
+		</div>
+
+	</RadzenBody>
+</RadzenLayout>
+<RadzenComponents></RadzenComponents>
+<RadzenMediaQuery Query="(max-width: 899.98px)" Change="@((e) => HandleMediaChange(PageMedia.Width, 900, e))"></RadzenMediaQuery>
+<RadzenMediaQuery Query="(max-width: 639.98px)" Change="@((e) => HandleMediaChange(PageMedia.Width, 640, e))"></RadzenMediaQuery>
+<RadzenMediaQuery Query="(max-width: 419.98px)" Change="@((e) => HandleMediaChange(PageMedia.Width, 420, e))"></RadzenMediaQuery>
+<RadzenMediaQuery Query="(max-height: 639.98px)" Change="@((e) => HandleMediaChange(PageMedia.Height, 640, e))"></RadzenMediaQuery>
+<RadzenMediaQuery Query="(max-height: 419.98px)" Change="@((e) => HandleMediaChange(PageMedia.Height, 420, e))"></RadzenMediaQuery>
+@code {
+
+}

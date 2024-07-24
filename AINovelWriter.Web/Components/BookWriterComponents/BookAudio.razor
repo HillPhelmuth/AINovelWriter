@@ -1,0 +1,26 @@
+﻿<audio id="@($"audioplayer-{BookAudioId}")"></audio>
+<RadzenText Text="@Title" TextStyle="TextStyle.Subtitle2"></RadzenText>
+<RadzenCard Style="display:flex;flex-direction:column;align-items:center; width:99%;padding:0">
+
+	@* <RadzenButton IsBusy="!_hasStarted" Size="ButtonSize.Small" Icon="play_arrow" Click="PlayAudio"></RadzenButton>
+	<RadzenButton Disabled="!_hasStarted" Size="ButtonSize.Small" Icon="pause" Click="PauseAudio"></RadzenButton> *@
+	<div>
+		
+		<RadzenToggleButton Size="ButtonSize.Small" IsBusy="!_hasStarted" BusyText="Converting..." @bind-Value=_isAudioPlaying Icon="play_arrow" Text="@(_isAudioPlaying ? "pause" : "play")" ToggleButtonStyle="ButtonStyle.Danger" ButtonStyle="ButtonStyle.Success" ToggleIcon="pause" Change="TogglePlayPause"></RadzenToggleButton>
+		<RadzenButton Size="ButtonSize.Small" IsBusy="!_hasStarted" BusyText="Converting..." Icon="file_download" Click="Download"></RadzenButton>
+		<RadzenButton Size="ButtonSize.ExtraSmall" Icon="ondemand_video" IconColor="red" Click="SetUpAudio"></RadzenButton>
+	</div>
+	@if (_isStreamingComplete)
+	{
+		<RadzenCard Style="display:flex;flex-direction:column; padding:0">
+			<RadzenSlider Value="_progress" TValue="double" Change="@(args => ChangeProgress(args))"></RadzenSlider>
+			@* <br /> *@
+			<div>
+				<RadzenText TextAlign="TextAlign.Center" Text="@_elapsed" TextStyle="TextStyle.Caption"></RadzenText> <span>/</span>
+				<RadzenText TextAlign="TextAlign.Center" Text="@_duration" TextStyle="TextStyle.Caption"></RadzenText>
+			</div>
+		</RadzenCard>
+
+	}
+
+</RadzenCard>

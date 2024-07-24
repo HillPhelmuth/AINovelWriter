@@ -1,0 +1,9 @@
+﻿@namespace AINovelWriter.Web.Components
+<AuthorizeView>
+	<Authorized>
+		<a href="Account/Logout">Log out</a>
+	</Authorized>
+	<NotAuthorized>
+		<a href="Account/Login?redirectUri=/">Log in</a>
+	</NotAuthorized>
+</AuthorizeView>

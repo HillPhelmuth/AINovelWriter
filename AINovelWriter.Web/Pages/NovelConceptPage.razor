@@ -1,0 +1,108 @@
+﻿@page "/concept"
+@inherits AppComponentBase
+
+<RadzenRow>
+	<RadzenColumn SizeLG="6" Size="12" Style="overflow:auto">
+		<RadzenText Text="Create an outline" TextAlign="TextAlign.Center" TextStyle="TextStyle.H6"></RadzenText>
+		<RadzenText Text="Provide some story details to generate an outline" TextAlign="TextAlign.Center" TextStyle="TextStyle.Subtitle1"></RadzenText>
+		<RadzenButton IsBusy="_isBusy" BusyText="Fine, generating idea..." @ref="_button" Size="ButtonSize.ExtraSmall" Text="Ugh, even this is too much work!" Click="@(args => _popup.ToggleAsync(_button.Element))"></RadzenButton>
+		<Popup @ref="_popup" Lazy=true Style="display:none;position:absolute;height:300px;width:600px;padding:5px;border:var(--rz-panel-border);background-color:var(--rz-panel-background-color);">
+			<RadzenText Text="Okay, we'll generate it for you. Just pick a genre" TextAlign="TextAlign.Center" TextStyle="TextStyle.Subtitle1"></RadzenText>
+			<RadzenTemplateForm Data="_novelIdea" TItem="NovelIdea" Submit="SubmitIdea">
+				<RadzenFormField Text="Genre">
+					<ChildContent>
+						<RadzenDropDown Data="_genres" @bind-Value="_novelIdea.NovelGenre"></RadzenDropDown>
+					</ChildContent>
+					<Helper>
+						<RadzenText TextStyle="TextStyle.Caption" Text="Select a genre to generate an idea"></RadzenText>
+					</Helper>
+				</RadzenFormField><br />
+				<RadzenButton ButtonType="ButtonType.Submit" Text="Generate Idea"></RadzenButton>
+			</RadzenTemplateForm>
+		</Popup>
+		<RadzenTemplateForm TItem="NovelConcepts" Data="AppState.NovelConcepts" Submit="CreateOutline">
+			<RadzenFormField Style="width:100%" Text="Title">
+				<ChildContent>
+					<RadzenTextBox Name="Title" Style="width:100%" @bind-Value="@AppState.NovelConcepts.Title"></RadzenTextBox>
+				</ChildContent>
+				<Helper>
+					<RadzenRequiredValidator Component="Title"></RadzenRequiredValidator>
+				</Helper>
+			</RadzenFormField>
+			<br />
+			<RadzenFormField Style="width:100%" Text="Topic or Theme">
+				<ChildContent>
+					<RadzenTextArea Name="Theme" Style="width:100%; height:4rem" @bind-Value="@AppState.NovelConcepts.Theme"></RadzenTextArea>
+				</ChildContent>
+				<Helper>
+					<RadzenRequiredValidator Component="Theme"></RadzenRequiredValidator>
+				</Helper>
+			</RadzenFormField>
+			<br />
+			<RadzenFormField Style="width:100%" Text="Characters (optional)">
+				<ChildContent>
+					<RadzenTextArea Style="width:100%; height:4rem" @bind-Value="@AppState.NovelConcepts.Characters"></RadzenTextArea>
+				</ChildContent>
+				<Helper>
+					<RadzenText TextStyle="TextStyle.Caption" Text="Provide character names and descriptions that you want included in the novel"></RadzenText>
+				</Helper>
+			</RadzenFormField>
+			<br />
+			<RadzenFormField Style="width:100%" Text="Plot Events (optional)">
+				<ChildContent>
+					<RadzenTextArea Style="width:100%; height:4rem" @bind-Value="@AppState.NovelConcepts.PlotEvents"></RadzenTextArea>
+				</ChildContent>
+				<Helper>
+					<RadzenText TextStyle="TextStyle.Caption" Text="Provide plot events that you want included in the novel"></RadzenText>
+				</Helper>
+			</RadzenFormField>
+			<br /><br />
+			<RadzenFormField Text="Chapter Count">
+				<ChildContent>
+					<RadzenNumeric @bind-Value="AppState.NovelConcepts.ChapterCount" Step="1" Min="2" Max="20"></RadzenNumeric>
+				</ChildContent>
+				<Helper>
+					<RadzenText TextStyle="TextStyle.Caption" Text="Between 3 and 20 Chapters."></RadzenText>
+				</Helper>
+			</RadzenFormField>
+			<RadzenFormField Text="AI Model">
+				<ChildContent>
+					<RadzenDropDown Name="AIModel" Data="AIModelDescriptions" ValueProperty="Key" TextProperty="Value" @bind-Value="@AppState.NovelConcepts.OutlineAIModel"></RadzenDropDown>
+				</ChildContent>
+				<Helper>
+					<RadzenText TextStyle="TextStyle.Caption" Text="Select the AI model used to generate Outline"></RadzenText>
+					<RadzenCompareValidator Operator="CompareOperator.NotEqual" Value="@AIModel.None" Component="AIModel" Text="Please select a model" Popup="true" Style="position:absolute"></RadzenCompareValidator>
+				</Helper>
+			</RadzenFormField><br />
+			<RadzenButton ButtonType="ButtonType.Submit" Text="Create Outline" BusyText="Generating Outline..." IsBusy="_isBusy"></RadzenButton>
+		</RadzenTemplateForm>
+	</RadzenColumn>
+	<RadzenColumn SizeLG="6" Size="12" Style="overflow:auto">
+		<div class="@(!_showOutline ? "hide-outline":"")" @onclick=@(() => _showOutline = true)>
+			<RadzenText Text="Write a book" TextAlign="TextAlign.Center" TextStyle="TextStyle.H6"></RadzenText>
+			<RadzenText Text="Use the approved outline to generate the full novel" TextAlign="TextAlign.Center" TextStyle="TextStyle.Subtitle1"></RadzenText>
+
+			<RadzenTemplateForm TItem="NovelOutline" Data="AppState.NovelOutline" Submit="GenerateNovel">
+				<RadzenFormField Style="width:100%" Text="Outline">
+					<ChildContent>
+						<RadzenTextArea Style="width:100%; font-size:.9rem; height:22rem" @bind-Value="@AppState.NovelOutline.Outline"></RadzenTextArea>
+					</ChildContent>
+					<Helper>
+						<RadzenText TextStyle="TextStyle.Caption" Text="Modify the outline as desired - just be sure each chapter starts with a markdown header (ex. ## Chapter 1)"></RadzenText>
+					</Helper>
+				</RadzenFormField>
+				<br /><br />
+				<RadzenFormField Text="AI Model">
+					<ChildContent>
+						<RadzenDropDown @ref=_aiModelField Data="AIModelDescriptions" ValueProperty="Key" TextProperty="Value"
+										@bind-Value="AppState.NovelOutline.WriterAIModel"></RadzenDropDown>
+					</ChildContent>
+					<Helper>
+						<RadzenText TextStyle="TextStyle.Caption" Text="Select the AI model used to write the story"></RadzenText>
+					</Helper>
+				</RadzenFormField>
+				<RadzenButton Style="margin-top:.5rem" ButtonType="ButtonType.Submit" Text="Write Novel" BusyText="Writing..." IsBusy="_isBusy"></RadzenButton>
+			</RadzenTemplateForm>
+		</div>
+	</RadzenColumn>
+</RadzenRow>
