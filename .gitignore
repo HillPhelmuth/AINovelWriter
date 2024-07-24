@@ -361,3 +361,8 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/AINovelWriter.Web/CheatNovel.json
+/AINovelWriter.Web/CheatNovel2.json
+/AINovelWriter.Web/CheatNovel3.json
+/AINovelWriter.Web/FullCheatNovel.json
+/AINovelWriter.Web/register-with-auth0.cmd
