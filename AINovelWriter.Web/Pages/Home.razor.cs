@@ -24,8 +24,7 @@ public partial class Home
 	private string Username = "Anonymous User";
 	private string Picture = "";
 	private bool _isCheat;
-	[CascadingParameter]
-	private Task<AuthenticationState>? AuthenticationState { get; set; }
+	
 	[Inject]
 	private CosmosService CosmosService { get; set; } = default!;
 	private bool _showBookLink;

@@ -1,4 +1,5 @@
-﻿using Tiktoken;
+﻿using System.Text.RegularExpressions;
+using Tiktoken;
 using Encoder = Tiktoken.Encoder;
 
 namespace AINovelWriter.Shared.Models;
@@ -84,5 +85,16 @@ public static class StringHelpers
 	public static int GetTokens200K(string text)
 	{
 		return _encoder200K.CountTokens(text);
+	}
+	public static string RemoveAllEscaping(string input)
+	{
+		if (string.IsNullOrEmpty(input))
+		{
+			return input;
+		}
+
+		// Pattern to match escape sequences including unicode and control characters
+		string pattern = @"\\[abfnrtv\\'""0-9xu]{1,6}";
+		return Regex.Replace(input, pattern, "").Replace("\n", " ");
 	}
 }

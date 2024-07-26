@@ -39,7 +39,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Auth0.AspNetCore.Authentication" Version="1.4.1" />
-		<PackageReference Include="Radzen.Blazor" Version="4.34.3" />
+		<PackageReference Include="Radzen.Blazor" Version="5.0.2" />
 		<PackageReference Include="Markdig" Version="0.37.0" />
 	</ItemGroup>
 

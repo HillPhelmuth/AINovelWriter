@@ -18,8 +18,16 @@ public class CosmosService(CosmosClient cosmosClient)
 	private readonly Container _userContainer = cosmosClient.GetContainer(DbName, UserContainerName);
 	public async Task<UserData?> GetUserProfile(string username)
 	{
-		var item = await _userContainer.ReadItemAsync<UserData>(username, new PartitionKey(username));
-		return item;
+		try
+		{
+			var item = await _userContainer.ReadItemAsync<UserData>(username, new PartitionKey(username));
+			return item;
+		}
+		catch
+		{
+			return null;
+		}
+		
 	}
 	public async Task<NovelInfo> GetUserNovel(string username, string novelId)
 	{
@@ -29,11 +37,10 @@ public class CosmosService(CosmosClient cosmosClient)
 	}
 	public async Task<(bool, string)> SaveUserNovel(NovelInfo novel, UserData userData)
 	{
-		if (userData.SavedNovels.All(x => x.NovelId != novel.id))
-		{
-			userData.SavedNovels.Add(new UserNovelData(novel.id, novel.Title));
-			await SaveUser(userData);
-		}
+		if (userData.SavedNovels.Any(x => x.NovelId == novel.id)) 
+			return await TryUpsertNovel(novel);
+		userData.SavedNovels.Add(new UserNovelData(novel.id, novel.Title));
+		await SaveUser(userData);
 
 		return await TryUpsertNovel(novel);
 

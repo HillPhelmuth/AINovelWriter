@@ -1,15 +1,18 @@
 ﻿using AINovelWriter.Shared.Models;
+using AINovelWriter.Shared.Services;
 using Markdig;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
+using System.IO.Compression;
 using System.Linq;
 using System.Linq.Dynamic.Core.Tokenizer;
 using System.Text.Json;
 using System.Threading;
-using static AINovelWriter.Shared.Models.EnumHelpers;
+using static AINovelWriter.Shared.Models.FileHelper;
 using static AINovelWriter.Shared.Services.NovelWriterService;
+
 
 namespace AINovelWriter.Web.Pages;
 
@@ -18,12 +21,14 @@ public partial class NovelStreamingPage
 	private async Task DownloadNovelToFile()
 	{
 		if (string.IsNullOrEmpty(AppState.NovelInfo.Text)) return;
-
-		var novelJson = JsonSerializer.Serialize(AppState.NovelInfo, new JsonSerializerOptions { WriteIndented = true });
-		var fileContent = FileHelper.GenerateTextFile(novelJson);
-
-		await JsRuntime.InvokeVoidAsync("downloadFile", $"{AppState.NovelConcepts.Title}.json", fileContent);
+		
+		//var novelJson = JsonSerializer.Serialize(AppState.NovelInfo, new JsonSerializerOptions { WriteIndented = true });
+		//var fileContent = FileHelper.GenerateTextFile(novelJson);
+		var fileContent = await CreateAndCompressFilesAsync(AppState.NovelInfo.Text, AppState.NovelInfo.ImageUrl);
+		//var fileContent = await pdf.CreatePdfDocument(AppState.NovelInfo);
+		await JsRuntime.InvokeVoidAsync("downloadFile", $"{AppState.NovelInfo.Title}.zip", fileContent);
 	}
+	
 	private CancellationTokenSource _cancellationTokenSource = new();
 	private bool _isCheat;
 	private List<string> _pages = [];
@@ -52,7 +57,7 @@ public partial class NovelStreamingPage
 		AppState.NovelInfo.IsComplete = true;
 		_isBusy = false;
 		StateHasChanged();
-		
+
 	}
 
 	private async void Cheat()

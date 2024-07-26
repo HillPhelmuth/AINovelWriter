@@ -5,22 +5,20 @@
 	<RadzenHeader Style="min-height:2.2rem;max-height:2.2rem">
 		<RadzenRow AlignItems="AlignItems.Center">
 			<RadzenColumn Size="1">
-				<RadzenButton Icon="restart_alt" Size="ButtonSize.ExtraSmall" Text="Reset" Click="Reset"></RadzenButton>
+				<RadzenButton Icon="restart_alt" Size="ButtonSize.ExtraSmall" Text="@(_currentMaxWidth <= 900 ? "" : "reset")" Click="Reset"></RadzenButton>
 			</RadzenColumn>
 			<RadzenColumn Size="2">
-				<RadzenButton class="shantell-sans-default" Text="My Profile" Click="ShowProfile" title="view profile, save/load novels" Icon="person" Variant="Variant.Text"></RadzenButton>
+				<RadzenButton class="shantell-sans-default" Text="@(_currentMaxWidth <= 900 ? "" : "My Profile")" Click="ShowProfile" title="view profile, save/load novels" Icon="person" Variant="Variant.Text"></RadzenButton>
 			</RadzenColumn>
 			<RadzenColumn Size="6">
-				@* <RadzenText Style="margin-top:.5rem" TextStyle="TextStyle.DisplayH6" TextAlign="TextAlign.Center" Text="Write Like You Mean It (But Don't Actually)" /> *@
+				<RadzenText Style="margin-top:.3rem" TextStyle="TextStyle.H6" TextAlign="TextAlign.Center" Text="AI Ghostwriter Pro (The Milli Vanilli project)" />
 			</RadzenColumn>
 			<RadzenColumn Size="2">
-				<RadzenButton Icon="save" Variant="Variant.Text" Text="Save Novel" title="Save current novel progress" Click="SaveNovel"></RadzenButton>
+				<RadzenButton Icon="save" Variant="Variant.Text" Text="@(_currentMaxWidth <= 900 ? "" : "Save Novel")" title="Save current novel progress" Click="SaveNovel"></RadzenButton>
 			</RadzenColumn>
-			<RadzenColumn Size="1">
-				<RadzenLink Style="width:32px; height:32px; margin-left:auto; margin-right:auto; display:block" Path="https://github.com/HillPhelmuth/AdventuresInSemanticKernel" Target="_blank">
-					<RadzenImage Style="width:32px; height:32px" Path="github-mark.svg"></RadzenImage>
-				</RadzenLink>
-			</RadzenColumn>
+			@* <RadzenColumn Size="1">
+				<RadzenAppearanceToggle DarkTheme="material-dark" />
+			</RadzenColumn> *@
 		</RadzenRow>
 	</RadzenHeader>
 	<RadzenBody Style="@_bodyStyle">
@@ -37,7 +35,7 @@
 				</RadzenBadge>
 			</Template>
 			<ChildContent>
-				<RadzenBreadCrumbItem Icon="home" Path="" Text="Intro"></RadzenBreadCrumbItem>
+				<RadzenBreadCrumbItem Icon="home" Path="home" Text="Intro"></RadzenBreadCrumbItem>
 				<RadzenBreadCrumbItem Icon="tips_and_updates" Path="concept" Text="Enter a few ideas"></RadzenBreadCrumbItem>
 				<RadzenBreadCrumbItem Icon="speaker_notes" Path="stream" Text="Sit back and watch as you 'write' a novel"></RadzenBreadCrumbItem>
 				<RadzenBreadCrumbItem Icon="palette" Visible="@AppState.NovelInfo.IsComplete" Path="cover" Text="'Create' your cover art"></RadzenBreadCrumbItem>
@@ -50,7 +48,7 @@
 
 	</RadzenBody>
 </RadzenLayout>
-<RadzenComponents></RadzenComponents>
+<RadzenComponents @rendermode="InteractiveServer" />
 <RadzenMediaQuery Query="(max-width: 899.98px)" Change="@((e) => HandleMediaChange(PageMedia.Width, 900, e))"></RadzenMediaQuery>
 <RadzenMediaQuery Query="(max-width: 639.98px)" Change="@((e) => HandleMediaChange(PageMedia.Width, 640, e))"></RadzenMediaQuery>
 <RadzenMediaQuery Query="(max-width: 419.98px)" Change="@((e) => HandleMediaChange(PageMedia.Width, 420, e))"></RadzenMediaQuery>

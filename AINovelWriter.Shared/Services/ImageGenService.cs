@@ -23,7 +23,7 @@ public class ImageGenService(IConfiguration configuration, BlobServiceClient blo
 	private const string ImageDataPrefix = "data:image/png;base64,";
 	private readonly BlobContainerClient _blobContainerClient = blobServiceClient.GetBlobContainerClient("$web");
 
-	public async Task<string> GenerateImage(NovelInfo novelInfo, string username,int index, string imageStyle = "photo-realistic", bool isVivid = false)
+	public async Task<string> GenerateImage(NovelInfo novelInfo, string imageStyle = "photo-realistic", bool isVivid = false)
 	{
 		var novelOutline = novelInfo.Outline;
 		var options = new ImageGenerationOptions()
@@ -35,23 +35,35 @@ public class ImageGenService(IConfiguration configuration, BlobServiceClient blo
 		};
 		var prompt = await GenerateImagePrompt(novelInfo.ConceptDescription, imageStyle);
 		GeneratedImage image = await _imageClient.GenerateImageAsync(prompt + $"\n\n{imageStyle}", options);
-		BinaryData bytes = image.ImageBytes;
+		var bytes = image.ImageBytes;
+		
 		var imageUrl = $"{ImageDataPrefix}{Convert.ToBase64String(bytes.ToArray())}";
-		//var blobName = @$"{username}\{novelInfo.Title}_{index}.png";
-		//var blobClient = _blobContainerClient.GetBlobClient(blobName);
-		//await blobClient.UploadAsync(bytes, overwrite:true);
+		
 		return imageUrl;
 	}
 	public async Task<string> SelectImage(NovelInfo novelInfo, string imageUrl)
 	{
 		// Extract the image data from the URL getting substring of after 'base64,'
-		var base64 = imageUrl[(imageUrl.IndexOf("base64,") + 7)..];
+		var base64 = imageUrl[(imageUrl.IndexOf("base64,", StringComparison.Ordinal) + 7)..];
 		var bytes = Convert.FromBase64String(base64);
 		var username = novelInfo.User;
 		var blobName = @$"{username}\{novelInfo.Title}_cover.png";
-		var blobClient = _blobContainerClient.GetBlobClient(blobName);
+		return await SaveAsUrl(blobName, bytes);
+	}
+
+	private async Task<string> SaveAsUrl(string fileName, byte[] bytes)
+	{
+		var blobClient = _blobContainerClient.GetBlobClient(fileName);
 		await blobClient.UploadAsync(new BinaryData(bytes), overwrite:true);
-		return $"{ImageContainerUrl}{blobName}";
+		return $"{ImageContainerUrl}{fileName}";
+	}
+	public async Task<string> SaveUserImage(string fileName, string dataBase64)
+	{
+		var blobName = Path.Combine("UserProfileImages", fileName);
+		
+		var data = Convert.FromBase64String(dataBase64);
+		return await SaveAsUrl(blobName, data);
+
 	}
 	private async Task<string> GenerateImagePrompt(string conceptDescription, string imageStyle)
 	{

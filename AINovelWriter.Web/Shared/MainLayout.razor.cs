@@ -65,7 +65,7 @@ public partial class MainLayout
 	}
 	private void ShowProfile()
 	{
-		DialogService.Open<UserProfile>("", options: new DialogOptions { CloseDialogOnOverlayClick = true, Draggable = true, Resizable = true });
+		DialogService.Open<UserProfile>($"Hello {AppState.UserData.UserName}!", options: new DialogOptions { CloseDialogOnOverlayClick = true, Draggable = true, Resizable = true });
 	}
 	private async Task SaveNovel()
 	{

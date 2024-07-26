@@ -229,6 +229,7 @@ pre {
 	font-family: "PT Sans Narrow", sans-serif !important;
 	line-height: 1.2rem !important;
 	white-space: pre-line;
+	font-size:.975em;
 }
 /*odd pages (appear on right)*/
 .odd {

@@ -1,23 +1,50 @@
 ﻿@inherits AppComponentBase
 <RadzenRow>
-	<RadzenColumn Size="12" >
+	<RadzenColumn Size="12">
 		<RadzenDataGrid Data="@AppState.UserData.SavedNovels" TItem="UserNovelData">
 			<Columns>
-				<RadzenDataGridColumn TItem="UserNovelData" Title="ID" Property="NovelId" Width="25%"></RadzenDataGridColumn>
-				<RadzenDataGridColumn TItem="UserNovelData" Title="Title" Property="Title" Width="60%"></RadzenDataGridColumn>
-				<RadzenDataGridColumn TItem="UserNovelData" Width="15%">
+				<RadzenDataGridColumn TItem="UserNovelData" Title="ID" Property="NovelId" Width="20%"></RadzenDataGridColumn>
+				<RadzenDataGridColumn TItem="UserNovelData" Title="Title" Property="Title" Width="50%"></RadzenDataGridColumn>
+				<RadzenDataGridColumn TItem="UserNovelData" Width="10%">
 					<Template Context="novel">
-						
 						<RadzenButton Size="ButtonSize.ExtraSmall" Text="Select" Click="@(() => SelectNovel(novel))"></RadzenButton>
+					</Template>
+				</RadzenDataGridColumn>
+				<RadzenDataGridColumn TItem="UserNovelData" Width="10%">
+					<Template Context="novel">
+						<RadzenButton Size="ButtonSize.ExtraSmall" Icon="delete" Click="@(() => DeleteNovel(novel))"></RadzenButton>
+					</Template>
+				</RadzenDataGridColumn>
+				<RadzenDataGridColumn TItem="UserNovelData" Width="10%">
+					<Template Context="novel">
+						<RadzenButton Size="ButtonSize.ExtraSmall" Icon="delete" Click="@(() => DeleteNovel(novel))"></RadzenButton>
 					</Template>
 				</RadzenDataGridColumn>
 			</Columns>
 		</RadzenDataGrid>
 	</RadzenColumn>
 	<RadzenColumn SizeLG="6" OffsetLG="3">
-		<RadzenCard Style="display:flex;justify-content:center">
-			<RadzenImage Path="@AppState.UserData.ImagePath"></RadzenImage>
-		</RadzenCard>
+		<div>
+			@if (!_changeImage)
+			{
+				<RadzenCard Style="display:flex;flex-direction:column;justify-content:center">
+					<RadzenImage Style="max-height:256px;max-width:256px" Path="@AppState.UserData.ImagePath"></RadzenImage>
+					<RadzenButton Size="ButtonSize.ExtraSmall" Variant="Variant.Text" Text="Change Image" Click="@(() => _changeImage = true)"></RadzenButton>
+				</RadzenCard>
+			}
+			else
+			{
+				<RadzenTemplateForm Data="_imageUpdateForm" TItem="ImageUpdateForm" Submit="UpdateImage">
+					<RadzenFileInput ChooseText="Choose Image" @bind-Value=_imageUpdateForm.FileData.ImageBase64Data @bind-FileName=_imageUpdateForm.FileData.FileName></RadzenFileInput>
+					<RadzenText TextAlign="TextAlign.Center" TextStyle="TextStyle.DisplayH6" Text="OR"></RadzenText>
+					<RadzenFormField Text="Add Image Url">
+						<RadzenTextBox @bind-Value=@_imageUpdateForm.Url></RadzenTextBox>
+					</RadzenFormField>
+					<br />
+					<RadzenButton ButtonType="ButtonType.Submit" Text="Submit Image"></RadzenButton>
+				</RadzenTemplateForm>
+			}
+		</div>
 	</RadzenColumn>
 </RadzenRow>
 <Login />

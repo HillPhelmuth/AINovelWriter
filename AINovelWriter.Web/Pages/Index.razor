@@ -1,31 +1,40 @@
-﻿@* @page "/" *@
-@attribute [Authorize]
+﻿@page "/"
+@inject NavigationManager NavigationManager
 
-<PageTitle>Auth0 Blazor Server</PageTitle>
+<PageTitle>Welcome</PageTitle>
 
-<h1>Welcome, @Username!</h1>
-You can only see this content if you're authenticated.
-<br />
-<img src="@Picture">
+<RadzenRow>
+	<RadzenColumn Offset="0" SizeLG="8" OffsetLG="2" Size="12" Style="overflow:auto">
+		<RadzenCard Style="display:flex; flex-direction:column; justify-content:center">
+			<RadzenText Text="Novel Writer" TextAlign="TextAlign.Center" TextStyle="TextStyle.H6"></RadzenText>
+			<RadzenText Text="Use an AI to generate a short novel" TextAlign="TextAlign.Center" TextStyle="TextStyle.Subtitle1"></RadzenText>
+			<RadzenCard Style="width:100%;display:flex; flex-direction:column; justify-content:center">
+				<RadzenText TextStyle="TextStyle.Body1">Always dreamed of being a novelist but can’t be bothered with the actual writing? You’re in luck! With our AI Novel Writer, you can sit back, relax, and watch as 'you' write a novel. No need to waste time on plot development, character arcs, or even basic grammar—our AI handles all the heavy lifting while you take all the credit.</RadzenText><br />
+				<RadzenText TextStyle="TextStyle.Body1">Just enter a few details about your story, such as the topic, title, and any characters or plot points you might vaguely care about (actually, we'll even do this part for you too...). Then, our AI will generate a comprehensive outline and even write the entire novel for you. It’s never been easier to call yourself a writer without actually writing a word!</RadzenText><br />
+				<RadzenText TextStyle="TextStyle.Body1">If your laziness is not limited to writing, but extends to reading as well, we've got you covered! Let an AI read the story to you, just as a parent would a child!</RadzenText>
+				<br />
+				<RadzenLink Style="margin-left:auto; margin-right:auto" Path="Account/Login?redirectUri=/" Text="Sign up or Log-in to get started!"></RadzenLink>
+			</RadzenCard>
+		
+		</RadzenCard>
+	</RadzenColumn>
+</RadzenRow>
 
-@code { 
-  private string Username = "Anonymous User";
-  private string Picture = "";
-  [CascadingParameter]
-  private Task<AuthenticationState>? authenticationState { get; set; }
+@code {
+	
+	[CascadingParameter]
+	private Task<AuthenticationState>? authenticationState { get; set; }
 
-  protected override async Task OnInitializedAsync()
-  {
-    if (authenticationState is not null)
-    {
-      var state = await authenticationState;
-
-      Username = state?.User?.Identity?.Name?? string.Empty;
-
-      Picture = state?.User.Claims
-                  .Where(c => c.Type.Equals("picture"))
-                  .Select(c => c.Value)
-                  .FirstOrDefault() ?? string.Empty;
+	protected override async Task OnInitializedAsync()
+	{
+		if (authenticationState is not null)
+		{
+			var state = await authenticationState;
+			if (state.User.Identity.IsAuthenticated)
+			{
+				NavigationManager.NavigateTo("home");
+			}
+			
     }
 
     await base.OnInitializedAsync();

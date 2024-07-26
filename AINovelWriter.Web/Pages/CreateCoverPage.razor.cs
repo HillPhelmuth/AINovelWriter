@@ -43,16 +43,13 @@ public partial class CreateCoverPage
 		var tasks = new List<Task<string>>();
 		foreach (var style in imageForm.CoverArtStyles)
 		{
-			//var textToImage = NovelWriterService.TextToImage(AppState.NovelInfo.Outline, style.GetDescription());
 			var isVivid = style is CoverArtStyle.PhotoRealistic or CoverArtStyle.SciFiArt or CoverArtStyle.FantasyArt;
-			var imageTask = ImageGenService.GenerateImage(AppState.NovelInfo, AppState.UserData.UserName ?? "unknown",imageForm.CoverArtStyles.IndexOf(style), style.GetDescription(), isVivid);
+			var imageTask = ImageGenService.GenerateImage(AppState.NovelInfo, $"{style.GetDisplayName()} - {style.GetDescription()}", isVivid);
 			tasks.Add(imageTask);
-			//var image = await NovelWriterService.TextToImage(AppState.NovelInfo.Outline, style.GetDescription());
-			//_images.Add(image);
-			//StateHasChanged();
+
 		}
 		var images = await Task.WhenAll(tasks);
-		AppState.GeneratedImages = [..images];
+		AppState.GeneratedImages = [.. images];
 		_isBusy = false;
 		StateHasChanged();
 	}

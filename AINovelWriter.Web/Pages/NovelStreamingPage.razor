@@ -19,17 +19,15 @@
 		<RadzenButton Disabled="@(_isBusy || string.IsNullOrWhiteSpace(AppState.NovelInfo.Text))" Text="Download" Size="ButtonSize.ExtraSmall" Click="DownloadNovelToFile"></RadzenButton>
 
 		<RadzenButton Text="Cancel" Size="ButtonSize.ExtraSmall" Click="Cancel"></RadzenButton>
-		@* @if (_showBookLink)
-		{
-			<RadzenLink Path="book" Text="View Full Book"></RadzenLink>
-		} *@
+		
 
 		<hr />
 
 
 	</RadzenColumn>
 	<RadzenColumn SizeLG="4" Size="0" Style="overflow:auto">
-		<RadzenText @ondblclick="@(Cheat)" TextAlign="TextAlign.Center" TextStyle="TextStyle.Subtitle1" Text="Chapter Outlines"></RadzenText>
+		<RadzenText TextAlign="TextAlign.Center" TextStyle="TextStyle.DisplayH6" Text="Audio"></RadzenText>
+		<RadzenText TextAlign="TextAlign.Center" TextStyle="TextStyle.Subtitle1" Text="Select a chapter to listen"></RadzenText>
 		@if (AppState.NovelInfo.ChapterOutlines.Count > 0)
 		{
 			<CascadingValue Name="Title" Value="@AppState.NovelConcepts.Title" TValue="string">
@@ -38,11 +36,11 @@
 						@foreach (var chapter in AppState.NovelInfo.ChapterOutlines)
 						{
 							<RadzenAccordionItem Text="@chapter.Title.TrimStart('#')" Style="max-height:15rem; overflow:auto">
-								<RadzenCard Style="color:black !important">
+								@* <RadzenCard Style="color:black !important">
 									@((MarkupString)AsHtml(chapter.Text))
 
-								</RadzenCard>
-								<RadzenCard Style="padding:0">
+								</RadzenCard> *@
+								<RadzenCard Style="padding:0; display:flex; align-items:center; justify-content:center">
 									<RadzenButton Size="ButtonSize.ExtraSmall" Disabled="@(string.IsNullOrEmpty(chapter.FullText))" Click="@(() => chapter.ShowAudio = true)" Icon="record_voice_over" Text="Too lazy even to read it"></RadzenButton>
 									@if (chapter.ShowAudio)
 									{

@@ -25,9 +25,10 @@ services.AddCascadingAuthenticationState();
 services.AddRazorComponents()
     .AddInteractiveServerComponents();
 services.AddSingleton<WeatherForecastService>();
-//services.AddScoped<AppState>();
-//services.AddScoped<INovelWriter, NovelWriterService>();
-//services.AddScoped<ImageGenService>();
+services.AddSignalR(o =>
+{
+    o.MaximumReceiveMessageSize = null;
+});
 services.AddNovelWriterServices(config);
 services.AddRadzenComponents();
 builder.Services.AddAzureClients(clientBuilder =>

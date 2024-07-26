@@ -1,6 +1,7 @@
 ﻿using AINovelWriter.Shared.Models;
 using AINovelWriter.Shared.Services;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
 using System.ComponentModel;
 using System.Text.Json;
@@ -17,6 +18,8 @@ public abstract class AppComponentBase : ComponentBase, IDisposable
 	protected IJSRuntime JsRuntime { get; set; } = default!;
 	[Inject]
 	protected NavigationManager NavigationManager { get; set; } = default!;
+	[CascadingParameter]
+	protected Task<AuthenticationState>? AuthenticationState { get; set; }
 	protected bool IsNovelComplete { get; set; }
 	protected override Task OnInitializedAsync()
 	{

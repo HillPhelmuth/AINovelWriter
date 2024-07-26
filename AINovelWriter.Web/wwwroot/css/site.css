@@ -69,21 +69,21 @@ a, .btn-link {
 
 
 .bungee-spice-regular {
-	font-family: "Bungee Spice", sans-serif;
+	font-family: "Bungee Spice", sans-serif !important;
 	font-weight: 400;
 	font-style: normal;
 }
 /* <uniquifier > : Use a unique and descriptive class name*/
 
 .shantell-sans-default {
-	font-family: "Shantell Sans", cursive;
+	font-family: "Shantell Sans", cursive !important;
 	font-optical-sizing: auto;
 	font-weight: 400;
 	font-style: normal;
 	font-variation-settings: "BNCE" 0, "INFM" 14, "SPAC" 1.9;
 }
 .pt-sans-narrow-regular {
-	font-family: "PT Sans Narrow", sans-serif;
+	font-family: "PT Sans Narrow", sans-serif !important;
 	font-weight: 400;
 	font-style: normal;
 }
