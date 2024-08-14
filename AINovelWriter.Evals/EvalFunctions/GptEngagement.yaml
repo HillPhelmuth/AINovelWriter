@@ -1,0 +1,47 @@
+name: GptEngagement
+description: Measures how captivating and engaging the generated chapter is. A score of 5 indicates that the chapter keeps the reader highly interested and eager to read more, while 1 suggests it fails to capture the reader's attention.
+execution_settings:
+  default:
+    max_tokens: 128
+    temperature: 0.1
+    top_p: 0.1
+    presence_penalty: 0
+    frequency_penalty: 0
+input_variables:
+- name: chapter
+  description: The generated chapter to evaluate.
+  default: ''
+
+template: |
+ Engagement measures how captivating and engaging the generated chapter is. It involves assessing the level of interest the chapter generates and whether it keeps the reader eager to continue reading. When evaluating engagement, consider how compelling the narrative is and how much it draws the reader in. Mercilessly score the Engagement of the chapter between one to five stars as if you were a writing critic using the following rating scale:
+
+    1 star: the chapter is dull, uninteresting, or fails to capture the reader's attention
+    2 stars: the chapter has some engaging elements, but overall struggles to maintain interest
+    3 stars: the chapter is somewhat engaging but lacks consistency in keeping the reader captivated
+    4 stars: the chapter is engaging and keeps the reader interested, with only minor lapses
+    5 stars: the chapter is highly engaging, captivating, and leaves the reader eager to read more
+
+    This rating value should always be an integer between 1 and 5. So, the rating produced should be 1 or 2 or 3 or 4 or 5.
+    Respond ONLY with the number.
+
+    ## Examples
+    The examples below show partial chapters and are meant to be indicative of the chapter's writing style. The real chapters will be much longer. 
+
+    chapter: John went to the store. He bought milk, eggs, and bread. He paid the cashier and went home. He put the groceries away.
+    stars: 1
+
+    chapter: John needed groceries. The store was crowded and the fluorescent lights buzzed overhead. He found the milk and eggs, but the bread aisle was empty. He sighed. This was turning into a chore.
+    stars: 2
+
+    chapter: John pushed through the crowded aisles, the smell of stale produce and cleaning supplies thick in the air. He grabbed the milk and eggs, then navigated his way to the bread aisle. A young woman with a overflowing basket accidentally bumped into him, sending a carton of eggs tumbling to the floor. He stared at the mess, feeling his frustration rise.
+    stars: 3
+
+    chapter: John gripped the worn leather of his shopping basket, his knuckles white. The fluorescent lights hummed, casting a sickly yellow glow over the crowded aisles. He had to get in and out quickly. He couldn't risk being seen. He snatched the milk and eggs, then cautiously made his way to the bread aisle. A sudden commotion near the entrance made him freeze. He glanced nervously over his shoulder.
+    stars: 4
+
+    chapter: John felt a bead of sweat trickle down his temple as he scanned the crowded aisles. The fluorescent lights buzzed like angry wasps, amplifying the tension that thrummed through him. He had to get the groceries and get out before they noticed him. He grabbed the milk and eggs, his heart pounding against his ribs. As he turned toward the bread aisle, a sudden crash echoed from the front of the store, followed by a woman's scream. He froze, his blood turning to ice. They were here.
+    stars: 5
+
+    ## Real Work
+    chapter: {{$chapter}}
+    stars:    

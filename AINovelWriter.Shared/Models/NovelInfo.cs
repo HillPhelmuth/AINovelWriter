@@ -7,8 +7,8 @@ namespace AINovelWriter.Shared.Models;
 
 public class NovelInfo
 {
-	public string id => Guid.NewGuid().ToString();
-	public string? User { get; set; }
+    public string id { get; set; } = Guid.NewGuid().ToString();
+    public string? User { get; set; }
 	public string Title { get; set; } = "";
 	public string Text { get; set; } = "";
 	public string Outline { get; set; } = "";
@@ -18,7 +18,7 @@ public class NovelInfo
 	[JsonIgnore]
 	[Ignore]
 	public string ImgHtml => $"<img src='{ImageUrl}' />";
-	public List<OutlineChapter> ChapterOutlines { get; set; } = [];
+	public List<ChapterOutline> ChapterOutlines { get; set; } = [];
 	public void SplitIntoPagesByWords(int wordPerPage = 200)
 	{
 		TextPages = StringHelpers.SplitStringIntoPagesByWords(Text, wordPerPage);
@@ -54,7 +54,7 @@ public class NovelInfo
 	public bool IsComplete { get; set; }
  
 }
-public record OutlineChapter(string Title, string Text)
+public record ChapterOutline(string Title, string Text)
 {
 	public string? FullText { get; set; }
 	public bool ShowAudio { get; set; }

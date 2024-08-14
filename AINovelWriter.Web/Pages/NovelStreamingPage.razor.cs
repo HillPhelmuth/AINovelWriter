@@ -33,6 +33,7 @@ public partial class NovelStreamingPage
 	private bool _isCheat;
 	private List<string> _pages = [];
 	private bool _isBusy;
+    private string _buttonClass = "";
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		if (firstRender && string.IsNullOrEmpty(AppState.NovelInfo.Text))
@@ -56,6 +57,7 @@ public partial class NovelStreamingPage
 		}
 		AppState.NovelInfo.IsComplete = true;
 		_isBusy = false;
+        _buttonClass = "blink_me";
 		StateHasChanged();
 
 	}

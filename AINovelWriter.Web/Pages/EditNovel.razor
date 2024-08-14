@@ -1,0 +1,94 @@
+﻿@page "/edit"
+@inherits AppComponentBase
+
+<RadzenRow>
+    <RadzenColumn Size="6">
+        <RadzenTemplateForm Data="_editNovelForm" TItem="EditNovelForm" Submit="GetFeedback">
+            <RadzenFormField Text="Chapter" Style="width:100%">
+                <ChildContent>
+                    <RadzenDropDown Name="Chapter" TValue="ChapterOutline" Data="ChapterOutlines" TextProperty="Title" @bind-Value="_editNovelForm.ChapterOutline"></RadzenDropDown>
+                </ChildContent>
+                <Helper>
+                    <RadzenRequiredValidator Component="Chapter" Popup="true" Style="position:absolute"></RadzenRequiredValidator>
+                </Helper>
+            </RadzenFormField>
+            <RadzenFormField Text="AI Model">
+                <ChildContent>
+                    <RadzenDropDown Name="AIModel" Data="AIModelDescriptions" ValueProperty="Key" TextProperty="Value" @bind-Value="@_editNovelForm.AIModel"></RadzenDropDown>
+                </ChildContent>
+                <Helper>
+                    <RadzenText TextStyle="TextStyle.Caption" Text="Select the AI model used to generate Outline"></RadzenText>
+                    <RadzenCompareValidator Operator="CompareOperator.NotEqual" Value="@AIModel.None" Component="AIModel" Text="Please select a model" Popup="true" Style="position:absolute"></RadzenCompareValidator>
+                </Helper>
+            </RadzenFormField><br />
+            <RadzenFormField Style="width:100%" Text="Additional Notes (optional)">
+                <ChildContent>
+                    <RadzenTextArea @bind-Value="@_editNovelForm.Notes" Style="width:100%;height:8rem"></RadzenTextArea>
+                </ChildContent>
+                <Helper>
+                    <RadzenText TextStyle="TextStyle.Caption" Text="Additional instructions for re-write"></RadzenText>
+                </Helper>
+            </RadzenFormField><br/>
+            <RadzenButton ButtonType="ButtonType.Submit" Text="Get Feedback" IsBusy="_isBusy" BusyText="Evaluating..."></RadzenButton>
+        </RadzenTemplateForm>
+    </RadzenColumn>
+    <RadzenColumn Size="6">
+        <RadzenCard Style="max-height:25rem; overflow:auto;overflow-wrap:break-word; white-space:pre-wrap">
+            @if (_editNovelForm.ChapterOutline != null)
+            {
+               @((MarkupString)AsHtml(_editNovelForm.ChapterOutline.FullText))
+            }
+            
+        </RadzenCard>
+    </RadzenColumn>
+</RadzenRow>
+@if (_applySuggestionForm.Feedback != null)
+{
+    <RadzenRow>
+        <RadzenColumn Size="6">
+            <RadzenTemplateForm Data="_applySuggestionForm" TItem="ApplySuggestionForm" Submit="ApplySuggestions">
+                <RadzenText TextStyle="TextStyle.Subtitle1" TextAlign="TextAlign.Center" Text="Feedback"></RadzenText>
+                <RadzenCard>
+                    <RadzenFieldset Text="Strengths" AllowCollapse="true" Style="overflow-wrap:break-word;padding-bottom:0">
+                        <RadzenText TextAlign="TextAlign.Center" TextStyle="TextStyle.Subtitle2" Text="Strengths"></RadzenText>
+                        @((MarkupString)AsHtml(_applySuggestionForm.Feedback.Strengths))
+                    </RadzenFieldset>
+                    <RadzenFieldset Text="Weaknesses" AllowCollapse="true" Style="overflow-wrap:break-word;padding-bottom:0">
+                        <RadzenText TextAlign="TextAlign.Center" TextStyle="TextStyle.Subtitle2" Text="Weaknesses"></RadzenText>
+                        @((MarkupString)AsHtml(_applySuggestionForm.Feedback.Weaknesses))
+                    </RadzenFieldset>
+                    <RadzenFieldset Text="Suggestions" AllowCollapse="true" Style="overflow-wrap:break-word;padding-bottom:0">
+                        <RadzenText TextAlign="TextAlign.Center" TextStyle="TextStyle.Subtitle2" Text="Suggestions"></RadzenText>
+                        @((MarkupString)AsHtml(_applySuggestionForm.Feedback.Suggestions))
+                    </RadzenFieldset>
+                </RadzenCard>
+                <RadzenFormField Text="AI Model">
+                    <ChildContent>
+                        <RadzenDropDown Name="AIModel" Data="AIModelDescriptions" ValueProperty="Key" TextProperty="Value" @bind-Value="@_applySuggestionForm.AIModel"></RadzenDropDown>
+                    </ChildContent>
+                    <Helper>
+                        <RadzenText TextStyle="TextStyle.Caption" Text="Select the AI model used to generate Outline"></RadzenText>
+                        <RadzenCompareValidator Operator="CompareOperator.NotEqual" Value="@AIModel.None" Component="AIModel" Text="Please select a model" Popup="true" Style="position:absolute"></RadzenCompareValidator>
+                    </Helper>
+                </RadzenFormField><br />
+                <RadzenButton ButtonType="ButtonType.Submit" Text="Apply Suggestions" IsBusy="_isRewriting" BusyText="Applying Suggestions"></RadzenButton>
+            </RadzenTemplateForm>
+        </RadzenColumn>
+        <RadzenColumn Size="6">
+            @if (!string.IsNullOrEmpty(_rewrite))
+            {
+                <RadzenButton Click="ApplyRewrite" Text="Apply Rewrite"></RadzenButton>
+                <RadzenCard Style="max-height:25rem; overflow:auto;overflow-wrap:break-word; white-space:pre-wrap">
+                    @((MarkupString)AsHtml(_rewrite))
+                </RadzenCard>
+
+            }
+            else if (_isRewriting)
+            {
+                <RadzenProgressBarCircular Style="margin-left:45%" ShowValue="true" Mode="ProgressBarMode.Indeterminate" Size="ProgressBarCircularSize.Large">
+                    <Template>Rewriting</Template>
+                </RadzenProgressBarCircular>
+            }
+        </RadzenColumn>
+    </RadzenRow>
+}

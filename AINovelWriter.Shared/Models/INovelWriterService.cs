@@ -1,9 +1,11 @@
-﻿namespace AINovelWriter.Shared.Models;
+﻿using PromptFlowEvalsAsPlugins;
+
+namespace AINovelWriter.Shared.Models;
 
 public interface INovelWriterService
 {
     
-    Task<NovelConcepts> GenerateNovelIdea(NovelGenre genre);
+    Task<NovelConcepts> GenerateNovelIdea(GenreCategoryItem genre, List<Genre> subgenres);
 
     Task<string> CreateNovelOutline(string theme, string characterDetails = "", string plotEvents = "",
         string novelTitle = "", int chapters = 15, AIModel aIModel = AIModel.Gpt4O);
@@ -33,4 +35,7 @@ public interface INovelWriterStreaming : ITextToSpeechService
 public interface INovelWriter : INovelWriterService, INovelWriterStreaming
 {
 	Task<string> TextToImage(string novelOutline, string imageStyle = "photo-realistic");
+	Task<List<ResultScore>> ExecuteChapterEval(string chapterText, string details);
+    Task<Feedback> ProvideRewriteFeedback(string chapterText, AIModel aiModel = AIModel.GeminiFlash, string? additionalInstructions = null);
+    Task<string> RewriteChapter(ChapterOutline chapterOutline, Feedback feedback, AIModel aiModel = AIModel.GeminiFlash);
 }

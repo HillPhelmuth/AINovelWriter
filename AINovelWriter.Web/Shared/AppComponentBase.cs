@@ -1,5 +1,6 @@
 ﻿using AINovelWriter.Shared.Models;
 using AINovelWriter.Shared.Services;
+using Markdig;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
@@ -24,7 +25,7 @@ public abstract class AppComponentBase : ComponentBase, IDisposable
 	protected override Task OnInitializedAsync()
 	{
 		AppState.PropertyChanged += HandlePropertyChanged;
-		NovelWriterService.SendChapterText += HandleUpdate;
+		NovelWriterService.SendChapterText += HandleChapterFullText;
 		NovelWriterService.SendChapters += HandleChapterOutline;
 		return base.OnInitializedAsync();
 	}
@@ -40,12 +41,13 @@ public abstract class AppComponentBase : ComponentBase, IDisposable
 		foreach (var chapter in chapters)
 		{
 			var title = chapter.Split("\n")[0];
-			AppState.NovelInfo.ChapterOutlines.Add(new OutlineChapter(title, chapter));
+			if (AppState.NovelInfo.ChapterOutlines.Any(x => x.Title == title)) continue;
+			AppState.NovelInfo.ChapterOutlines.Add(new ChapterOutline(title, chapter));
 		}
 		StateHasChanged();
 	}
 	private int _chapterIndex;
-	protected void HandleUpdate(object? sender, string args)
+	protected void HandleChapterFullText(object? sender, string args)
 	{
 		AppState.NovelInfo.ChapterOutlines[_chapterIndex].FullText = args;
 		_chapterIndex++;
@@ -60,13 +62,21 @@ public abstract class AppComponentBase : ComponentBase, IDisposable
 		//AppState.NovelInfo.TextPages = StringHelpers.SplitStringIntoPagesByLines(AppState.NovelInfo.Text, 20);
 
 	}
+    private readonly MarkdownPipeline _markdownPipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
+    protected string AsHtml(string? text)
+    {
+        if (text == null) return "";
+        var pipeline = _markdownPipeline;
+        var result = Markdown.ToHtml(text, pipeline);
+        return result;
 
-	protected virtual void Dispose(bool disposing)
+    }
+    protected virtual void Dispose(bool disposing)
 	{
 		if (disposing)
 		{
 			AppState.PropertyChanged -= HandlePropertyChanged;
-			NovelWriterService.SendChapterText -= HandleUpdate;
+			NovelWriterService.SendChapterText -= HandleChapterFullText;
 			NovelWriterService.SendChapters -= HandleChapterOutline;
 			NovelWriterService.TextToImageUrl -= HandleImageGen;
 		}

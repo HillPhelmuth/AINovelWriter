@@ -24,8 +24,8 @@ public enum AIModel
     [ModelProvidor("OpenAI")]
     [ModelProvidor("AzureOpenAI")]
 	Gpt4Turbo,
-    [ModelName("gpt-4o")]
-    [AzureOpenAIModel("gpt-4")]
+    [ModelName("gpt-4o-2024-08-06")]
+    [AzureOpenAIModel("gpt-4o")]
     [Description("Latest gpt-4o")]
     [ModelProvidor("OpenAI")]
     [ModelProvidor("AzureOpenAI")]
@@ -34,7 +34,7 @@ public enum AIModel
     [Description("Latest Gemini 1.0 Pro")]
     [ModelProvidor("GoogleAI")]
 	Gemini10,
-    [ModelName("gemini-1.5-pro-latest")]
+    [ModelName("gemini-1.5-pro-exp-0801")]
     [Description("Latest Gemini 1.5 Pro")]
     [ModelProvidor("GoogleAI")]
 	Gemini15,

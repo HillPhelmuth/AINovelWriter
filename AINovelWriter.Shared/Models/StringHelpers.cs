@@ -97,4 +97,31 @@ public static class StringHelpers
 		string pattern = @"\\[abfnrtv\\'""0-9xu]{1,6}";
 		return Regex.Replace(input, pattern, "").Replace("\n", " ");
 	}
+	public static string ReplaceChapter(string originalText, string chapterTitle, string newChapterText)
+	{
+		// Find the start of the chapter to replace
+		var startIndex = originalText.IndexOf(chapterTitle, StringComparison.Ordinal);
+		if (startIndex == -1)
+		{
+			throw new ArgumentException("Chapter title not found in the original text.");
+		}
+
+		// Find the start of the next chapter to determine the end of the current chapter
+		var endIndex = originalText.IndexOf("## Chapter", startIndex + chapterTitle.Length, StringComparison.Ordinal);
+
+		if (endIndex == -1)
+		{
+			// If this is the last chapter, we replace everything till the end of the text
+			endIndex = originalText.Length;
+		}
+
+		// Extract the text before and after the chapter
+		var beforeChapter = originalText[..startIndex];
+		var afterChapter = originalText[endIndex..];
+
+		// Combine the text before, the new chapter text, and the text after
+		var updatedText = beforeChapter + newChapterText + afterChapter;
+
+		return updatedText;
+	}
 }

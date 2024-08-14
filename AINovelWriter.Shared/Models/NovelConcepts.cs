@@ -2,7 +2,11 @@
 
 public class NovelConcepts
 {
-	public NovelGenre Genre { get; set; }
+	public GenreCategory Genre { get; set; }
+    public string? GenreDescription => Genre.GetDescription();
+
+    public string? SubGenre { get; set; }
+	public List<Genre> SubGenres { get; set; } = [];
     public string? Theme { get; set; }
     public string? Characters { get; set; }
     public string? PlotEvents { get; set; }
@@ -14,28 +18,11 @@ public class NovelConcepts
 		return $"""
 		        Title: {Title}
 		        Genre: {Genre.ToString()}
+		        Description: {GenreDescription}
+		        Subgenre: {SubGenre}
 		        Theme: {Theme}
 		        Characters:{Characters}
 		        Plot Events: {PlotEvents}
 		        """;
 	}
-}
-public enum NovelGenre
-{
-	None,
-	Fantasy,
-	ScienceFiction,
-	Mystery,
-	Romance,
-	Thriller,
-	HistoricalFiction,
-	Horror,
-	YoungAdult,
-	LiteraryFiction,
-	Dystopian,
-	Adventure,
-	Crime,
-	MagicalRealism,
-	Contemporary,
-	Western
 }

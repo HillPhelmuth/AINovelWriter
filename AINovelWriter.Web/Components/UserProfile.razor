@@ -17,7 +17,7 @@
 				</RadzenDataGridColumn>
 				<RadzenDataGridColumn TItem="UserNovelData" Width="10%">
 					<Template Context="novel">
-						<RadzenButton Size="ButtonSize.ExtraSmall" Icon="delete" Click="@(() => DeleteNovel(novel))"></RadzenButton>
+						<RadzenButton Size="ButtonSize.ExtraSmall" Icon="download" Click="@(() => DownloadNovelToFile(novel))"></RadzenButton>
 					</Template>
 				</RadzenDataGridColumn>
 			</Columns>

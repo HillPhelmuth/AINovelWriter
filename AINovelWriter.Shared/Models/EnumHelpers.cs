@@ -4,6 +4,19 @@ namespace AINovelWriter.Shared.Models;
 
 public static class EnumHelpers
 {
+    // a generic GetAttribute method for enums
+    public static TAttribute GetAttribute<TAttribute>(this Enum value)
+        where TAttribute : Attribute
+    {
+        var type = value.GetType();
+        var memberInfo = type.GetMember(value.ToString()).FirstOrDefault();
+        if (memberInfo != null)
+        {
+            var attributes = memberInfo.GetCustomAttributes(typeof(TAttribute), false);
+            return attributes is { Length: > 0 } ? (TAttribute)attributes[0] : null;
+        }
+        return null;
+    }
     public static IEnumerable<string> GetModelProvidors(this AIModel model)
     {
         var type = model.GetType();
@@ -54,4 +67,15 @@ public static class EnumHelpers
 
 		return attributes is { Length: > 0 } ? attributes[0].DisplayName : value.ToString();
 	}
+    public static List<string> GetSubGenreList(this NovelGenre genre)
+    {
+        var fi = genre.GetType().GetField(genre.ToString());
+        var attributes = (SubGenreAttribute[])fi.GetCustomAttributes(typeof(SubGenreAttribute), false);
+        if (attributes is { Length: 0 })
+        {
+            return [];
+        }
+        var subGenres = attributes[0].SubGenres;
+        return subGenres.Split(',').Select(x => x.Trim()).ToList();
+    }
 }

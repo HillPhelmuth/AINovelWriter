@@ -11,7 +11,7 @@
 				<RadzenButton class="shantell-sans-default" Text="@(_currentMaxWidth <= 900 ? "" : "My Profile")" Click="ShowProfile" title="view profile, save/load novels" Icon="person" Variant="Variant.Text"></RadzenButton>
 			</RadzenColumn>
 			<RadzenColumn Size="6">
-				<RadzenText Style="margin-top:.3rem" TextStyle="TextStyle.H6" TextAlign="TextAlign.Center" Text="AI Ghostwriter Pro (The Milli Vanilli project)" />
+				<RadzenText Style="@(_currentMaxWidth <= 900 ? "font-size:95%" : "margin-top:.3rem")" TextStyle="TextStyle.H6" TextAlign="TextAlign.Center" Text="AI Ghostwriter Pro (The Milli Vanilli project)" />
 			</RadzenColumn>
 			<RadzenColumn Size="2">
 				<RadzenButton Icon="save" Variant="Variant.Text" Text="@(_currentMaxWidth <= 900 ? "" : "Save Novel")" title="Save current novel progress" Click="SaveNovel"></RadzenButton>
@@ -39,7 +39,9 @@
 				<RadzenBreadCrumbItem Icon="tips_and_updates" Path="concept" Text="Enter a few ideas"></RadzenBreadCrumbItem>
 				<RadzenBreadCrumbItem Icon="speaker_notes" Path="stream" Text="Sit back and watch as you 'write' a novel"></RadzenBreadCrumbItem>
 				<RadzenBreadCrumbItem Icon="palette" Visible="@AppState.NovelInfo.IsComplete" Path="cover" Text="'Create' your cover art"></RadzenBreadCrumbItem>
-				<RadzenBreadCrumbItem Icon="auto_stories" Visible="@(!string.IsNullOrEmpty(AppState.NovelInfo.ImageUrl))" Path="book" Text="Read 'your' book!"></RadzenBreadCrumbItem>
+                <RadzenBreadCrumbItem Icon="auto_stories" Visible="@(!string.IsNullOrEmpty(AppState.NovelInfo.ImageUrl))" Path="book" Text="Read 'your' book!"></RadzenBreadCrumbItem>
+				<RadzenBreadCrumbItem Icon="edit_note" Visible="@AppState.NovelInfo.IsComplete" Path="edit" Text="Improve 'your' book!"></RadzenBreadCrumbItem>
+				<RadzenBreadCrumbItem Icon="quiz" Visible="@AppState.NovelInfo.IsComplete" Path="eval" Text="Evaluate 'your' book!"></RadzenBreadCrumbItem>
 			</ChildContent>
 		</RadzenBreadCrumb>
 		<div>

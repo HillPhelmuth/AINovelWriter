@@ -19,4 +19,8 @@ public class UserData
 	public bool IsAuthenticated => !string.IsNullOrWhiteSpace(UserName);
 	public List<UserNovelData> SavedNovels { get; set; } = [];
 }
-public record UserNovelData(string NovelId, string Title);
+
+public record UserNovelData(string NovelId, string Title)
+{
+	public string NovelId { get; set; } = NovelId;
+}

@@ -4,12 +4,13 @@
 <RadzenRow>
 	
 	<RadzenColumn SizeLG="8" Size="12" Style="overflow:auto">
-		<RadzenText TextAlign="TextAlign.Center" TextStyle="TextStyle.Subtitle1" Text="Book"></RadzenText>
+        <RadzenText TextAlign="TextAlign.Center" TextStyle="TextStyle.Subtitle1" Text="Book"></RadzenText>
+        <RadzenButton Text="Re-write" Size="ButtonSize.ExtraSmall" BusyText="Writing" IsBusy="_isBusy" Click="@(async() =>await GenerateNovelAsync())" ></RadzenButton>
 		@if (AppState.NovelInfo.IsComplete)
 		{
-			<RadzenButton Icon="palette" Text="Choose your cover" Click="@(() => NavigationManager.NavigateTo("cover"))"></RadzenButton>
+			<RadzenButton class="@_buttonClass" Style="margin-left:35%" Icon="palette" Text="Choose your cover" Click="@(() => NavigationManager.NavigateTo("cover"))"></RadzenButton>
 		}
-		<RadzenButton Text="Re-write" Size="ButtonSize.ExtraSmall" BusyText="Writing" IsBusy="_isBusy" Click="@(async() =>await GenerateNovelAsync())" ></RadzenButton>
+		
 		<RadzenCard Style="height:74vh; overflow:auto; position:relative" Variant="Variant.Text">
 			
 			<BookReader Text="@AppState.NovelInfo.Text"></BookReader>

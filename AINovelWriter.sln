@@ -3,11 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.34916.146
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AINovelWriter.Audio", "AINovelWriter.Audio\AINovelWriter.Audio.csproj", "{0EEBDDA7-F983-47EB-90AA-39C13A1A1FB0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AINovelWriter.Audio", "AINovelWriter.Audio\AINovelWriter.Audio.csproj", "{0EEBDDA7-F983-47EB-90AA-39C13A1A1FB0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AINovelWriter.Shared", "AINovelWriter.Shared\AINovelWriter.Shared.csproj", "{E72282E6-74D7-49D5-8F1E-1BD972A49C53}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AINovelWriter.Shared", "AINovelWriter.Shared\AINovelWriter.Shared.csproj", "{E72282E6-74D7-49D5-8F1E-1BD972A49C53}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AINovelWriter.Web", "AINovelWriter.Web\AINovelWriter.Web.csproj", "{41ACBA5A-4846-4686-889A-FFBA7385469E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AINovelWriter.Web", "AINovelWriter.Web\AINovelWriter.Web.csproj", "{41ACBA5A-4846-4686-889A-FFBA7385469E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AINovelWriter.Evals", "AINovelWriter.Evals\AINovelWriter.Evals.csproj", "{68CACA3A-683F-4DFB-BDFA-FB1BA3C1BF83}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{41ACBA5A-4846-4686-889A-FFBA7385469E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{41ACBA5A-4846-4686-889A-FFBA7385469E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{41ACBA5A-4846-4686-889A-FFBA7385469E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68CACA3A-683F-4DFB-BDFA-FB1BA3C1BF83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68CACA3A-683F-4DFB-BDFA-FB1BA3C1BF83}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68CACA3A-683F-4DFB-BDFA-FB1BA3C1BF83}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68CACA3A-683F-4DFB-BDFA-FB1BA3C1BF83}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

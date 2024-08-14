@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using AINovelWriter.Shared.Models;
+using Microsoft.Identity.Client;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.Google;
@@ -55,7 +56,7 @@ public class NovelWriterPlugin(AIModel aIModel = AIModel.Gpt4O)
 	[KernelFunction, Description("Summarize all the character details and plot events in the novel chapter")]
 	public async Task<string> SummarizeChapter(Kernel kernel, [Description("Chapter text to summarize")] string chapterText)
 	{
-		var settings = new OpenAIPromptExecutionSettings { MaxTokens = 1028 };
+		var settings = new OpenAIPromptExecutionSettings { MaxTokens = 1028};
 		var args = new KernelArguments(settings)
 		{
 			["novel_chapter"] = chapterText
@@ -67,7 +68,7 @@ public class NovelWriterPlugin(AIModel aIModel = AIModel.Gpt4O)
 	public async Task<string> CreateNovelOutline(Kernel kernel, [Description("The central topic or theme of the story")] string theme, [Description("A list of character details that must be included in the outline")] string characterDetails = "", [Description("Plot events that must occurr in the outline")] string plotEvents = "", [Description("The title of the novel")] string novelTitle = "", [Description("Number of chapters to include")] int chapters = 15)
 	{
 
-		var settings = GetPromptExecutionSettingsFromModel(_aIModel, 0.85);
+		var settings = GetPromptExecutionSettingsFromModel(_aIModel, 0.85, outputFormat:Prompts.OutlineSchema);
 		var args = new KernelArguments(settings)
 		{
 			["theme"] = theme,
@@ -112,14 +113,14 @@ public class NovelWriterPlugin(AIModel aIModel = AIModel.Gpt4O)
 		var response = await kernel.InvokePromptAsync<string>(prompt, args);
 		return response;
 	}
-	private PromptExecutionSettings GetPromptExecutionSettingsFromModel(AIModel model, double tempurature = 1.0, int maxTokens = 4096)
+	private PromptExecutionSettings GetPromptExecutionSettingsFromModel(AIModel model, double tempurature = 1.0, int maxTokens = 4096, string? outputFormat = null)
 	{
 		var providor = model.GetModelProvidors().FirstOrDefault();
 		return providor switch
 		{
 			"GoogleAI" => new GeminiPromptExecutionSettings { MaxTokens = maxTokens, Temperature = tempurature },
 			"MistralAI" => new MistralAIPromptExecutionSettings { MaxTokens = maxTokens, Temperature = tempurature },
-			"OpenAI" or "AzureOpenAI" => new OpenAIPromptExecutionSettings { MaxTokens = maxTokens, Temperature = tempurature, ChatSystemPrompt = "You are a professional novelist tasked with writing a chapter for a novel. The chapter should be exactly 3000 words. It is very important to maintain this exact word count. Ensure the chapter is engaging, cohesive, and well-structured." },
+			"OpenAI" or "AzureOpenAI" => new OpenAIPromptExecutionSettings { MaxTokens = maxTokens, Temperature = tempurature, ChatSystemPrompt = "You are a professional novelist tasked with writing a chapter for a novel. The chapter should be exactly 100 paragraphs. It is very important to maintain this exact paragraph count. Ensure the chapter is engaging, cohesive, and well-structured."},
 			_ => new OpenAIPromptExecutionSettings { MaxTokens = maxTokens, Temperature = tempurature }
 		};
 	}

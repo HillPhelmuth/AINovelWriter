@@ -1,0 +1,31 @@
+﻿name: GptWritingDetail
+description: Measures how well the generated chapter adheres to the prompt for detailed descriptions and a slower pace. A score of 5 indicates that the chapter provides very detailed descriptions and a deliberately slow pace, while 1 suggests it lacks detail and moves too quickly.
+execution_settings:
+  default:
+    max_tokens: 128
+    temperature: 0.1
+    top_p: 0.1
+    presence_penalty: 0
+    frequency_penalty: 0
+input_variables:
+- name: chapter
+  description: The generated chapter to evaluate.
+  default: ''
+
+template: |
+ WritingDetail measures how well the generated chapter adheres to the instruction for detailed descriptions and a slower pace. It involves assessing the richness of sensory details, the depth of character exploration, and the pacing of events. When evaluating writing detail, consider how vividly the setting, characters, and events are described and whether the chapter takes the time to develop these elements thoroughly. Score the writing detail of the chapter between one to five stars using the following rating scale:
+
+    1 star: the chapter lacks detail and moves too quickly, with little attention to sensory description or depth
+    2 stars: the chapter includes some detail but is generally sparse, with a faster pace than desired
+    3 stars: the chapter provides moderate detail with a balanced pace, but lacks the richness needed for full immersion
+    4 stars: the chapter is detailed and slower-paced, with only minor areas that could be further developed
+    5 stars: the chapter is richly detailed, immersive, and deliberately paced, fully capturing the reader's senses and emotions
+
+    This rating value should always be an integer between 1 and 5. So, the rating produced should be 1 or 2 or 3 or 4 or 5.
+    Respond ONLY with the number.
+
+    
+
+    ## Real Work
+    **chapter:** {{$chapter}}
+    stars:    

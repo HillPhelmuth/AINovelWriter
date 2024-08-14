@@ -366,3 +366,5 @@ FodyWeavers.xsd
 /AINovelWriter.Web/CheatNovel3.json
 /AINovelWriter.Web/FullCheatNovel.json
 /AINovelWriter.Web/register-with-auth0.cmd
+/AINovelWriter.Web/Pages/DataForFinetuning.razor
+/AINovelWriter.Web/Pages/DataForFinetuning.razor.cs

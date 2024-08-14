@@ -19,11 +19,18 @@ public partial class UserProfile
 	private DialogService Dialog { get; set; } = default!;
 	[Inject]
 	private ImageGenService ImageGenService { get; set; } = default!;
+	[Inject]
+	private NotificationService NotificationService { get; set; } = default!;
 		
 	private bool _changeImage;
 	private async Task SelectNovel(UserNovelData userNovelData)
 	{
 		var novel = await CosmosService.GetUserNovel(AppState.UserData.UserName, userNovelData.NovelId);
+        if (novel.User is null)
+        {
+			NotificationService.Notify(NotificationSeverity.Info, "Novel Data updated. Try again.");
+			Dialog.Close();
+        }
 		AppState.NovelInfo = novel;
 		Dialog.Close();
 	}
@@ -33,8 +40,9 @@ public partial class UserProfile
 		if (result == true)
 		{
 			var userData = AppState.UserData;
+			await CosmosService.DeleteUserNovel(userData, userNovelData.NovelId);
 			userData.SavedNovels.Remove(userNovelData);
-			await CosmosService.SaveUser(userData);
+			
 		}
 	}
 	private async Task DownloadNovelToFile(UserNovelData userNovelData)
@@ -42,9 +50,12 @@ public partial class UserProfile
 		AppState.NovelInfo = await CosmosService.GetUserNovel(AppState.UserData.UserName, userNovelData.NovelId);
 		if (string.IsNullOrEmpty(AppState.NovelInfo.Text)) return;
 
-		var fileContent = await CreateAndCompressFilesAsync(AppState.NovelInfo.Text, AppState.NovelInfo.ImageUrl);
-		
-		await JsRuntime.InvokeVoidAsync("downloadFile", $"{AppState.NovelInfo.Title}.zip", fileContent);
+        //var fileContent = await CreateAndCompressFilesAsync(AppState.NovelInfo.Text, AppState.NovelInfo.ImageUrl);
+        using var client = new HttpClient();
+ 
+        var imageBytes = await ImageGenService.GetImageBlob(AppState.NovelInfo.ImageUrl) /*await client.GetByteArrayAsync(AppState.NovelInfo.ImageUrl)*/;
+		var pdfData = CreatePdf(imageBytes, AppState.NovelInfo.Text);
+        await JsRuntime.InvokeVoidAsync("downloadFile", $"{AppState.NovelInfo.Title}.pdf", pdfData);
 	}
 	private ImageUpdateForm _imageUpdateForm = new();
 	private async void UpdateImage(ImageUpdateForm imageUpdateForm)

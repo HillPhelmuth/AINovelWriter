@@ -11,18 +11,26 @@ public partial class NovelConceptPage
 	private class NovelIdea
 	{
 		public NovelGenre NovelGenre { get; set; }
+		public string? Subgenre { get; set; }
 	}
 
+	private class NovelIdeaForm
+	{
+		public GenreCategoryItem? NovelCategory { get; set; } 
+		public List<Genre> SubGenres { get; set; } = [];
+	}
+	private NovelIdeaForm _novelIdeaForm = new();
 	private bool _isBusy;
 	private bool _showOutline;
 	private NovelIdea _novelIdea = new();
 	private List<NovelGenre> _genres = Enum.GetValues<NovelGenre>().ToList();
+	private Dictionary<NovelGenre, List<string>> _genreWithSubgenres = Enum.GetValues<NovelGenre>().ToDictionary(x => x, y => y.GetSubGenreList());
 	RadzenButton _button;
 	Popup _popup;
 	private RadzenDropDown<AIModel> _aiModelField;
 	private static Dictionary<AIModel, string> AIModelDescriptions => GetEnumsWithDescriptions<AIModel>().ToDictionary(x => x.Key, y => y.Value);
 	private CancellationTokenSource _cancellationTokenSource = new();
-	private async Task SubmitIdea(NovelIdea novelIdea)
+	private async Task SubmitIdea(NovelIdeaForm novelIdea)
 	{
 		_isBusy = true;
 		StateHasChanged();
@@ -33,12 +41,12 @@ public partial class NovelConceptPage
 		StateHasChanged();
 	}
 	private int _attempts = 0;
-	private async Task TryGenerateConcepts(NovelIdea novelIdea)
+	private async Task TryGenerateConcepts(NovelIdeaForm novelIdea)
 	{
 		try
 		{
-			AppState.NovelConcepts = await NovelWriterService.GenerateNovelIdea(novelIdea.NovelGenre);
-			AppState.NovelConcepts.Genre = novelIdea.NovelGenre;
+            AppState.NovelConcepts = await NovelWriterService.GenerateNovelIdea(novelIdea.NovelCategory!, novelIdea.SubGenres);
+			AppState.NovelConcepts.Genre = novelIdea.NovelCategory!.Category;
 			StateHasChanged();
 
 		}
@@ -60,7 +68,8 @@ public partial class NovelConceptPage
 		StateHasChanged();
 		await Task.Delay(1);
 		AppState.NovelInfo = new NovelInfo() { User = AppState.UserData.UserName };
-		AppState.NovelOutline.Outline = await NovelWriterService.CreateNovelOutline(novelConcepts.Theme, novelConcepts.Characters, novelConcepts.PlotEvents, novelConcepts.Title, novelConcepts.ChapterCount, novelConcepts.OutlineAIModel);
+        var theme = $"{novelConcepts.Genre}\n{novelConcepts.SubGenre} {novelConcepts.Theme}";
+        AppState.NovelOutline.Outline = await NovelWriterService.CreateNovelOutline(theme, novelConcepts.Characters, novelConcepts.PlotEvents, novelConcepts.Title, novelConcepts.ChapterCount, novelConcepts.OutlineAIModel);
 		AppState.NovelInfo.Outline = AppState.NovelOutline.Outline;
 		AppState.NovelInfo.Title = novelConcepts.Title;
 		AppState.NovelInfo.ConceptDescription = novelConcepts.ToString();

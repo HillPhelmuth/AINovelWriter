@@ -4,6 +4,7 @@ using Radzen;
 using System.ComponentModel;
 using AINovelWriter.Shared.Models;
 using AINovelWriter.Web.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace AINovelWriter.Web.Shared;
 
@@ -17,7 +18,9 @@ public partial class MainLayout
 	private CosmosService CosmosService { get; set; } = default!;
 	[Inject]
 	private NotificationService NotificationService { get; set; } = default!;
-	private bool _hasOutline;
+    [CascadingParameter]
+    protected Task<AuthenticationState>? AuthenticationState { get; set; }
+    private bool _hasOutline;
 	private bool _hasNovel;
 	private bool _hasCover;
 	private string _currentPage;
@@ -33,9 +36,10 @@ public partial class MainLayout
 	{
 		if (firstRender)
 		{
-
-		}
-		await base.OnAfterRenderAsync(firstRender);
+            
+        }
+        AppState.UserData.UserName ??= (await AuthenticationState!).User.Identity?.Name;
+        await base.OnAfterRenderAsync(firstRender);
 	}
 	private async void Reset()
 	{
@@ -61,6 +65,9 @@ public partial class MainLayout
 				_bodyStyle = _currentPage == "book" ? "padding:0;overflow:hidden" : "padding:.75rem .5rem;";
 				StateHasChanged();
 				break;
+			case nameof(AppState.NovelInfo):
+				StateHasChanged();
+				break;
 		}
 	}
 	private void ShowProfile()
@@ -69,7 +76,8 @@ public partial class MainLayout
 	}
 	private async Task SaveNovel()
 	{
-		var result = await CosmosService.SaveUserNovel(AppState.NovelInfo, AppState.UserData);
+		
+        var result = await CosmosService.SaveUserNovel(AppState.NovelInfo, AppState.UserData);
 		if (result.Item1)
 		{
 			NotificationService.Notify(NotificationSeverity.Success, "Novel Saved", $"Novel {AppState.NovelInfo.Title} Saved successfully!");

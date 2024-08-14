@@ -94,3 +94,12 @@ a, .btn-link {
 	font-style: normal;
 }
 @import url("https://fonts.googleapis.com/css2?family=Judson&family=Quando&display=swap");
+.blink_me {
+	animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+	50% {
+		opacity: 0;
+	}
+}

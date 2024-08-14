@@ -4,8 +4,10 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using AINovelWriter.Evals;
 using AINovelWriter.Shared.Models;
 using AINovelWriter.Shared.Plugins;
+using Azure.AI.OpenAI;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Http.Resilience;
@@ -18,6 +20,7 @@ using Microsoft.SemanticKernel.Connectors.OpenAI;
 using Microsoft.SemanticKernel.TextToAudio;
 using Microsoft.SemanticKernel.TextToImage;
 using Polly;
+using PromptFlowEvalsAsPlugins;
 
 namespace AINovelWriter.Shared.Services;
 
@@ -31,7 +34,7 @@ public class NovelWriterService(IConfiguration configuration) : INovelWriter
 	public event EventHandler<AudioState>? SendAudioStateUpdate;
 
 
-	public async Task<NovelConcepts> GenerateNovelIdea(NovelGenre genre)
+	public async Task<NovelConcepts> GenerateNovelIdea(GenreCategoryItem genre, List<Genre> subgenres)
 	{
 		var random = new Random();
 		var roll = random.Next(1, 4);
@@ -44,26 +47,33 @@ public class NovelWriterService(IConfiguration configuration) : INovelWriter
 		};
 		var kernel = CreateKernel(aIModel);
 		const string Prompt = """
-                              You are a novel idea generator. Provided a Genre, generate a novel idea.
+                              You are a novel idea generator. Provided a Genre and a Sub-genre, generate a novel idea.
                               The idea should contain a Title, a Theme, a few Character Details, and a few key Plot Events.
                               ## Output
                               Your output must be in json using the following format:
                               ```json
                               {
                               	"Title": "Title of the Novel",
-                                  "Theme": "Theme of the Novel",
-                                  "Characters": "Character Details",
-                                  "PlotEvents": "Plot Events"
+                              	"Theme": "Theme of the Novel",
+                              	"Characters": "Character Details",
+                              	"PlotEvents": "Plot Events"
                               }
                               ```
-
+                              Include the Genre and Sub-genre in the Theme.
                               ## Genre
                               {{ $genre }}
+                              
+                              ## Sub-genres
+                              {{ $subgenre }}
                               """;
-		var settings = GetPromptExecutionSettingsFromModel(aIModel, 0.7);
-		var args = new KernelArguments(settings) { ["genre"] = genre.ToString() };
+		var settings = GetPromptExecutionSettingsFromModel(aIModel, 0.9);
+        var subgenreString = string.Join("\n", subgenres.Select(x => x.ToString()));
+        var args = new KernelArguments(settings) { ["genre"] = $"{genre.Name}\n{genre.Description}", ["subgenre"] = subgenreString };
 		var json = await kernel.InvokePromptAsync<string>(Prompt, args);
-		return JsonSerializer.Deserialize<NovelConcepts>(json.Replace("```json", "").Replace("```", "").Trim('\n'));
+        var concepts = JsonSerializer.Deserialize<NovelConcepts>(json.Replace("```json", "").Replace("```", "").Trim('\n'));
+		concepts.Genre = genre.Category;
+		concepts.SubGenres = subgenres;
+        return concepts;
 
 	}
 	public async Task<string> CreateNovelOutline(string theme, string characterDetails = "", string plotEvents = "",
@@ -103,7 +113,7 @@ public class NovelWriterService(IConfiguration configuration) : INovelWriter
 	public async IAsyncEnumerable<string> WriteNovel(string outline, AIModel aiModel = AIModel.Gpt4O,
 		[EnumeratorCancellation] CancellationToken cancellationToken = default)
 	{
-
+		//var chapterOutline = JsonSerializer.Deserialize<ChapterOutline>(outline.Replace("```json","").Replace("```","").Trim('\n'));
 		var chapters = SplitMarkdownByHeaders(outline);
 		var kernel = CreateKernel(aiModel);
 		var novelPlugin = new NovelWriterPlugin(aiModel);
@@ -126,7 +136,7 @@ public class NovelWriterService(IConfiguration configuration) : INovelWriter
 			if (cancellationToken.IsCancellationRequested) break;
 
 			var chapterCopy = chapter + "\n\n**expected length:** 100 paragraphs";
-			var flashKernel = CreateKernel(AIModel.GeminiFlash);
+			//var flashKernel = CreateKernel(AIModel.Gpt4Mini);
 			//var chapterExpanded = await expandChapterFunc.InvokeAsync<string>(flashKernel, new KernelArguments() { ["outline"] = chapterCopy, ["storyDescription"] = _description }, cancellationToken);
 			var writeArgs = new KernelArguments()
 			{
@@ -154,7 +164,7 @@ public class NovelWriterService(IConfiguration configuration) : INovelWriter
 				["chapterText"] = chapterText
 			};
 			var summary = await summarizeChapterFunc.InvokeAsync<string>(kernel, summarizeArgs, cancellationToken);
-			summaryBuilder.AppendLine(summary);
+			summaryBuilder.AppendLine(chapterText);
 
 		}
 		//var image = await TextToImage(outline);
@@ -162,7 +172,7 @@ public class NovelWriterService(IConfiguration configuration) : INovelWriter
 	}
 	public async IAsyncEnumerable<string> WriteChapterStreaming(Kernel kernel, KernelArguments args, AIModel aiModel, [EnumeratorCancellation] CancellationToken cancellationToken = default)
 	{
-		var settings = GetPromptExecutionSettingsFromModel(aiModel);
+		var settings = GetWritingSettingsFromModel(aiModel);
 		//var args = new KernelArguments(settings)
 		//{
 		// ["chapter_outline"] = outline,
@@ -171,10 +181,26 @@ public class NovelWriterService(IConfiguration configuration) : INovelWriter
 		// ["summary"] = summary
 		//};
 		var chat = kernel.GetRequiredService<IChatCompletionService>();
-		var chatHistory = new ChatHistory("You are a professional novelist tasked with writing a chapter for a novel. Ensure the chapter is engaging, cohesive, and well-structured. The chapter should be 100 paragraphs long. It is very important to maintain this exact paragraph count.");
+		var chatHistory = new ChatHistory("You are a professional novelist tasked with writing a chapter for a novel. Ensure the chapter is engaging, cohesive, and well-structured. The chapter must be 100 paragraphs long. It is very important to maintain this exact paragraph count. Your writing should always contain as much detail as possible. Always write with characters first, preferring dialog over exposition.");
 		var promptTemplateFactory = new KernelPromptTemplateFactory();
 		var userPrompt = await promptTemplateFactory.Create(new PromptTemplateConfig(Prompts.ChapterWriterPrompt)).RenderAsync(kernel, args, cancellationToken);
 		chatHistory.AddUserMessage(userPrompt);
+		//Azure.AI.OpenAI.StreamingChatCompletionsUpdate
+		var hasMore = false;
+		var currentChapter = "";
+		await foreach (var message in chat.GetStreamingChatMessageContentsAsync(chatHistory, settings, kernel, cancellationToken))
+		{
+			
+			var messageContent = message.Content!;
+			currentChapter += messageContent;
+			yield return messageContent;
+			if (aiModel.ToString().StartsWith("Open") || aiModel.ToString().StartsWith("Mistral")) continue;
+            var item = message.Metadata?["FinishReason"] as CompletionsFinishReason?;
+            hasMore = item != null && item.Value == CompletionsFinishReason.TokenLimitReached;
+		}
+		if (!hasMore) yield break;
+		chatHistory.AddAssistantMessage(currentChapter);
+		chatHistory.AddUserMessage("Continue the chapter");
 		await foreach (var message in chat.GetStreamingChatMessageContentsAsync(chatHistory, settings, kernel, cancellationToken))
 		{
 			yield return message.Content!;
@@ -182,17 +208,60 @@ public class NovelWriterService(IConfiguration configuration) : INovelWriter
 		//return kernel.InvokePromptStreamingAsync<string>(ChapterWriterPrompt, args);
 
 	}
-	private static PromptExecutionSettings GetPromptExecutionSettingsFromModel(AIModel model)
+
+    public async Task<List<ResultScore>> ExecuteChapterEval(string chapterText, string details)
+    {
+		var kernel = CreateKernel();
+        var novelEvalService = new NovelEvalService(kernel);
+		var inputs = novelEvalService.CreateInputModels(chapterText, details);
+		var resultScores = await novelEvalService.ExecuteEvals(inputs);
+		return resultScores;
+    }
+
+    public async Task<Feedback> ProvideRewriteFeedback(string chapterText, AIModel aiModel = AIModel.GeminiFlash, string? additionalInstructions = null)
+    {
+		var kernel = CreateKernel(aiModel);
+		var settings = GetRewriteSettingsFromModel(aiModel);
+        var args = new KernelArguments(settings) { ["chapterText"] = chapterText, ["notes"] = additionalInstructions };
+		var result = await kernel.InvokePromptAsync<string>(Prompts.ChapterImprovementPrompt, args);
+		var feedback = JsonSerializer.Deserialize<Feedback>(result!.Replace("```json", "").Replace("```", "").Trim('\n'));
+		return feedback!;
+    }
+	public async Task<string> RewriteChapter(ChapterOutline chapterOutline, Feedback feedback,
+		AIModel aiModel = AIModel.GeminiFlash)
+    {
+        var kernel = CreateKernel(aiModel);
+        var promptFilter = new PromptFilter();
+		kernel.PromptRenderFilters.Add(promptFilter);
+        var settings = GetWritingSettingsFromModel(aiModel);
+        var args = new KernelArguments(settings) { ["chapterText"] = chapterOutline.FullText, ["strengths"] = feedback.Strengths, ["weaknesses"] = feedback.Weaknesses, ["suggestions"] = feedback.Suggestions };
+        var rewrittenChapter = await kernel.InvokePromptAsync<string>(Prompts.ChapterRewritePrompt, args);
+		
+        return rewrittenChapter;
+    }
+	
+	private static PromptExecutionSettings GetWritingSettingsFromModel(AIModel model)
 	{
 		var providor = model.GetModelProvidors().FirstOrDefault();
 		return providor switch
 		{
-			"GoogleAI" => new GeminiPromptExecutionSettings { MaxTokens = 4096 },
-			"MistralAI" => new MistralAIPromptExecutionSettings { MaxTokens = 4096 },
-			"OpenAI" or "AzureOpenAI" => new OpenAIPromptExecutionSettings { MaxTokens = 4096, ChatSystemPrompt = "You are a professional novelist tasked with writing a chapter for a novel. The chapter should be exactly 3000 words. It is very important to maintain this exact word count. Ensure the chapter is engaging, cohesive, and well-structured." },
-			_ => new OpenAIPromptExecutionSettings { MaxTokens = 4096 }
+			"GoogleAI" => new GeminiPromptExecutionSettings {  },
+			"MistralAI" => new MistralAIPromptExecutionSettings { },
+			"OpenAI" or "AzureOpenAI" => new OpenAIPromptExecutionSettings { ChatSystemPrompt = "You are a professional novelist tasked with writing a chapter for a novel. Follow the writing guide.  Ensure the chapter is very detailed, engaging, cohesive, and well-structured.", Temperature = 0.7 },
+			_ => new OpenAIPromptExecutionSettings { Temperature = 0.7}
 		};
 	}
+	private static PromptExecutionSettings GetRewriteSettingsFromModel(AIModel model)
+    {
+        var providor = model.GetModelProvidors().FirstOrDefault();
+        return providor switch
+        {
+            "GoogleAI" => new GeminiPromptExecutionSettings {  },
+            "MistralAI" => new MistralAIPromptExecutionSettings { },
+            "OpenAI" or "AzureOpenAI" => new OpenAIPromptExecutionSettings { ChatSystemPrompt = "Provide feedback as a novel editor. Locate the flaws and provide notes for a re-write, if necessary. Use json format in response", Temperature = 0.7 },
+            _ => new OpenAIPromptExecutionSettings { Temperature = 0.7 }
+        };
+    }
 	public async Task<string> TextToImage(string novelOutline, string imageStyle = "photo-realistic")
 	{
 		var kernelBuilder = Kernel.CreateBuilder();
@@ -214,7 +283,7 @@ public class NovelWriterService(IConfiguration configuration) : INovelWriter
 		});
 		var kernel = kernelBuilder
 			.AddOpenAITextToImage(configuration["OpenAI:ApiKey"]!, modelId: "dall-e-3")
-			.AddOpenAIChatCompletion("gpt-4o", configuration["OpenAI:ApiKey"]!)
+			.AddOpenAIChatCompletion("gpt-4o-2024-08-06", configuration["OpenAI:ApiKey"]!)
 			.Build();
 		var imagePromptPrompt =
 							"""

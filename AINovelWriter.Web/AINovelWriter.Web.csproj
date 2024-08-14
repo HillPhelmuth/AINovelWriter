@@ -10,31 +10,33 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Compile Remove="Pages\Error.cshtml.cs" />
-	  <Compile Remove="Pages\Login.cshtml.cs" />
-	  <Compile Remove="Pages\Logout.cshtml.cs" />
+		<Compile Remove="Pages\DataForFinetuning.razor.cs" />
+		<Compile Remove="Pages\Error.cshtml.cs" />
+		<Compile Remove="Pages\Login.cshtml.cs" />
+		<Compile Remove="Pages\Logout.cshtml.cs" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Content Remove="Pages\Error.cshtml" />
-	  <Content Remove="Pages\Login.cshtml" />
-	  <Content Remove="Pages\Logout.cshtml" />
-	  <Content Remove="Pages\_Host.cshtml" />
-	  <Content Remove="Pages\_Layout.cshtml" />
-	  <Content Remove="Shared\AccessControl.razor" />
+		<Content Remove="Pages\DataForFinetuning.razor" />
+		<Content Remove="Pages\Error.cshtml" />
+		<Content Remove="Pages\Login.cshtml" />
+		<Content Remove="Pages\Logout.cshtml" />
+		<Content Remove="Pages\_Host.cshtml" />
+		<Content Remove="Pages\_Layout.cshtml" />
+		<Content Remove="Shared\AccessControl.razor" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Include="wwwroot\lib\compress.sh" />
-	  <None Include="wwwroot\lib\hash.js" />
-	  <None Include="wwwroot\lib\scissor.js" />
-	  <None Include="wwwroot\lib\scissor.min.js" />
-	  <None Include="wwwroot\lib\turn.html4.js" />
-	  <None Include="wwwroot\lib\turn.html4.min.js" />
-	  <None Include="wwwroot\lib\turn.js" />
-	  <None Include="wwwroot\lib\turn.min.js" />
-	  <None Include="wwwroot\lib\zoom.js" />
-	  <None Include="wwwroot\lib\zoom.min.js" />
+		<None Include="wwwroot\lib\compress.sh" />
+		<None Include="wwwroot\lib\hash.js" />
+		<None Include="wwwroot\lib\scissor.js" />
+		<None Include="wwwroot\lib\scissor.min.js" />
+		<None Include="wwwroot\lib\turn.html4.js" />
+		<None Include="wwwroot\lib\turn.html4.min.js" />
+		<None Include="wwwroot\lib\turn.js" />
+		<None Include="wwwroot\lib\turn.min.js" />
+		<None Include="wwwroot\lib\zoom.js" />
+		<None Include="wwwroot\lib\zoom.min.js" />
 	</ItemGroup>
 
 	<ItemGroup>

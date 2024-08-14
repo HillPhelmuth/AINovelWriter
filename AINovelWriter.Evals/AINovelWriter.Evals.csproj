@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="EvalFunctions\GptCharacterDevelopment.yaml" />
+    <None Remove="EvalFunctions\GptClarity.yaml" />
+    <None Remove="EvalFunctions\GptCreativity.yaml" />
+    <None Remove="EvalFunctions\GptEngagement.yaml" />
+    <None Remove="EvalFunctions\GptRelevance.yaml" />
+    <None Remove="EvalFunctions\GptWritingDetail.yaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="EvalFunctions\GptWritingDetail.yaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="EvalFunctions\GptCharacterDevelopment.yaml" />
+    <EmbeddedResource Include="EvalFunctions\GptClarity.yaml" />
+    <EmbeddedResource Include="EvalFunctions\GptCreativity.yaml" />
+    <EmbeddedResource Include="EvalFunctions\GptEngagement.yaml" />
+    <EmbeddedResource Include="EvalFunctions\GptRelevance.yaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="PromptFlowEvalsAsPlugins" Version="0.0.3-beta" />
+  </ItemGroup>
+
+</Project>

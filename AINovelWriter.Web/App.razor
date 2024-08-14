@@ -2,33 +2,32 @@
 <html lang="en">
 
 <head>
-	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<base href="/" />
-	<title>AI Ghost-Writer Pro (The Milli Vanilli project)</title>
-	<meta name="description" content="Write Like You Mean It (But Don't Actually, because Gen AI is doing it all). Experience effortless writing with AI Novel Writer." />
-	<meta name="keywords" content="AI writing, lazy writing, novel writing, AI content generation, effortless writing, automated writing, sardonic writing" />
-	<meta name="author" content="AINovelWriter Team" />
-	<meta name="robots" content="index, follow" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="/" />
+    <title>AI Ghost-Writer Pro (The Milli Vanilli project)</title>
+    <meta name="description" content="AI Ghost-Writer Pro (The Milli Vanilli project). Experience effortless writing with AI Novel Writer." />
+    <meta name="keywords" content="AI writing, lazy writing, novel writing, AI content generation, effortless writing, automated writing, sardonic writing" />
+    <meta name="author" content="AINovelWriter Team" />
+    <meta name="robots" content="index, follow" />
 
-	<!-- Open Graph Meta Tags -->
-	<meta property="og:title" content="AI Ghost-Writer Pro (The Milli Vanilli project)" />
-	<meta property="og:description" content="AI Ghost-Writer Pro (The Milli Vanilli project). Experience effortless writing with AI Novel Writer." />
-	<meta property="og:image" content="AIWriterIcon.jpg" />
-	<meta property="og:url" content="https://www.ainovelwriter.com" />
-	<meta property="og:type" content="website" />
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="AI Ghost-Writer Pro (The Milli Vanilli project)" />
+    <meta property="og:description" content="AI Ghost-Writer Pro (The Milli Vanilli project). Experience effortless writing with AI Novel Writer." />
+    <meta property="og:image" content="AIWriterIcon.jpg" />
+    <meta property="og:url" content="https://www.ainovelwriter.com" />
+    <meta property="og:type" content="website" />
 
     <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
     <link rel="stylesheet" href="css/site.css" />
     <link rel="stylesheet" href="css/basic.css" />
     <link rel="stylesheet" href="AINovelWriter.Web.styles.css" />
-	<link rel="icon" type="image/png" href="AIWriterIcon.jpg" />
-    @*< link rel="stylesheet" href="_content/Radzen.Blazor/css/standard.css"> *@
+    <link rel="icon" type="image/png" href="AIWriterIcon.jpg" />
     <link rel="stylesheet" href="_content/Radzen.Blazor/css/standard-wcag.css">
-	<RadzenTheme Theme="standard" @rendermode="InteractiveServer" />
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Bungee+Spice&family=PT+Sans+Narrow:wght@400;700&family=Shantell+Sans:ital,wght,BNCE@0,300..800,13;1,300..800,13&display=swap" rel="stylesheet">
+    <RadzenTheme Theme="standard" @rendermode="InteractiveServer" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bungee+Spice&family=PT+Sans+Narrow:wght@400;700&family=Shantell+Sans:ital,wght,BNCE@0,300..800,13;1,300..800,13&display=swap" rel="stylesheet">
     <HeadOutlet @rendermode="@InteractiveServer" />
 </head>
 
@@ -36,50 +35,47 @@
     <Routes @rendermode="@InteractiveServer" />
     <script src="_framework/blazor.web.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-    
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.5.3/modernizr.min.js" integrity="sha512-QtNlDBla6b4bbyMH+MpiDDOTxqgZTcqcroisKjdjobaNhmKXXWjI3SabUnodWXyyz0aRC4x92lBA2FgomJq5hg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-   @*  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-mousewheel/3.1.13/jquery.mousewheel.min.js" integrity="sha512-rCjfoab9CVKOH/w/T6GbBxnAH5Azhy4+q1EXW5XEURefHbIkRbQ++ZR+GBClo3/d3q583X/gO4FKmOFuhkKrdA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> *@
     <script src="_content/Radzen.Blazor/Radzen.Blazor.js?v=@(typeof(Radzen.Colors).Assembly.GetName().Version)"></script>
     <script src="lib/turn.min.js"></script>
     <script src="js/turnInterop.js"></script>
     <script>
-	    window.downloadFile = async (filename, data) => {
-		    const response = new Response(data);
-		    const blob = await response.blob();
+        window.downloadFile = async (filename, data) => {
+            const response = new Response(data);
+            const blob = await response.blob();
 
-		    const url = window.URL.createObjectURL(blob);
-		    const link = document.createElement('a');
-		    link.href = url;
-		    link.download = filename;
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
 
-		    document.body.appendChild(link);
-		    link.click();
-		    document.body.removeChild(link);
-	    };
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        };
     </script>
     <script>
-	    window.scrollToBottom = function (elementId) {
-		    const element = document.getElementById(elementId);
-		    if (element) {
-			    element.scrollIntoView({ behavior: 'smooth', block: 'end' });
-		    }
-	    }
+        window.scrollToBottom = function (elementId) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            }
+        }
 
     </script>
     <script>
-
-
-	    window.playAudio = (audioUrl, dotNetObj) => {
-		    var audio = document.getElementById('audioPlayer');
-		    audio.src = audioUrl;
-		    console.log("playAudio Invoked from c#");
-		    audio.addEventListener('ended', function chapterEnded() {
-			    audio.removeEventListener('ended', chapterEnded);
-			    dotNetObj.invokeMethodAsync('PlayNextChapter');
-			    console.log("PlayNextChapter invoked from JS");
-		    });
-		    audio.play();
-	    }
+        window.playAudio = (audioUrl, dotNetObj) => {
+            var audio = document.getElementById('audioPlayer');
+            audio.src = audioUrl;
+            console.log("playAudio Invoked from c#");
+            audio.addEventListener('ended', function chapterEnded() {
+                audio.removeEventListener('ended', chapterEnded);
+                dotNetObj.invokeMethodAsync('PlayNextChapter');
+                console.log("PlayNextChapter invoked from JS");
+            });
+            audio.play();
+        }
     </script>
 </body>
 

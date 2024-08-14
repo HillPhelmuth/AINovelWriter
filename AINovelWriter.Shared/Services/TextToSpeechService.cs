@@ -32,7 +32,7 @@ public class TextToSpeechService : ITextToSpeechService
 		speechSynthesizer.SynthesisStarted += SpeechSynthesizer_SynthesisStarted;
 		speechSynthesizer.SynthesisCompleted += SpeechSynthesizer_SynthesisCompleted;
 		// Get text from the console and synthesize to the default speaker.
-		Console.WriteLine("Enter some text that you want to speak >");
+		
 		string text = chapterText;
 		foreach (var segment in text.SplitText(int.MaxValue))
 		{

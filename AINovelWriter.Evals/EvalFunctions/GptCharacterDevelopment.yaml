@@ -1,0 +1,54 @@
+name: GptCharacterDevelopment
+description: Measures how well characters are portrayed and developed within the generated chapter. A score of 5 indicates strong, believable character development, while 1 indicates poor or shallow characterization.
+execution_settings:
+  default:
+    max_tokens: 128
+    temperature: 0.1
+    top_p: 0.1
+    presence_penalty: 0
+    frequency_penalty: 0
+input_variables:
+- name: details
+  description: the details and themes provided by the user.
+  default: ''
+- name: chapter
+  description: The generated chapter to evaluate.
+  default: ''
+
+template: |
+ Character Development measures how well the characters are portrayed and developed within the generated chapter. It involves assessing the depth, growth, and consistency of the characters in relation to the narrative. When evaluating character development, consider how well the characters are brought to life and how convincingly they evolve throughout the chapter. Given the details and chapter, mercilessly score the character development of the chapter between one to five stars as if you were a writing critic using the following rating scale:
+
+    1 star: the characters are poorly developed or inconsistent
+    2 stars: the characters have minimal development or are largely flat
+    3 stars: the characters are somewhat developed but lack depth or consistency
+    4 stars: the characters are well-developed with minor issues
+    5 stars: the characters are fully developed, consistent, and compelling
+
+    This rating value should always be an integer between 1 and 5. So, the rating produced should be 1 or 2 or 3 or 4 or 5.
+    Respond ONLY with the number.
+
+    ## Examples
+    details: A young girl discovers a magical forest hidden behind her school.
+    chapter: <-The chapter introduces the girl, but her character is not explored or developed further.->
+    stars: 1
+
+    details: A detective investigates a series of mysterious disappearances in a small town.
+    chapter: <-The detective is mentioned briefly, with little focus on his personality or motives.->
+    stars: 2
+
+    details: A young boy befriends a talking animal who helps him on a journey.
+    chapter: <-The boy and the animal are introduced, but their relationship lacks depth or growth.->
+    stars: 3
+
+    details: A spaceship crew is stranded on a distant planet with limited resources.
+    chapter: <-The crew members are described with distinct personalities, but their development is somewhat inconsistent.->
+    stars: 4
+
+    details: An ancient prophecy foretells the return of a lost king to reclaim his throne.
+    chapter: <-The chapter provides a rich and consistent portrayal of the king's character, showing his evolution throughout.->
+    stars: 5
+
+    ## Real Work
+    details: {{$details}}
+    chapter: {{$chapter}}
+    stars:    

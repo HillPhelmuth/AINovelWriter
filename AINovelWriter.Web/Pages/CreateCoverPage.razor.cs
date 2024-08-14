@@ -56,7 +56,7 @@ public partial class CreateCoverPage
 	private async void SelectImage(string image)
 	{
 		if (_isBusy) return;
-		var imageUrl = await ImageGenService.SelectImage(AppState.NovelInfo, image);
+		var imageUrl = await ImageGenService.SelectImage(AppState.UserData.UserName, AppState.NovelInfo.Title, image);
 		AppState.AddCover(imageUrl);
 		NavigationManager.NavigateTo("book");
 	}
