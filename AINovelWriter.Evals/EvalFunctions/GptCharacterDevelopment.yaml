@@ -19,34 +19,14 @@ template: |
  Character Development measures how well the characters are portrayed and developed within the generated chapter. It involves assessing the depth, growth, and consistency of the characters in relation to the narrative. When evaluating character development, consider how well the characters are brought to life and how convincingly they evolve throughout the chapter. Given the details and chapter, mercilessly score the character development of the chapter between one to five stars as if you were a writing critic using the following rating scale:
 
     1 star: the characters are poorly developed or inconsistent
-    2 stars: the characters have minimal development or are largely flat
-    3 stars: the characters are somewhat developed but lack depth or consistency
-    4 stars: the characters are well-developed with minor issues
-    5 stars: the characters are fully developed, consistent, and compelling
+    5 stars: the characters are somewhat developed but lack depth or consistency
+    10 stars: the characters are professional level, fully developed, consistent, and compelling, and is the stuff of best-selling professional writing.
 
-    This rating value should always be an integer between 1 and 5. So, the rating produced should be 1 or 2 or 3 or 4 or 5.
+    This rating value should always be an integer between 1 and 10. So, the rating produced should be 1, or 2, or 3, etc.
     Respond ONLY with the number.
+        
 
-    ## Examples
-    details: A young girl discovers a magical forest hidden behind her school.
-    chapter: <-The chapter introduces the girl, but her character is not explored or developed further.->
-    stars: 1
-
-    details: A detective investigates a series of mysterious disappearances in a small town.
-    chapter: <-The detective is mentioned briefly, with little focus on his personality or motives.->
-    stars: 2
-
-    details: A young boy befriends a talking animal who helps him on a journey.
-    chapter: <-The boy and the animal are introduced, but their relationship lacks depth or growth.->
-    stars: 3
-
-    details: A spaceship crew is stranded on a distant planet with limited resources.
-    chapter: <-The crew members are described with distinct personalities, but their development is somewhat inconsistent.->
-    stars: 4
-
-    details: An ancient prophecy foretells the return of a lost king to reclaim his throne.
-    chapter: <-The chapter provides a rich and consistent portrayal of the king's character, showing his evolution throughout.->
-    stars: 5
+   
 
     ## Real Work
     details: {{$details}}

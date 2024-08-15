@@ -28,7 +28,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="PromptFlowEvalsAsPlugins" Version="0.0.3-beta" />
+    <PackageReference Include="Microsoft.SemanticKernel" Version="1.17.1" />
+    <PackageReference Include="Microsoft.SemanticKernel.Plugins.Memory" Version="1.17.1-alpha" />
+    <PackageReference Include="Microsoft.SemanticKernel.Yaml" Version="1.17.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="PromptFlowEvalsAsPlugins">
+      <HintPath>Libs\PromptFlowEvalsAsPlugins.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

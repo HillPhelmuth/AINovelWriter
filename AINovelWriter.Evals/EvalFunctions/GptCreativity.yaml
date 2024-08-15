@@ -16,15 +16,13 @@ template: |
  Creativity measures the originality and inventiveness of the generated chapter. It involves assessing how unique, imaginative, and engaging the content is, considering the overall narrative and ideas presented. When evaluating creativity, consider the level of originality, unexpected twists, and the freshness of ideas. From the Perspective of a writing editor, how many changes would you make to improve the creativity of the chapter? Rate the creativity of the chapter between one to five stars using the following rating scale:
 
     1 star: the chapter is highly generic or uninspired and you would suggest a near-complete rewrite
-    2 stars: the chapter shows minimal creativity with few original ideas, but you would suggest re-working many elements
-    3 stars: the chapter is somewhat creative but lacks distinctive elements and is over reliant on tropes, you would suggest some changes
-    4 stars: the chapter is creative with some original and engaging ideas, but you would suggest minor adjustments
-    5 stars: the chapter is highly creative, with unique, imaginative, and compelling content. You would suggest no changes or only minor tweaks for perfection
+    5 stars: the chapter is somewhat creative but lacks distinctive elements and is over reliant on tropes, you would suggest some changes
+    10 stars: the chapter is professional level and as creative as anything you've ever seen, with unique, imaginative, and compelling content. You would suggest no changes or only minor tweaks for perfection, and is the stuff of best-selling professional writing.
 
-    This rating value should always be an integer between 1 and 5. So, the rating produced should be 1 or 2 or 3 or 4 or 5.
+    This rating value should always be an integer between 1 and 10. So, the rating produced should be 1, or 2, or 3, etc.
     Respond ONLY with the number.
 
-   
+      
     ## Real Work
     chapter: {{$chapter}}
     stars:    

@@ -19,35 +19,13 @@ template: |
  Relevance measures how well the generated fiction content aligns with the specific details and themes provided by the user. It involves assessing the degree to which the chapter adheres to the given details, maintaining consistency with the user's expectations. When evaluating relevance, consider how closely the chapter matches the user's input. Given the details and chapter, score the relevance of the chapter between one to five stars using the following rating scale:
 
     1 star: the chapter is completely irrelevant to the details provided
-    2 stars: the chapter has minimal relevance to the details
-    3 stars: the chapter is somewhat relevant, but with significant deviations
-    4 stars: the chapter is mostly relevant, with only minor deviations
-    5 stars: the chapter is highly relevant and aligns perfectly with the details
+    5 stars: the chapter is somewhat relevant, but with significant deviations
+    10 stars: the chapter is professional level, highly relevant, and aligns perfectly with the details
 
-    This rating value should always be an integer between 1 and 5. So, the rating produced should be 1 or 2 or 3 or 4 or 5.
+    This rating value should always be an integer between 1 and 10. So, the rating produced should be 1, or 2, or 3, etc.
     Respond ONLY with the number.
 
-    ## Examples
-    details: A young girl discovers a magical forest hidden behind her school.
-    chapter: <-The chapter describes a day at school with no mention of a forest or anything magical.->
-    stars: 1
-
-    details: A detective investigates a series of mysterious disappearances in a small town.
-    chapter: <-The chapter focuses on the detective's personal life, with a brief mention of the town.->
-    stars: 2
-
-    details: A young boy befriends a talking animal who helps him on a journey.
-    chapter: <-The chapter involves the boy meeting the animal but does not fully develop the journey.->
-    stars: 3
-
-    details: A spaceship crew is stranded on a distant planet with limited resources.
-    chapter: <-The chapter details the crew's efforts to survive but introduces unrelated elements not mentioned in the details.->
-    stars: 4
-
-    details: An ancient prophecy foretells the return of a lost king to reclaim his throne.
-    chapter: <-The chapter centers on the prophecy, with the lost king's return being the focal point.->
-    stars: 5
-
+    
     ## Real Work
     details: {{$details}}
     chapter: {{$chapter}}

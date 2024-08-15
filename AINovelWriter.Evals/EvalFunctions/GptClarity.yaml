@@ -16,30 +16,13 @@ template: |
  Clarity measures how clear and easy to understand the generated chapter is. It involves evaluating the readability, coherence, and overall articulation of the writing. When evaluating clarity, consider how well the chapter conveys its ideas and how easy it is to follow the narrative. Mercilessly score the clarity of the chapter between one to five stars as if you were a writing critic using the following rating scale:
 
     1 star: the chapter is confusing, poorly articulated, or difficult to follow
-    2 stars: the chapter has some clarity but includes significant confusing elements
-    3 stars: the chapter is somewhat clear but may have minor issues that affect understanding
-    4 stars: the chapter is mostly clear with only minor articulation issues
-    5 stars: the chapter is very clear, well-articulated, and easy to follow
+    5 stars: the chapter is somewhat clear but may have minor issues that affect understanding
+    10 stars: the chapter is perfectly clear, well-articulated, and easy to follow
 
-    This rating value should always be an integer between 1 and 5. So, the rating produced should be 1 or 2 or 3 or 4 or 5.
+    This rating value should always be an integer between 1 and 10. So, the rating produced should be 1, or 2, or 3, etc.
     Respond ONLY with the number.
 
-    ## Examples
-    chapter: <-The chapter is written in a disjointed manner, making it hard to follow or understand.->
-    stars: 1
-
-    chapter: <-The chapter contains some clear ideas but is frequently interrupted by confusing or unclear passages.->
-    stars: 2
-
-    chapter: <-The chapter is mostly understandable, but some parts are unclear or poorly explained.->
-    stars: 3
-
-    chapter: <-The chapter is generally clear, with only a few minor points that could be articulated better.->
-    stars: 4
-
-    chapter: <-The chapter is very well-written, with clear and coherent ideas that are easy to follow.->
-    stars: 5
-
+        
     ## Real Work
     chapter: {{$chapter}}
     stars:    

@@ -30,6 +30,10 @@ public enum AIModel
     [ModelProvidor("OpenAI")]
     [ModelProvidor("AzureOpenAI")]
 	Gpt4O,
+	[ModelName("chatgpt-4o-latest")]
+	[Description("Dynamic gpt-4o")]
+	[ModelProvidor("OpenAI")]
+	Gpt4OChatGptLatest,
     [ModelName("gemini-pro")]
     [Description("Latest Gemini 1.0 Pro")]
     [ModelProvidor("GoogleAI")]
@@ -42,8 +46,8 @@ public enum AIModel
     [Description("Gemeni Flash")]
     [ModelProvidor("GoogleAI")]
     GeminiFlash,
-    [ModelName("open-mistral-7b")]
-	[Description("Open Mistral 7B")]
+    [ModelName("open-mistral-nemo")]
+	[Description("Open Mistral Nemo")]
 	[ModelProvidor("MistralAI")]
 	OpenMistral7B,
 	[ModelName("open-mixtral-8x7b")]

@@ -33,9 +33,16 @@ public class NovelEvalService
         var resultScores = new List<ResultScore>();
         foreach (var input in inputs)
         {
-            var result = await evalService.ExecuteEval(input);
-            resultScores.Add(result);
-        }
+	        try
+	        {
+		        var result = await evalService.ExecuteEval(input);
+		        resultScores.Add(result);
+	        }
+			catch (Exception e)
+			{
+				Console.WriteLine(e);
+			}
+		}
         return resultScores;
     }
     private Dictionary<string, KernelFunction> GetEvalFunctions()

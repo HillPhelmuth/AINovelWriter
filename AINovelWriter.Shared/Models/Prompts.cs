@@ -233,6 +233,7 @@ namespace AINovelWriter.Shared.Models
 					
 			## Chapter 1: {Name of Chapter}
 					
+			- **POV Character**: {Name of the character whose point of view the chapter is written from, if applicable}
 			- **Setting**: {Introduce the setting where the primary events occur.}
 			- **Character Development**: {Summarize the character development occurring in this chapter}
 			- **Key Events**: {List and briefly describe at least 5 key events of the chapter}

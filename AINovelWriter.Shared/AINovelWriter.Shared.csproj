@@ -26,4 +26,10 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\AINovelWriter.Evals\AINovelWriter.Evals.csproj" />
 	</ItemGroup>
+	
+	<ItemGroup>
+	  <Reference Include="PromptFlowEvalsAsPlugins">
+	    <HintPath>..\AINovelWriter.Evals\Libs\PromptFlowEvalsAsPlugins.dll</HintPath>
+	  </Reference>
+	</ItemGroup>
 </Project>
