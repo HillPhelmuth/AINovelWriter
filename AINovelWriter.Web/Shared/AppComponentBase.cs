@@ -19,16 +19,40 @@ public abstract class AppComponentBase : ComponentBase, IDisposable
 	protected IJSRuntime JsRuntime { get; set; } = default!;
 	[Inject]
 	protected NavigationManager NavigationManager { get; set; } = default!;
-	[CascadingParameter]
+    [Inject]
+    protected CosmosService CosmosService { get; set; } = default!;
+    [CascadingParameter]
 	protected Task<AuthenticationState>? AuthenticationState { get; set; }
 	protected bool IsNovelComplete { get; set; }
-	protected override Task OnInitializedAsync()
+	protected override async Task OnInitializedAsync()
 	{
 		AppState.PropertyChanged += HandlePropertyChanged;
 		NovelWriterService.SendChapterText += HandleChapterFullText;
 		NovelWriterService.SendChapters += HandleChapterOutline;
-		return base.OnInitializedAsync();
-	}
+        if (AuthenticationState is not null && !string.IsNullOrEmpty(AppState.UserData.UserName))
+        {
+            var state = await AuthenticationState;
+
+            var userDataUserName = state?.User?.Identity?.Name;
+            var picture = state?.User?.Claims
+                .Where(c => c.Type.Equals("picture"))
+                .Select(c => c.Value)
+                .FirstOrDefault() ?? string.Empty;
+            var userProfile = await CosmosService.GetUserProfile(userDataUserName ?? string.Empty);
+            if (userProfile is not null)
+            {
+                AppState.UserData = userProfile;
+                AppState.UserData.ImagePath ??= picture;
+            }
+            else
+            {
+                AppState.UserData.UserName = userDataUserName ?? string.Empty;
+                AppState.UserData.ImagePath ??= picture;
+            }
+
+            await base.OnInitializedAsync();
+        }
+    }
 	protected virtual List<string> InterestingProperties => [];
 	protected virtual void HandlePropertyChanged(object? sender, PropertyChangedEventArgs args)
 	{

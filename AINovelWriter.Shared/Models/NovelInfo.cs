@@ -8,6 +8,10 @@ namespace AINovelWriter.Shared.Models;
 public class NovelInfo
 {
     public string id { get; set; } = Guid.NewGuid().ToString();
+	public DateOnly CreatedOn { get; set; } = DateOnly.FromDateTime(DateTime.Now);
+	[JsonIgnore]
+	[Ignore]
+	public string? AuthorStyle { get; set; }
     public string? User { get; set; }
 	public string Title { get; set; } = "";
 	public string Text { get; set; } = "";
@@ -19,7 +23,8 @@ public class NovelInfo
 	[Ignore]
 	public string ImgHtml => $"<img src='{ImageUrl}' />";
 	public List<ChapterOutline> ChapterOutlines { get; set; } = [];
-	public void SplitIntoPagesByWords(int wordPerPage = 200)
+	public List<FlatChapterEval> ChapterEvals { get; set; } = [];
+    public void SplitIntoPagesByWords(int wordPerPage = 200)
 	{
 		TextPages = StringHelpers.SplitStringIntoPagesByWords(Text, wordPerPage);
 	}

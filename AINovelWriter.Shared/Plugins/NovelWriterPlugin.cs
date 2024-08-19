@@ -1,17 +1,17 @@
-﻿using System.ComponentModel;
-using AINovelWriter.Shared.Models;
-using Microsoft.Identity.Client;
+﻿using AINovelWriter.Shared.Models;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.Google;
 using Microsoft.SemanticKernel.Connectors.MistralAI;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
+using System.ComponentModel;
 
 namespace AINovelWriter.Shared.Plugins;
 
 public class NovelWriterPlugin(AIModel aIModel = AIModel.Gpt4O)
 {
-	private AIModel _aIModel = aIModel;
+    public const string SummaryPrompt = "Summarize all the character details and plot events in the novel chapter. Summarize chapter by chapter:```\n {{$novel_chapter}} \n ```";
+    private AIModel _aIModel = aIModel;
 
 	[KernelFunction, Description("Write a chapter of a novel based on the provided outline, previous chapter, and summary of the full novel so far")]
 	public async IAsyncEnumerable<string> WriteChapterStreaming(Kernel kernel, [Description("Chapter Outline")] string outline, [Description("Story description and characters")] string storyDescription, [Description("Precise text of the previous chapter")] string previousChapter, [Description("Combined summary of each chapter so far")] string summary)
@@ -61,7 +61,7 @@ public class NovelWriterPlugin(AIModel aIModel = AIModel.Gpt4O)
 		{
 			["novel_chapter"] = chapterText
 		};
-		var response = await kernel.InvokePromptAsync<string>("Summarize all the character details and plot events in the novel chapter. Summarize chapter by chapter:```\n {{$novel_chapter}} \n ```", args);
+		var response = await kernel.InvokePromptAsync<string>(SummaryPrompt, args);
 		return response;
 	}
 	[KernelFunction, Description("Create an outline for a novel")]

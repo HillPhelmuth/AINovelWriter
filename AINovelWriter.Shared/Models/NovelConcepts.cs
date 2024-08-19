@@ -4,6 +4,7 @@ public class NovelConcepts
 {
 	public GenreCategory Genre { get; set; }
     public string? GenreDescription => Genre.GetDescription();
+    public string AuthorStyle { get; set; } = "";
 
     public string? SubGenre { get; set; }
 	public List<Genre> SubGenres { get; set; } = [];
@@ -15,11 +16,11 @@ public class NovelConcepts
     public AIModel OutlineAIModel { get; set; }
 	public override string ToString()
 	{
-		return $"""
+        return $"""
 		        Title: {Title}
 		        Genre: {Genre.ToString()}
 		        Description: {GenreDescription}
-		        Subgenre: {SubGenre}
+		        Subgenres: {string.Join("\n", SubGenres.Select(x => x.ToString()))}
 		        Theme: {Theme}
 		        Characters:{Characters}
 		        Plot Events: {PlotEvents}

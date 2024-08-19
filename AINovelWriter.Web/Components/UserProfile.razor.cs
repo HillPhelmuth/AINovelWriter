@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using static AINovelWriter.Shared.Models.FileHelper;
 using static AINovelWriter.Shared.Services.NovelWriterService;
+// ReSharper disable FieldCanBeMadeReadOnly.Local
 
 namespace AINovelWriter.Web.Components;
 
@@ -32,7 +33,8 @@ public partial class UserProfile
 			Dialog.Close();
         }
 		AppState.NovelInfo = novel;
-		Dialog.Close();
+        AppState.NovelOutline.Outline = novel.Outline;
+        Dialog.Close();
 	}
 	private async Task DeleteNovel(UserNovelData userNovelData)
 	{
@@ -47,14 +49,14 @@ public partial class UserProfile
 	}
 	private async Task DownloadNovelToFile(UserNovelData userNovelData)
 	{
-		AppState.NovelInfo = await CosmosService.GetUserNovel(AppState.UserData.UserName, userNovelData.NovelId);
+		AppState.NovelInfo = await CosmosService.GetUserNovel(AppState.UserData.UserName!, userNovelData.NovelId);
 		if (string.IsNullOrEmpty(AppState.NovelInfo.Text)) return;
 
         //var fileContent = await CreateAndCompressFilesAsync(AppState.NovelInfo.Text, AppState.NovelInfo.ImageUrl);
         using var client = new HttpClient();
  
         var imageBytes = await ImageGenService.GetImageBlob(AppState.NovelInfo.ImageUrl) /*await client.GetByteArrayAsync(AppState.NovelInfo.ImageUrl)*/;
-		var pdfData = CreatePdf(imageBytes, AppState.NovelInfo.Text);
+		var pdfData = CreatePdf(imageBytes, AppState.NovelInfo.ChapterOutlines.Where(x => !string.IsNullOrEmpty(x.FullText)).Select(x => x.FullText).ToList()!, AppState.NovelInfo.Title);
         await JsRuntime.InvokeVoidAsync("downloadFile", $"{AppState.NovelInfo.Title}.pdf", pdfData);
 	}
 	private ImageUpdateForm _imageUpdateForm = new();
@@ -64,7 +66,7 @@ public partial class UserProfile
 		if (string.IsNullOrEmpty(imageUpdateForm.Url))
 		{
 			var fileDataImageBase64Data = imageUpdateForm.FileData.ImageBase64Data![(imageUpdateForm.FileData.ImageBase64Data.IndexOf("base64,", StringComparison.Ordinal) + 7)..];
-			AppState.UserData.ImagePath = await ImageGenService.SaveUserImage(imageUpdateForm.FileData.FileName, fileDataImageBase64Data);
+			AppState.UserData.ImagePath = await ImageGenService.SaveUserImage(imageUpdateForm.FileData.FileName!, fileDataImageBase64Data);
 			await CosmosService.SaveUser(AppState.UserData);
 			StateHasChanged();
 		}

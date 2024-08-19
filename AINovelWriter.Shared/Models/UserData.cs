@@ -20,7 +20,7 @@ public class UserData
 	public List<UserNovelData> SavedNovels { get; set; } = [];
 }
 
-public record UserNovelData(string NovelId, string Title)
+public record UserNovelData(string NovelId, string Title, DateOnly CreatedOn)
 {
 	public string NovelId { get; set; } = NovelId;
 }
