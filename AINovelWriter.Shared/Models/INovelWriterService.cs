@@ -26,8 +26,8 @@ public interface INovelWriterStreaming : ITextToSpeechService
     event Action<string>? SendChapters;
     event EventHandler<string>? SendChapterText;
     event EventHandler<string>? TextToImageUrl;
-	IAsyncEnumerable<string> WriteNovel(string outline, AIModel aiModel = AIModel.Gpt4O,
-        CancellationToken cancellationToken = default);
+	IAsyncEnumerable<string> WriteNovel(string outline, string authorStyle = "", AIModel aiModel = AIModel.Gpt4O,
+		CancellationToken cancellationToken = default);
 
 	event EventHandler<string>? SendTitle;
     event EventHandler<ReadOnlyMemory<byte>?>? SendAudioResponse;

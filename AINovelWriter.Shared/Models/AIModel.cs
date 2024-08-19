@@ -38,10 +38,14 @@ public enum AIModel
     [Description("Latest Gemini 1.0 Pro")]
     [ModelProvidor("GoogleAI")]
 	Gemini10,
-    [ModelName("gemini-1.5-pro-exp-0801")]
+    [ModelName("gemini-1.5-pro-latest")]
     [Description("Latest Gemini 1.5 Pro")]
     [ModelProvidor("GoogleAI")]
 	Gemini15,
+	[ModelName("gemini-1.5-pro-exp-0801")]
+	[Description("Experimental Gemini 1.5 Pro")]
+	[ModelProvidor("GoogleAI")]
+	Gemini15Exp,
     [ModelName("gemini-1.5-flash")]
     [Description("Gemeni Flash")]
     [ModelProvidor("GoogleAI")]

@@ -16,7 +16,7 @@ public partial class NovelConceptPage
 
 	private class NovelIdeaForm
 	{
-		public GenreCategoryItem? NovelCategory { get; set; } 
+		public GenreCategoryItem? NovelCategory { get; set; }
 		public List<Genre> SubGenres { get; set; } = [];
 	}
 	private NovelIdeaForm _novelIdeaForm = new();
@@ -29,6 +29,14 @@ public partial class NovelConceptPage
 	Popup _popup;
 	private RadzenDropDown<AIModel> _aiModelField;
 	private static Dictionary<AIModel, string> AIModelDescriptions => GetEnumsWithDescriptions<AIModel>().ToDictionary(x => x.Key, y => y.Value);
+
+	public Dictionary<string, string> AuthorStyles = new()
+		{
+			{ nameof(Prompts.Authors.JoeAbercrombie), Prompts.Authors.JoeAbercrombie },
+			{ nameof(Prompts.Authors.LeeChild), Prompts.Authors.LeeChild },
+			{ nameof(Prompts.Authors.StevenErikson), Prompts.Authors.StevenErikson },
+			{ nameof(Prompts.Authors.BrandonSanderson), Prompts.Authors.BrandonSanderson }
+		};
 	private CancellationTokenSource _cancellationTokenSource = new();
 	private async Task SubmitIdea(NovelIdeaForm novelIdea)
 	{
@@ -45,7 +53,7 @@ public partial class NovelConceptPage
 	{
 		try
 		{
-            AppState.NovelConcepts = await NovelWriterService.GenerateNovelIdea(novelIdea.NovelCategory!, novelIdea.SubGenres);
+			AppState.NovelConcepts = await NovelWriterService.GenerateNovelIdea(novelIdea.NovelCategory!, novelIdea.SubGenres);
 			AppState.NovelConcepts.Genre = novelIdea.NovelCategory!.Category;
 			StateHasChanged();
 
@@ -68,12 +76,13 @@ public partial class NovelConceptPage
 		StateHasChanged();
 		await Task.Delay(1);
 		AppState.NovelInfo = new NovelInfo() { User = AppState.UserData.UserName };
-        var theme = $"{novelConcepts.Genre}\n{novelConcepts.SubGenre} {novelConcepts.Theme}";
-        AppState.NovelOutline.Outline = await NovelWriterService.CreateNovelOutline(theme, novelConcepts.Characters, novelConcepts.PlotEvents, novelConcepts.Title, novelConcepts.ChapterCount, novelConcepts.OutlineAIModel);
+		var theme = $"{novelConcepts.Genre}\n{novelConcepts.SubGenre} {novelConcepts.Theme}";
+		AppState.NovelOutline.Outline = await NovelWriterService.CreateNovelOutline(theme, novelConcepts.Characters, novelConcepts.PlotEvents, novelConcepts.Title, novelConcepts.ChapterCount, novelConcepts.OutlineAIModel);
 		AppState.NovelInfo.Outline = AppState.NovelOutline.Outline;
 		AppState.NovelInfo.Title = novelConcepts.Title;
 		AppState.NovelInfo.ConceptDescription = novelConcepts.ToString();
-		_isBusy = false;
+		AppState.NovelInfo.AuthorStyle = novelConcepts.AuthorStyle;
+        _isBusy = false;
 		_showOutline = true;
 		await _aiModelField.Element.FocusAsync();
 		StateHasChanged();
@@ -86,12 +95,13 @@ public partial class NovelConceptPage
 		var ctoken = _cancellationTokenSource.Token;
 		AppState.NovelOutline = novelWriter;
 		AppState.WriterModel = novelWriter.WriterAIModel;
+		AppState.NovelInfo.Text = "";
 		NavigationManager.NavigateTo("stream");
 		await Task.Delay(1);
 		//await foreach (var token in NovelWriterService.WriteNovel(AppState.NovelOutline.Outline, AppState.NovelOutline.WriterAIModel, ctoken))
 		//{
-		//	AppState.NovelInfo.Text += token;
-		//	await InvokeAsync(StateHasChanged);
+		//    AppState.NovelInfo.Text += token;
+		//    await InvokeAsync(StateHasChanged);
 		//}
 		_isBusy = false;
 		StateHasChanged();

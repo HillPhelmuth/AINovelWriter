@@ -28,7 +28,7 @@ public class CosmosService(CosmosClient cosmosClient)
             while (feed.HasMoreResults)
             {
                 var results = await feed.ReadNextAsync();
-				item.Resource.SavedNovels.AddRange(results.Select(x => new UserNovelData(x.id,x.Title)));
+				item.Resource.SavedNovels.AddRange(results.Select(x => new UserNovelData(x.id,x.Title, x.CreatedOn)));
             }
             return item;
 		}
@@ -71,7 +71,7 @@ public class CosmosService(CosmosClient cosmosClient)
         while (feed.HasMoreResults)
         {
 			var items = await feed.ReadNextAsync();
-            foreach (NovelInfo item in items)
+            foreach (var item in items)
             {
 				if (user.SavedNovels.Any(x => x.NovelId == item.id)) continue;
                 if (user.SavedNovels.Any(x => x.Title == item.Title))
@@ -80,7 +80,7 @@ public class CosmosService(CosmosClient cosmosClient)
 					Console.WriteLine($"Updated {item.Title} with {item.id}");
 					continue;
                 }
-				user.SavedNovels.Add(new UserNovelData(item.id, item.Title));
+				user.SavedNovels.Add(new UserNovelData(item.id, item.Title, item.CreatedOn));
 				Console.WriteLine($"Added {item.Title} with {item.id}");
 				countAdded++;
             }
@@ -96,7 +96,7 @@ public class CosmosService(CosmosClient cosmosClient)
 			novel.User = userData.UserName;
 		if (userData.SavedNovels.Any(x => x.NovelId == novel.id)) 
 			return await TryUpsertNovel(novel);
-		userData.SavedNovels.Add(new UserNovelData(novel.id, novel.Title));
+		userData.SavedNovels.Add(new UserNovelData(novel.id, novel.Title, novel.CreatedOn));
 		await SaveUser(userData);
 
 		return await TryUpsertNovel(novel);

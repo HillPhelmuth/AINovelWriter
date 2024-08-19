@@ -10,6 +10,8 @@ using System.Linq;
 using System.Linq.Dynamic.Core.Tokenizer;
 using System.Text.Json;
 using System.Threading;
+using Radzen.Blazor;
+using Radzen.Blazor.Rendering;
 using static AINovelWriter.Shared.Models.FileHelper;
 using static AINovelWriter.Shared.Services.NovelWriterService;
 
@@ -28,7 +30,8 @@ public partial class NovelStreamingPage
 		//var fileContent = await pdf.CreatePdfDocument(AppState.NovelInfo);
 		await JsRuntime.InvokeVoidAsync("downloadFile", $"{AppState.NovelInfo.Title}.zip", fileContent);
 	}
-	
+	private Popup? _popup;
+	private RadzenButton? _button;
 	private CancellationTokenSource _cancellationTokenSource = new();
 	private bool _isCheat;
 	private List<string> _pages = [];
@@ -50,7 +53,7 @@ public partial class NovelStreamingPage
 		_isBusy = true;
 		StateHasChanged();
 		var ctoken = _cancellationTokenSource.Token;
-		await foreach (var token in NovelWriterService.WriteNovel(AppState.NovelOutline.Outline!, AppState.NovelOutline.WriterAIModel, ctoken))
+		await foreach (var token in NovelWriterService.WriteNovel(AppState.NovelOutline.Outline!,AppState.NovelInfo.AuthorStyle ?? "", AppState.NovelOutline.WriterAIModel, ctoken))
 		{
 			AppState.NovelInfo.Text += token;
 			await InvokeAsync(StateHasChanged);
@@ -89,7 +92,11 @@ public partial class NovelStreamingPage
 	{
 		_cancellationTokenSource.Cancel();
 		_cancellationTokenSource = new CancellationTokenSource();
-	}
+        AppState.NovelInfo.IsComplete = true;
+        _isBusy = false;
+        _buttonClass = "blink_me";
+        StateHasChanged();
+    }
 	private readonly MarkdownPipeline _markdownPipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
 	private string AsHtml(string? text)
 	{

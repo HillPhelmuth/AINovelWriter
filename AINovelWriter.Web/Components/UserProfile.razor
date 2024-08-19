@@ -1,21 +1,21 @@
 ﻿@inherits AppComponentBase
 <RadzenRow>
 	<RadzenColumn Size="12">
-		<RadzenDataGrid Data="@AppState.UserData.SavedNovels" TItem="UserNovelData">
+		<RadzenDataGrid Data="@AppState.UserData.SavedNovels" TItem="UserNovelData" AllowPaging="true" AllowSorting="true" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Density="Density.Compact" PageSize="10">
 			<Columns>
-				<RadzenDataGridColumn TItem="UserNovelData" Title="ID" Property="NovelId" Width="20%"></RadzenDataGridColumn>
+				<RadzenDataGridColumn TItem="UserNovelData" Title="Created" Property="CreatedOn" Width="20%"></RadzenDataGridColumn>
 				<RadzenDataGridColumn TItem="UserNovelData" Title="Title" Property="Title" Width="50%"></RadzenDataGridColumn>
-				<RadzenDataGridColumn TItem="UserNovelData" Width="10%">
+				<RadzenDataGridColumn TItem="UserNovelData" Width="10%" Sortable="false" Filterable="false">
 					<Template Context="novel">
 						<RadzenButton Size="ButtonSize.ExtraSmall" Text="Select" Click="@(() => SelectNovel(novel))"></RadzenButton>
 					</Template>
 				</RadzenDataGridColumn>
-				<RadzenDataGridColumn TItem="UserNovelData" Width="10%">
+				<RadzenDataGridColumn TItem="UserNovelData" Width="10%" Sortable="false" Filterable="false">
 					<Template Context="novel">
 						<RadzenButton Size="ButtonSize.ExtraSmall" Icon="delete" Click="@(() => DeleteNovel(novel))"></RadzenButton>
 					</Template>
 				</RadzenDataGridColumn>
-				<RadzenDataGridColumn TItem="UserNovelData" Width="10%">
+				<RadzenDataGridColumn TItem="UserNovelData" Width="10%" Sortable="false" Filterable="false">
 					<Template Context="novel">
 						<RadzenButton Size="ButtonSize.ExtraSmall" Icon="download" Click="@(() => DownloadNovelToFile(novel))"></RadzenButton>
 					</Template>
