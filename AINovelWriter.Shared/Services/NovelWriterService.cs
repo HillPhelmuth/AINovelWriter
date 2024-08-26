@@ -33,8 +33,55 @@ public class NovelWriterService(IConfiguration configuration) : INovelWriter
     public event EventHandler<ReadOnlyMemory<byte>?>? SendAudioResponse;
     public event EventHandler<AudioState>? SendAudioStateUpdate;
 
-
-    public async Task<NovelConcepts> GenerateNovelIdea(GenreCategoryItem genre, List<Genre> subgenres)
+    public async Task<NovelInfo> ReverseEngineerNovel(string directoryPath, int volume, string title)
+	{
+		var chapters = ReverseWriterService.ParseNovelChapters(directoryPath).Where(x => x.Volume == volume).ToList();
+		var kernel = CreateKernel();
+		var chapterOuts = new List<ChapterOutline>();
+        var settings = new OpenAIPromptExecutionSettings() { MaxTokens = 2048 };
+        Console.WriteLine($"ReverseEngineerNovel Chapters: {chapters.Count}");
+        foreach (var chapter in chapters)
+		{
+            Console.WriteLine($"Chapter Tokens: {StringHelpers.GetTokens200K(chapter.Text)}");
+			var args = new KernelArguments(settings) { ["novel_chapter"] = chapter.Text };
+			var chapterOutline = await kernel.InvokePromptAsync<string>(Prompts.OutlineReversePrompt, args);
+			chapter.Outline = chapterOutline;
+			chapterOuts.Add(new ChapterOutline($"Chapter: 00{chapter.Part}-{chapter.Chapter}", chapter.Outline){FullText = chapter.Text});
+		}
+        var novelInfo = new NovelInfo
+        {
+            Outline = string.Join("\n", chapters.Select(x => x.Outline)),
+            Text = string.Join("\n", chapters.Select(x => x.Text)), 
+            ChapterOutlines = chapterOuts,
+            Title = title
+        };
+        const string Prompt = """
+                              You are a novel Summarizer. Given a novel outline, provide a summary using the following json output format:
+                              ## Output
+                              Your output must be in json using the following format:
+                              ```json
+                              {
+                              	"Theme": "Theme of the Novel described in 1-3 sentances",
+                                "Characters": "paragraph describing 3 - 5 main Characters",
+                                "PlotEvents": "paragraph describing 3 - 5 primary Plot Events"
+                              }
+                              ```
+                              
+                              ## Novel Outline
+                              
+                              {{ $novel }}
+                              """;
+        
+        var novelArgs = new KernelArguments(settings) { ["novel"] = novelInfo.Outline };
+        var json = await kernel.InvokePromptAsync<string>(Prompt, novelArgs);
+        //var concepts = JsonSerializer.Deserialize<NovelConcepts>(json.Replace("```json", "").Replace("```", "").Trim('\n'));
+        //concepts.Title = title;
+        novelInfo.ConceptDescription =json;
+        //var args = new KernelArguments() { ["novel_chapter"] = JsonSerializer.Serialize(chapters) };
+        //var novelInfo = await reverseEngineerFunc.InvokeAsync<NovelInfo>(kernel, args);
+        return novelInfo;
+	}
+	public async Task<NovelConcepts> GenerateNovelIdea(GenreCategoryItem genre, List<Genre> subgenres)
     {
         var random = new Random();
         var roll = random.Next(1, 7);
@@ -182,8 +229,7 @@ public class NovelWriterService(IConfiguration configuration) : INovelWriter
         var chat = kernel.GetRequiredService<IChatCompletionService>();
         var systemMessage = $"""
                              You are a creative and exciting fiction writer. You write intelligent, detailed and engrossing novels that expertly combine character development and growth, interpersonal and international intrigue, and thrilling action. You are tasked with writing a chapter for a novel. Ensure the chapter is engaging, cohesive, and well-structured. Your writing should always contain as much detail as possible. Always write with characters first, preferring dialog over exposition. Most importantly, follow the provided Writing Guide.
-                             
-                             {authorStyle}
+                            
                              """;
 
         var chatHistory = new ChatHistory(systemMessage);
@@ -202,7 +248,7 @@ public class NovelWriterService(IConfiguration configuration) : INovelWriter
             var item = message.Metadata?["FinishReason"] as CompletionsFinishReason?;
             if (item == null) continue;
             Console.WriteLine($"Finish Reason: {item}");
-			hasMore = item.Value == CompletionsFinishReason.TokenLimitReached;
+            hasMore = item.Value == CompletionsFinishReason.TokenLimitReached;
         }
         if (!hasMore) yield break;
         chatHistory.AddAssistantMessage(currentChapter);

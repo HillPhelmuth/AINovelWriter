@@ -32,22 +32,25 @@
 					<Items>
 						@foreach (var chapter in AppState.NovelInfo.ChapterOutlines)
 						{
-							<RadzenAccordionItem Text="@chapter.Title.TrimStart('#')" Style="max-height:15rem; overflow:auto">
-								<RadzenCard Style="padding:0; display:flex; align-items:center; justify-content:center">
-									<RadzenButton Size="ButtonSize.ExtraSmall" Disabled="@(string.IsNullOrEmpty(chapter.FullText))" Click="@(() => chapter.ShowAudio = true)" Icon="record_voice_over" Text="Too lazy even to read it"></RadzenButton>
-									@if (chapter.ShowAudio)
-									{
-										var indexString = AppState.NovelInfo.ChapterOutlines.IndexOf(chapter).ToString();
+                            <RadzenAccordionItem Text="@chapter.Title.TrimStart('#')" Style="max-height:15rem; overflow:auto">
+                                <RadzenButton Size="ButtonSize.ExtraSmall" Disabled="@(string.IsNullOrEmpty(chapter.FullText))" Click="@(() => chapter.ShowAudio = true)" Icon="record_voice_over" Text="Too lazy even to read it"></RadzenButton>
+                                <RadzenCard Style="padding:0; display:flex; align-items:center; justify-content:center">
+
+                                    @if (chapter.ShowAudio)
+                                    {
+                                        var indexString = AppState.NovelInfo.ChapterOutlines.IndexOf(chapter).ToString();
                                         <BookAudio BookAudioId="@indexString" TextToAudio="@chapter.FullText" Title="@chapter.Title"></BookAudio>
-                                        <Popup @ref="_popup" Lazy=false Style="display:none;position:absolute;height:max-content;width:max-content;padding:5px;border:var(--rz-panel-border);background-color:var(--rz-panel-background-color);left:10vw">
-                                            <RadzenCard Style="overflow-wrap:break-word; white-space:pre-wrap">
-                                                @((MarkupString)AsHtml(chapter.Text))
-                                            </RadzenCard>
-                                        </Popup>
-                                        <RadzenButton @ref="_button" Click="@(() => _popup.ToggleAsync(_button!.Element))"></RadzenButton>
-									}
-								</RadzenCard>
-							</RadzenAccordionItem>
+
+
+                                    }
+                                    <Popup @ref="_popup" Lazy=false Style="display:none;position:absolute;height:max-content;width:max-content;padding:5px;border:var(--rz-panel-border);background-color:var(--rz-panel-background-color);left:10vw">
+                                        <RadzenCard Style="overflow-wrap:break-word; white-space:pre-wrap">
+                                            @((MarkupString)AsHtml(chapter.Text))
+                                        </RadzenCard>
+                                    </Popup>
+                                    <RadzenButton Size="ButtonSize.ExtraSmall" @ref="_button" Click="@(() => _popup.ToggleAsync(_button!.Element))" Text="See Outline"></RadzenButton>
+                                </RadzenCard>
+                            </RadzenAccordionItem>
 						}
 					</Items>
 				</RadzenAccordion>
