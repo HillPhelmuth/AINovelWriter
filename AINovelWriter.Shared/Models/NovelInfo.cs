@@ -24,7 +24,8 @@ public class NovelInfo
 	public string ImgHtml => $"<img src='{ImageUrl}' />";
 	public List<ChapterOutline> ChapterOutlines { get; set; } = [];
 	public List<FlatChapterEval> ChapterEvals { get; set; } = [];
-    public void SplitIntoPagesByWords(int wordPerPage = 200)
+	public FullNovelEval? NovelEval { get; set; }
+	public void SplitIntoPagesByWords(int wordPerPage = 200)
 	{
 		TextPages = StringHelpers.SplitStringIntoPagesByWords(Text, wordPerPage);
 	}

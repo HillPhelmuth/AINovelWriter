@@ -368,3 +368,5 @@ FodyWeavers.xsd
 /AINovelWriter.Web/register-with-auth0.cmd
 /AINovelWriter.Web/Pages/DataForFinetuning.razor
 /AINovelWriter.Web/Pages/DataForFinetuning.razor.cs
+/AINovelWriter.Web/Sword_Magic_1.json
+/AINovelWriter.Web/Sword_Magic_3.json

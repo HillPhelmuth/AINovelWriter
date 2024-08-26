@@ -13,7 +13,7 @@ input_variables:
   default: ''
 
 template: |
- Engagement measures how captivating and engaging the generated chapter is. It involves assessing the level of interest the chapter generates and whether it keeps the reader eager to continue reading. When evaluating engagement, consider how compelling the narrative is and how much it draws the reader in. Mercilessly score the Engagement of the chapter between one to five stars as if you were a writing critic using the following rating scale:
+ Engagement measures how captivating and engaging the generated chapter is. It involves assessing the level of interest the chapter generates and whether it keeps the reader eager to continue reading. When evaluating engagement, consider how compelling the narrative is and how much it draws the reader in. Mercilessly score the Engagement of the chapter between one to ten stars as if you were a writing critic using the following rating scale:
 
     1 star: the chapter is dull, uninteresting, or fails to capture the reader's attention
     5 stars: the chapter is somewhat engaging but lacks consistency in keeping the reader captivated

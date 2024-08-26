@@ -76,7 +76,7 @@ public partial class NovelConceptPage
 		StateHasChanged();
 		await Task.Delay(1);
 		AppState.NovelInfo = new NovelInfo() { User = AppState.UserData.UserName };
-		var theme = $"{novelConcepts.Genre}\n{novelConcepts.SubGenre} {novelConcepts.Theme}";
+		var theme = $"Genre:\n{novelConcepts.Genre.ToString() +"\n"+ novelConcepts.Genre.GetDescription()}\n\n{(novelConcepts.SubGenres.Count > 0 ? "Subgenres:\n" + string.Join("\n", novelConcepts.SubGenres.Select(x => x.ToString())) : string.Empty)}\nTheme/Description: {novelConcepts.Theme}";
 		AppState.NovelOutline.Outline = await NovelWriterService.CreateNovelOutline(theme, novelConcepts.Characters, novelConcepts.PlotEvents, novelConcepts.Title, novelConcepts.ChapterCount, novelConcepts.OutlineAIModel);
 		AppState.NovelInfo.Outline = AppState.NovelOutline.Outline;
 		AppState.NovelInfo.Title = novelConcepts.Title;
@@ -98,11 +98,7 @@ public partial class NovelConceptPage
 		AppState.NovelInfo.Text = "";
 		NavigationManager.NavigateTo("stream");
 		await Task.Delay(1);
-		//await foreach (var token in NovelWriterService.WriteNovel(AppState.NovelOutline.Outline, AppState.NovelOutline.WriterAIModel, ctoken))
-		//{
-		//    AppState.NovelInfo.Text += token;
-		//    await InvokeAsync(StateHasChanged);
-		//}
+		
 		_isBusy = false;
 		StateHasChanged();
 	}

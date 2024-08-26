@@ -20,7 +20,7 @@ public class NovelConcepts
 		        Title: {Title}
 		        Genre: {Genre.ToString()}
 		        Description: {GenreDescription}
-		        Subgenres: {string.Join("\n", SubGenres.Select(x => x.ToString()))}
+		        {(SubGenres.Count > 0 ? "Subgenres: " + string.Join("\n", SubGenres.Select(x => x.ToString())) : string.Empty)}
 		        Theme: {Theme}
 		        Characters:{Characters}
 		        Plot Events: {PlotEvents}

@@ -13,7 +13,7 @@ input_variables:
   default: ''
 
 template: |
- Creativity measures the originality and inventiveness of the generated chapter. It involves assessing how unique, imaginative, and engaging the content is, considering the overall narrative and ideas presented. When evaluating creativity, consider the level of originality, unexpected twists, and the freshness of ideas. From the Perspective of a writing editor, how many changes would you make to improve the creativity of the chapter? Rate the creativity of the chapter between one to five stars using the following rating scale:
+ Creativity measures the originality and inventiveness of the generated chapter. It involves assessing how unique, imaginative, and engaging the content is, considering the overall narrative and ideas presented. When evaluating creativity, consider the level of originality, unexpected twists, and the freshness of ideas. From the Perspective of a writing editor, how many changes would you make to improve the creativity of the chapter? Rate the creativity of the chapter between one to ten stars using the following rating scale:
 
     1 star: the chapter is highly generic or uninspired and you would suggest a near-complete rewrite
     5 stars: the chapter is somewhat creative but lacks distinctive elements and is over reliant on tropes, you would suggest some changes

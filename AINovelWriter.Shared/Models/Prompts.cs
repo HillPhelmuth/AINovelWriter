@@ -107,7 +107,7 @@ namespace AINovelWriter.Shared.Models
             """;
 
         public const string ChapterRewritePrompt =
-            """
+			$$$"""
             ## Instructions
             
             - Rewrite the chapter below by applying the Feedback suggestions. 
@@ -117,15 +117,7 @@ namespace AINovelWriter.Shared.Models
             
             ## Writing Style Guide
             
-            1. **Detailed Descriptions and Slower Pace:** You will prioritize **very** detailed descriptions of the setting, characters, and events. Imagine the reader is experiencing the story through their senses – sight, sound, touch, smell, and taste. Paint a vivid picture with your words. You will also prefer a slower pace of events, focusing on character development, inner thoughts, and nuanced interactions. Allow the reader to fully immerse themselves in the world and connect with the characters on a deeper level.
-            
-            2. **Extended and Exciting Action Sequences:** When action occurs, it should be **very** detailed and exciting. Describe the movements - every movement, the impact of blows - blow by blow, the adrenaline rush, and the strategic choices - and reasoning behind them - made during the fight. Don't shy away from using vivid imagery and sensory details to make the reader feel like they are in the midst of the action.  These action sequences should be extended and well-paced, building tension and suspense before reaching a thrilling climax.
-            
-            3. **Character Voice and Dialogue:** Develop distinct and believable voices for each character. Their dialogue should reflect their personality, background, and motivations. Use dialogue to reveal character relationships, advance the plot, and provide moments of humor or tension.
-            
-            4. **Show, Don't Tell:**  Instead of simply stating facts, use descriptive language to show the reader what is happening. For example, instead of saying "He was angry," describe his clenched fists, reddened face, and strained voice.
-            
-            5. **Consistency and Continuity:** Maintain consistency in your world-building, character traits, and plot details. Pay attention to continuity to ensure a seamless and believable reading experience.
+            {{{StyleGuide}}}
           
             ## Feedback
             Rewrite the chapter using the following feedback. 
@@ -145,7 +137,7 @@ namespace AINovelWriter.Shared.Models
                                         
             """;
 		public const string ChapterWriterPrompt =
-			"""
+            $$$"""
 			## Instructions
 			         
 			1. Write only 1 long and very detailed chapter based on the Chapter Outline.
@@ -166,52 +158,7 @@ namespace AINovelWriter.Shared.Models
 			
 			## Writing Style Guide
 			
-			1. **Detailed Descriptions and Proper Pace:** You will prioritize **very** detailed descriptions of the setting, characters, and events. Imagine the reader is experiencing the story through their senses – sight, sound, touch, smell, and taste. Paint a vivid picture with your words. You will also prefer a slower pace of events, focusing on character development, inner thoughts, and nuanced interactions. Allow the reader to fully immerse themselves in the world and connect with the characters on a deeper level.
-			
-			2. **Extended and Exciting Action Sequences:** When action occurs, it should be **very** detailed and exciting. Describe the movements - every movement, the impact of blows - blow by blow, the adrenaline rush, and the strategic choices - and reasoning behind them - made during the fight. Don't shy away from using vivid imagery and sensory details to make the reader feel like they are in the midst of the action.  These action sequences should be extended and well-paced, building tension and suspense before reaching a thrilling climax.
-			
-			3. **Character Voice and Dialogue:** Develop distinct and believable voices for each character. Their dialogue should reflect their personality, background, and motivations. Use dialogue to reveal character relationships, advance the plot, and provide moments of humor or tension.
-			
-			4. **Show, Don't Tell:**  Instead of simply stating facts, use descriptive language to show the reader what is happening. For example, instead of saying "He was angry," describe his clenched fists, reddened face, and strained voice.
-			
-			5. **Consistency and Continuity:** Maintain consistency in your world-building, character traits, and plot details. Pay attention to continuity to ensure a seamless and believable reading experience.
-			
-			By following these guidelines, you will create a richly detailed and immersive story that captivates the reader from beginning to end. Remember to prioritize both detailed descriptions and exciting action sequences, creating a balanced and engaging narrative.
-			
-			## Elements of a Good Chapter
-			
-			**1. Engaging Opening:**
-			
-			* **Hook:**  Grab the reader's attention immediately. This could be through action, intrigue, a compelling question, vivid imagery, or an interesting character introduction.
-			* **Clarity:** Quickly establish the setting, time frame, and relevant characters. The reader shouldn't be confused about where or when the chapter takes place.
-			
-			**2. Plot Development:**
-			
-			* **Movement:** Something needs to happen. This could be an external event, an internal conflict, a revelation, or a shift in relationships.
-			* **Purpose:** The chapter should contribute to the overall plot of the novel. It should move the story forward, even if subtly.
-			* **Conflict and Tension:** Introduce or escalate conflict, whether internal or external. This creates tension and keeps the reader invested.
-			
-			**3. Character Development:**
-			
-			* **Growth and Change:**  Chapters should reveal something new about the characters, their motivations, or their relationships. They should evolve, even if minimally.
-			* **Authenticity:** Characters should behave and react in believable ways, given their personalities and circumstances.
-			* **Point of View:** Maintaining a consistent point of view helps readers connect with the characters and their experiences.
-			
-			**4. Setting and Atmosphere:**
-			
-			* **Vivid Description:**  Use sensory details to bring the setting to life and create a specific mood or atmosphere.
-			* **Relevance:** The setting should be more than just backdrop; it should influence the characters and the events of the chapter.
-			
-			**5. Pacing and Rhythm:**
-			
-			* **Variety:** Mix short and long sentences, action and introspection, dialogue and narration to create a dynamic rhythm.
-			* **Control:** The pace should match the content of the chapter. Action scenes might be fast-paced, while introspective moments might be slower.
-			
-			**6. Strong Ending:** (remember this is just one chapter in a larger story)
-			
-			* **Closure:** Provide a sense of completion, even if it's just a temporary pause in the action.
-			* **Cliffhanger (Optional):**  End on a note of suspense or intrigue to entice the reader to continue to the next chapter.
-			* **Resonance:**  Leave the reader with something to think about, whether it's a new understanding of a character or a lingering question.		
+			{{{StyleGuide}}}
 			        
 			## Story Description and Characters
 			        
@@ -240,7 +187,7 @@ namespace AINovelWriter.Shared.Models
 			Now, take a deep breath and start writing with an authentic voice. 
 			""";
 		public const string ChapterWriterPrompt2 =
-			"""
+			$$$"""
 			## Instructions
 			         
 			1. Write only 1 long and very detailed chapter based on the Chapter Outline.
@@ -261,18 +208,7 @@ namespace AINovelWriter.Shared.Models
 			
 			## Writing Style Guide
 			
-			1. **Detailed Descriptions and Proper Pace:** You will prioritize **very** detailed descriptions of the setting, characters, and events. Imagine the reader is experiencing the story through their senses – sight, sound, touch, smell, and taste. Paint a vivid picture with your words. You will also prefer a slower pace of events, focusing on character development, inner thoughts, and nuanced interactions. Allow the reader to fully immerse themselves in the world and connect with the characters on a deeper level.
-			
-			2. **Extended and Exciting Action Sequences:** When action occurs, it should be **very** detailed and exciting. Describe the movements - every movement, the impact of blows - blow by blow, the adrenaline rush, and the strategic choices - and reasoning behind them - made during the fight. Don't shy away from using vivid imagery and sensory details to make the reader feel like they are in the midst of the action.  These action sequences should be extended and well-paced, building tension and suspense before reaching a thrilling climax.
-			
-			3. **Character Voice and Dialogue:** Develop distinct and believable voices for each character. Their dialogue should reflect their personality, background, and motivations. Use dialogue to reveal character relationships, advance the plot, and provide moments of humor or tension.
-			
-			4. **Show, Don't Tell:**  Instead of simply stating facts, use descriptive language to show the reader what is happening. For example, instead of saying "He was angry," describe his clenched fists, reddened face, and strained voice.
-			
-			5. **Consistency and Continuity:** Maintain consistency in your world-building, character traits, and plot details. Pay attention to continuity to ensure a seamless and believable reading experience.
-			
-			By following these guidelines, you will create a richly detailed and immersive story that captivates the reader from beginning to end. Remember to prioritize both detailed descriptions and exciting action sequences, creating a balanced and engaging narrative.
-			
+			{{{StyleGuide}}}
 			
 			## Story Description and Characters
 			        
@@ -347,6 +283,32 @@ namespace AINovelWriter.Shared.Models
 			 - _Conflict and Tension:_ Introduce or escalate conflict, whether internal or external. This creates tension and keeps the reader invested.
 			
 			""";
+		public const string OutlineReversePrompt =
+			"""
+			Write an outline of the chapter using the format below.
+			
+			# Outline of a Chapter
+					
+			## Chapter 1: {Name of Chapter}
+					
+			1. **POV Character**: {Name of the character whose point of view the chapter is written from, if applicable}
+			2. **Setting and Atmosphere:**: Introduce the setting where the primary events occur.
+			 - _Vivid Description:_  Use sensory details to bring the setting to life and create a specific mood or atmosphere.
+			 - _Relevance:_ The setting should be more than just backdrop; it should influence the characters and the events of the chapter.
+			3. **Character Development**: Summarize the character development occurring in this chapter
+			 - _Growth and Change:_  Chapters should reveal something new about the characters, their motivations, or their relationships. They should evolve, even if minimally.
+			 - _Authenticity:_ Characters should behave and react in believable ways, given their personalities and circumstances.
+			 - _Point of View:_ Maintaining a consistent point of view helps readers connect with the characters and their experiences.
+			4. **Plot Development:** Provide and describe in detail several plot developments of the chapter
+			 - _Movement:_ Something needs to happen. This could be an external event, an internal conflict, a revelation, or a shift in relationships.
+			 - _Purpose:_ The chapter should contribute to the overall plot of the novel. It should move the story forward, even if subtly.
+			 - _Conflict and Tension:_ Introduce or escalate conflict, whether internal or external. This creates tension and keeps the reader invested.
+						
+			 # Chapter Text
+			 ```
+			 {{$novel_chapter}}
+			 ```
+			""";
         public const string SummaryPrompt =
             """
             ## Instructions
@@ -362,6 +324,85 @@ namespace AINovelWriter.Shared.Models
             {{$novel_chapter}} 
             ```
             """;
+
+        public const string StyleGuide =
+	        """
+	        1. **Detailed Descriptions and Proper Pace:** You will prioritize **very** detailed descriptions of the setting, characters, and events. Imagine the reader is experiencing the story through their senses – sight, sound, touch, smell, and taste. Paint a vivid picture with your words. You will also prefer a slower pace of events, focusing on character development, inner thoughts, and nuanced interactions. Allow the reader to fully immerse themselves in the world and connect with the characters on a deeper level.
+	        
+	        2. **Cinematic Action: Immerse Your Reader in the Fight:**
+	        
+	        Don't just tell us about a fight – unleash it on the page!  Craft exhilarating action sequences that crackle with energy and keep readers on the edge of their seats.
+	        
+	        **Instead of:** "They fought fiercely."
+	        
+	        **Unleash the action:**  "Steel clashed against steel, a shower of sparks erupting in the dim light.  He parried a lightning-fast thrust, the force of the blow vibrating up his arm.  Adrenaline surged through him, sharpening his senses.  He ducked, weaved, and countered, each movement a calculated dance of death.  He could feel the burn in his muscles, the sting of sweat in his eyes.  His opponent, a whirlwind of aggression, pressed the attack, forcing him to retreat.  He needed an opening, a chance to strike… now!"
+	        
+	        **Remember to:**
+	        
+	        * **Choreograph the Combat:** Describe each movement with precision, focusing on the impact of blows, the clash of weapons, and the grunts of exertion.
+	        * **Engage the Senses:**  Immerse the reader in the sights, sounds, smells, and even the feel of the fight.  Think dust kicked up by frantic footwork, the metallic tang of blood, the roar of the crowd (if applicable).
+	        * **Strategic Depth:**  Give insights into the characters' tactical thinking, their split-second decisions, and the reasons behind their actions.
+	        * **Pacing and Tension:** Build suspense, allow moments of respite, and then escalate the conflict towards a thrilling climax.
+	        
+	        By crafting cinematic action sequences, you'll transform your readers into active participants, drawing them into the heart of the battle.
+	        
+	        3.  **Give Your Characters a Voice: Dialogue That Sings**
+	        
+	        Let your characters speak for themselves! Craft distinct and believable voices that breathe life into their personalities and propel the narrative forward.
+	                
+	         **Don't just have them talk:** "He said he was happy to be there."
+	                
+	         **Let their voices resonate:**
+	                
+	          * **The gruff veteran:** "Happy? Kid, I've seen happier faces at a funeral.  Let's just get this over with."
+	          * **The eager apprentice:** "Oh, wow! This is amazing! I can't wait to learn everything!"
+	          * **The sly rogue:** "Happy?  Let's just say I'm... *delighted* to be of service.  For a price, of course."
+	                
+	          **Remember to:**
+	                
+	          * **Reflect Personality:**  How does their word choice, tone, and slang reveal who they are?
+	          * **Consider Background:**  Does their upbringing, education, or social status influence how they speak?
+	          * **Driven by Motivation:**  What are their goals and desires?  How does this affect their dialogue?
+	          * **Relationship Dynamics:**  How does their speech change when interacting with different characters?
+	          * **Advance the Plot:**  Use dialogue to reveal information, create conflict, and move the story forward.
+	          * **Emotional Impact:**  Can dialogue be used to inject humor, build tension, or evoke empathy?
+	                
+	        By crafting compelling dialogue, you'll not only bring your characters to life but also enrich the narrative tapestry of your story.
+	        
+	        4. **Bring Your Story to Life: Show, Don't Tell:**
+	        
+	         Instead of simply stating emotions or facts, immerse your reader in the scene. Use vivid descriptions that engage their senses. 
+	        
+	         **Don't tell us:** "He was angry."
+	        
+	         **Show us:** "His knuckles whitened as his fists clenched, a vein throbbing in his temple. A flush crept up his neck, painting his face a mottled crimson.  His voice, a strained rasp, vibrated with barely suppressed fury."
+	        
+	         **Remember to consider:**
+	        
+	         * **Sensory Details:** What can the characters see, hear, smell, taste, and touch?
+	         * **Actions:**  What are the characters doing that reveals their emotions and intentions?
+	         * **Body Language:** How are their postures, facial expressions, and gestures communicating?
+	         * **Dialogue:** Can you reveal information through what the characters say (and don't say) to each other?
+	        
+	         By painting a picture with words, you'll create a more compelling and engaging experience for your reader.
+	        
+	        5.  Weave a Seamless Tapestry: Consistency and Continuity
+	        
+	        Imagine a beautiful tapestry, carefully woven with intricate details and vibrant threads.  Every element contributes to the overall picture, creating a harmonious and captivating whole.  Your story is no different.
+	        
+	        **Consistency and continuity are the threads that hold your narrative together, ensuring a believable and immersive experience for your reader.**
+	        
+	        **Consider these key elements:**
+	        
+	         * **World-Building:**  Establish clear rules for your world, from magic systems to social hierarchies, and maintain them consistently.
+	         * **Character Traits:**  Ensure your characters behave in a way that aligns with their established personalities and motivations.  Avoid sudden, unexplained shifts in behavior.
+	         * **Plot Details:**  Keep track of key events, timelines, and previously established information.  Avoid contradictions and inconsistencies that can break the reader's immersion.
+	         * **Cause and Effect:**  Ensure actions have consequences and that events flow logically from one another.  This creates a sense of realism and reinforces the reader's engagement.
+	        
+	        **By weaving a tapestry of consistency and continuity, you'll create a world that feels real, characters that resonate, and a story that captivates from beginning to end.**
+	        
+	        By following these guidelines, you will create a richly detailed and immersive story that captivates the reader from beginning to end. Remember to prioritize both detailed descriptions and exciting action sequences, creating a balanced and engaging narrative.
+	        """;
         public const string OutlineWriterPromptJson =
             """
             # Objective

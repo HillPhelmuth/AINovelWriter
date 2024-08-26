@@ -181,15 +181,14 @@ public class NovelWriterService(IConfiguration configuration) : INovelWriter
         
         var chat = kernel.GetRequiredService<IChatCompletionService>();
         var systemMessage = $"""
-                             You are a creative and exciting fiction writer. You write intelligent, detailed and engrossing novels that expertly combine character development and growth, interpersonal and international intrigue, and thrilling action. You are tasked with writing a chapter for a novel. Ensure the chapter is engaging, cohesive, and well-structured. Your writing should always contain as much detail as possible. Always write with characters first, preferring dialog over exposition.
-                             Emulate the style of the following author:
+                             You are a creative and exciting fiction writer. You write intelligent, detailed and engrossing novels that expertly combine character development and growth, interpersonal and international intrigue, and thrilling action. You are tasked with writing a chapter for a novel. Ensure the chapter is engaging, cohesive, and well-structured. Your writing should always contain as much detail as possible. Always write with characters first, preferring dialog over exposition. Most importantly, follow the provided Writing Guide.
                              
                              {authorStyle}
                              """;
 
         var chatHistory = new ChatHistory(systemMessage);
         var promptTemplateFactory = new KernelPromptTemplateFactory();
-        var userPrompt = await promptTemplateFactory.Create(new PromptTemplateConfig(Prompts.ChapterWriterPrompt2)).RenderAsync(kernel, args, cancellationToken);
+        var userPrompt = await promptTemplateFactory.Create(new PromptTemplateConfig(Prompts.ChapterWriterPrompt)).RenderAsync(kernel, args, cancellationToken);
         chatHistory.AddUserMessage(userPrompt);
         //Azure.AI.OpenAI.StreamingChatCompletionsUpdate
         var hasMore = false;
@@ -199,7 +198,7 @@ public class NovelWriterService(IConfiguration configuration) : INovelWriter
             var messageContent = message.Content!;
             currentChapter += messageContent;
             yield return messageContent;
-            //if (aiModel.ToString().StartsWith("Open") || aiModel.ToString().StartsWith("Mistral")) continue;
+            if (aiModel != AIModel.Gpt4O) continue;
             var item = message.Metadata?["FinishReason"] as CompletionsFinishReason?;
             if (item == null) continue;
             Console.WriteLine($"Finish Reason: {item}");
@@ -410,8 +409,8 @@ public class NovelWriterService(IConfiguration configuration) : INovelWriter
             {
                 o.Retry.ShouldHandle = args => ValueTask.FromResult(args.Outcome.Result?.StatusCode is HttpStatusCode.TooManyRequests);
                 o.Retry.BackoffType = DelayBackoffType.Exponential;
-                o.AttemptTimeout = new HttpTimeoutStrategyOptions { Timeout = TimeSpan.FromSeconds(90) };
-                o.CircuitBreaker.SamplingDuration = TimeSpan.FromSeconds(180);
+                o.AttemptTimeout = new HttpTimeoutStrategyOptions { Timeout = TimeSpan.FromSeconds(180) };
+                o.CircuitBreaker.SamplingDuration = TimeSpan.FromSeconds(360);
                 o.TotalRequestTimeout = new HttpTimeoutStrategyOptions { Timeout = TimeSpan.FromMinutes(5) };
             });
         });
