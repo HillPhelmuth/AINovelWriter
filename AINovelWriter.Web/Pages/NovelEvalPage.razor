@@ -4,7 +4,42 @@
 <RadzenRow>
     <RadzenColumn SizeLG="8" OffsetLG="2">
         <RadzenCard Style="padding-left:0;padding-right:0">
-            <RadzenDataGrid @ref="_grid" Data="_chapterEvals" TItem="FlatChapterEval" Density="Density.Compact" AllowPaging="true" PageSize="15" AllowSorting="true" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive">
+            <div style="display:flex;flex-direction:row;justify-content:space-evenly; align-items:center">
+                <RadzenCard>
+                    <RadzenText TextAlign="TextAlign.Center" TextStyle="TextStyle.Subtitle1">Full Novel Scores</RadzenText>
+                    @* <RadzenIcon Icon="help" MouseEnter="@((args) => ShowToolTip(args, "Eval scores for the full text of the novel in one shot"))"></RadzenIcon> *@
+                    </RadzenCard>
+                <RadzenCard>
+                    <RadzenText TextStyle="TextStyle.Subtitle2">Character Development</RadzenText>
+                    <RadzenText TextAlign="TextAlign.Center">@AppState.NovelInfo.NovelEval?.CharacterDevelopment.ToString("N3")</RadzenText>
+                </RadzenCard>
+                <RadzenCard>
+                    <RadzenText TextStyle="TextStyle.Subtitle2">Clarity</RadzenText>
+                    <RadzenText TextAlign="TextAlign.Center">@AppState.NovelInfo.NovelEval?.Clarity.ToString("N3")</RadzenText>
+                </RadzenCard>
+                <RadzenCard>
+                    <RadzenText TextStyle="TextStyle.Subtitle2">Creativity</RadzenText>
+                    <RadzenText TextAlign="TextAlign.Center">@AppState.NovelInfo.NovelEval?.Creativity.ToString("N3")</RadzenText>
+                </RadzenCard>
+                <RadzenCard>
+                    <RadzenText TextStyle="TextStyle.Subtitle2">Engagement</RadzenText>
+                    <RadzenText TextAlign="TextAlign.Center">@AppState.NovelInfo.NovelEval?.Engagement.ToString("N3")</RadzenText>
+                </RadzenCard>
+                <RadzenCard>
+                    <RadzenText TextStyle="TextStyle.Subtitle2">WritingDetail</RadzenText>
+                    <RadzenText TextAlign="TextAlign.Center">@AppState.NovelInfo.NovelEval?.WritingDetail.ToString("N3")</RadzenText>
+                </RadzenCard>
+                <RadzenCard>
+                    <RadzenText TextStyle="TextStyle.Subtitle2">Relevance</RadzenText>
+                    <RadzenText TextAlign="TextAlign.Center">@AppState.NovelInfo.NovelEval?.Relevance.ToString("N3")</RadzenText>
+                </RadzenCard>
+                <RadzenCard>
+                    <RadzenText TextStyle="TextStyle.Subtitle2">Overall</RadzenText>
+                    <RadzenText TextAlign="TextAlign.Center">@AppState.NovelInfo.NovelEval?.Overall.ToString("N3")</RadzenText>
+                </RadzenCard>
+            </div>
+            <RadzenText TextStyle="TextStyle.Subtitle1" TextAlign="TextAlign.Center">Chapter Evaluations</RadzenText>
+            <RadzenDataGrid @ref="_grid" Data="_chapterEvals" TItem="FlatChapterEval" Density="Density.Compact" AllowPaging="true" PageSize="20" AllowSorting="true" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" ShowPagingSummary="true">
                 <Template Context="eval">
                     <RadzenCard Style="overflow-wrap:break-word; white-space:pre-wrap">
                         @((MarkupString)AsHtml(eval.ChapterText))

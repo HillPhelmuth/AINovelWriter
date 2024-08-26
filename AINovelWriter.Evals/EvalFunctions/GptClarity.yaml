@@ -13,7 +13,7 @@ input_variables:
   default: ''
 
 template: |
- Clarity measures how clear and easy to understand the generated chapter is. It involves evaluating the readability, coherence, and overall articulation of the writing. When evaluating clarity, consider how well the chapter conveys its ideas and how easy it is to follow the narrative. Mercilessly score the clarity of the chapter between one to five stars as if you were a writing critic using the following rating scale:
+ Clarity measures how clear and easy to understand the generated chapter is. It involves evaluating the readability, coherence, and overall articulation of the writing. When evaluating clarity, consider how well the chapter conveys its ideas and how easy it is to follow the narrative. Mercilessly score the clarity of the chapter between one to ten stars as if you were a writing critic using the following rating scale:
 
     1 star: the chapter is confusing, poorly articulated, or difficult to follow
     5 stars: the chapter is somewhat clear but may have minor issues that affect understanding

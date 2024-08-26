@@ -69,7 +69,7 @@
                 </Helper>
             </RadzenFormField>
             <br />
-            <RadzenFormField Text="Genre" Style="width:100%">
+            @* <RadzenFormField Text="Genre" Style="width:100%">
                 <ChildContent>
                     <RadzenDropDown Style="width:100%" Data="AuthorStyles" TextProperty="Key" ValueProperty="Value" @bind-Value="AppState.NovelConcepts.AuthorStyle">
                         
@@ -78,7 +78,7 @@
                 <Helper>
                     <RadzenText TextStyle="TextStyle.Caption" Text="Select an author's style (optional)"></RadzenText>
                 </Helper>
-            </RadzenFormField><br />
+            </RadzenFormField><br /> *@
             <RadzenFormField Style="width:100%" Text="Characters (optional)">
                 <ChildContent>
                     <RadzenTextArea Style="width:100%; height:4rem" @bind-Value="@AppState.NovelConcepts.Characters"></RadzenTextArea>

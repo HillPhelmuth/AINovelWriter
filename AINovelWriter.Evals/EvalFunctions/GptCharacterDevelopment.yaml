@@ -16,7 +16,7 @@ input_variables:
   default: ''
 
 template: |
- Character Development measures how well the characters are portrayed and developed within the generated chapter. It involves assessing the depth, growth, and consistency of the characters in relation to the narrative. When evaluating character development, consider how well the characters are brought to life and how convincingly they evolve throughout the chapter. Given the details and chapter, mercilessly score the character development of the chapter between one to five stars as if you were a writing critic using the following rating scale:
+ Character Development measures how well the characters are portrayed and developed within the generated chapter. It involves assessing the depth, growth, and consistency of the characters in relation to the narrative. When evaluating character development, consider how well the characters are brought to life and how convincingly they evolve throughout the chapter. Given the details and chapter, mercilessly score the character development of the chapter between one to ten stars as if you were a writing critic using the following rating scale:
 
     1 star: the characters are poorly developed or inconsistent
     5 stars: the characters are somewhat developed but lack depth or consistency

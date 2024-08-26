@@ -25,12 +25,19 @@ public class AppState : INotifyPropertyChanged
     }
 
     public NovelInfo NovelInfo
-	{
-		get => _novelInfo;
-		set => SetField(ref _novelInfo, value);
-	}
+    {
+        get => _novelInfo;
+        set
+        {
+            if (string.IsNullOrEmpty(NovelConcepts.Theme))
+            {
+				NovelConcepts = new NovelConcepts { Title = value.Title, Theme = value.ConceptDescription };
+            }
+            SetField(ref _novelInfo, value);
+        }
+    }
 
-	public NovelConcepts NovelConcepts
+    public NovelConcepts NovelConcepts
 	{
 		get => _novelConcepts;
 		set => SetField(ref _novelConcepts, value);

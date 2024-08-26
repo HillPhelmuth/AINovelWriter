@@ -13,7 +13,7 @@ input_variables:
   default: ''
 
 template: |
- WritingDetail measures how well the generated chapter adheres to the instruction for detailed descriptions and a slower pace. It involves assessing the richness of sensory details, the depth of character exploration, and the pacing of events. When evaluating writing detail, consider how vividly the setting, characters, and events are described and whether the chapter takes the time to develop these elements thoroughly. Score the writing detail of the chapter between one to five stars using the following rating scale:
+ WritingDetail measures how well the generated chapter adheres to the instruction for detailed descriptions and a slower pace. It involves assessing the richness of sensory details, the depth of character exploration, and the pacing of events. When evaluating writing detail, consider how vividly the setting, characters, and events are described and whether the chapter takes the time to develop these elements thoroughly. Score the writing detail of the chapter between one to ten stars using the following rating scale:
 
     1 star: the chapter lacks detail and moves too quickly, with little attention to sensory description or depth
     5 stars: the chapter provides moderate detail with a balanced pace, but lacks the richness needed for full immersion

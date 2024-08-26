@@ -16,7 +16,7 @@ input_variables:
   default: ''
 
 template: |
- Relevance measures how well the generated fiction content aligns with the specific details and themes provided by the user. It involves assessing the degree to which the chapter adheres to the given details, maintaining consistency with the user's expectations. When evaluating relevance, consider how closely the chapter matches the user's input. Given the details and chapter, score the relevance of the chapter between one to five stars using the following rating scale:
+ Relevance measures how well the generated fiction content aligns with the specific details and themes provided by the user. It involves assessing the degree to which the chapter adheres to the given details, maintaining consistency with the user's expectations. When evaluating relevance, consider how closely the chapter matches the user's input. Given the details and chapter, score the relevance of the chapter between one to ten stars using the following rating scale:
 
     1 star: the chapter is completely irrelevant to the details provided
     5 stars: the chapter is somewhat relevant, but with significant deviations
