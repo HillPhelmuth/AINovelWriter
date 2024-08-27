@@ -38,5 +38,5 @@ public interface INovelWriter : INovelWriterService, INovelWriterStreaming
 	Task<List<ResultScore>> ExecuteChapterEval(string chapterText, string details);
     Task<Feedback> ProvideRewriteFeedback(string chapterText, AIModel aiModel = AIModel.GeminiFlash, string? additionalInstructions = null);
     Task<string> RewriteChapter(ChapterOutline chapterOutline, Feedback feedback, AIModel aiModel = AIModel.GeminiFlash);
-    Task<NovelInfo> ReverseEngineerNovel(string directoryPath, int volume, string title);
+    Task<NovelInfo> ReverseEngineerNovel(string epubFileData, string title);
 }

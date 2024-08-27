@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
 using System.ComponentModel;
 using System.Text.Json;
+using Radzen;
 
 namespace AINovelWriter.Web.Shared;
 
@@ -21,7 +22,9 @@ public abstract class AppComponentBase : ComponentBase, IDisposable
 	protected NavigationManager NavigationManager { get; set; } = default!;
     [Inject]
     protected CosmosService CosmosService { get; set; } = default!;
-    [CascadingParameter]
+	[Inject]
+	protected DialogService DialogService { get; set; } = default!;
+	[CascadingParameter]
 	protected Task<AuthenticationState>? AuthenticationState { get; set; }
 	protected bool IsNovelComplete { get; set; }
 	protected override async Task OnInitializedAsync()

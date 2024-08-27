@@ -17,6 +17,7 @@
 		<PackageReference Include="OpenAI" Version="2.0.0-beta.7" />
 		<PackageReference Include="PDFsharp" Version="6.1.1" />
 		<PackageReference Include="PDFsharp-MigraDoc" Version="6.1.1" />
+		<PackageReference Include="ReverseMarkdown" Version="4.6.0" />
 		<PackageReference Include="Tiktoken" Version="2.0.3" />
 		<PackageReference Include="Azure.Storage.Blobs" Version="12.21.0" />
 		<PackageReference Include="Microsoft.Extensions.Azure" Version="1.7.4" />

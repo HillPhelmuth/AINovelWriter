@@ -33,6 +33,7 @@ public partial class NovelStreamingPage
 	private Popup? _popup;
 	private RadzenButton? _button;
 	private CancellationTokenSource _cancellationTokenSource = new();
+	
 	private bool _isCheat;
 	private List<string> _pages = [];
 	private bool _isBusy;

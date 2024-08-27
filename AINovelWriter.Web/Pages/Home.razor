@@ -15,11 +15,19 @@
 				<br />
 				<RadzenButton Style="margin-left:auto; margin-right:auto" Click="@(() => NavigationManager.NavigateTo("concept"))" Text="Get Started!"></RadzenButton>
 			</RadzenCard>
-			@if (_isCheat)
+			@* @if (_isCheat)
 			{
 				<RadzenButton Style="margin-left:auto; margin-right:auto" Text="Cheat" Click="Cheat" IsBusy="_isBusy" BusyText="Cheating..."></RadzenButton>
-			}
-					
+			} *@
+            <RadzenToggleButton Style="margin-left:auto; margin-right:auto" @bind-Value="_isReverse" Text="@(_isReverse ? "Start Novel" : "Upload Novel")"></RadzenToggleButton>
+			@if (_isReverse)
+            {
+				<RadzenTemplateForm Style="margin-left:auto; margin-right:auto" Data="_fileUploadForm" TItem="FileUploadForm" Submit="UploadEpub">
+                    <RadzenFileInput ChooseText="Upload Epub" Accept="*" Name="File" @bind-Value="@_fileUploadForm.FileContent" @bind-FileName="@_fileUploadForm.FileName" @bind-FileSize="_fileUploadForm.FileSize"></RadzenFileInput>
+					<RadzenCustomValidator Component="File" Validator="@(() => _fileUploadForm.FileName.Contains(".epub"))" Text="Upload epub file"></RadzenCustomValidator>
+                    <RadzenButton ButtonType="ButtonType.Submit" Text="Upload and Submit" IsBusy="_isBusy" BusyText="Reverse Engineering..."></RadzenButton>
+                </RadzenTemplateForm>
+            }
 		</RadzenCard>
 	</RadzenColumn>
 </RadzenRow>

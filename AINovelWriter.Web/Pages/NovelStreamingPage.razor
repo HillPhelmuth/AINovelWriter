@@ -3,35 +3,35 @@
 
 <RadzenRow>
 	
-	<RadzenColumn SizeLG="8" Size="12" Style="overflow:auto">
+    <RadzenColumn SizeLG="8" Size="12" Style="overflow:auto">
         <RadzenText TextAlign="TextAlign.Center" TextStyle="TextStyle.Subtitle1" Text="Book"></RadzenText>
         <RadzenButton Text="Re-write" Size="ButtonSize.ExtraSmall" BusyText="Writing" IsBusy="_isBusy" Click="@(async() =>await GenerateNovelAsync())" ></RadzenButton>
-		@if (AppState.NovelInfo.IsComplete)
-		{
-			<RadzenButton class="@_buttonClass" Style="margin-left:35%" Icon="palette" Text="Choose your cover" Click="@(() => NavigationManager.NavigateTo("cover"))"></RadzenButton>
-		}
+        @if (AppState.NovelInfo.IsComplete)
+        {
+            <RadzenButton class="@_buttonClass" Style="margin-left:35%" Icon="palette" Text="Choose your cover" Click="@(() => NavigationManager.NavigateTo("cover"))"></RadzenButton>
+        }
 		
-		<RadzenCard Style="height:74vh; overflow:auto; position:relative" Variant="Variant.Text">
+        <RadzenCard Style="height:74vh; overflow:auto; position:relative" Variant="Variant.Text">
 			
-			<BookReader Text="@AppState.NovelInfo.Text"></BookReader>
+            <BookReader Text="@AppState.NovelInfo.Text"></BookReader>
 
-		</RadzenCard>
+        </RadzenCard>
 
-		<RadzenButton Disabled="@(_isBusy || string.IsNullOrWhiteSpace(AppState.NovelInfo.Text))" Text="Download" Size="ButtonSize.ExtraSmall" Click="DownloadNovelToFile"></RadzenButton>
+        <RadzenButton Disabled="@(_isBusy || string.IsNullOrWhiteSpace(AppState.NovelInfo.Text))" Text="Download" Size="ButtonSize.ExtraSmall" Click="DownloadNovelToFile"></RadzenButton>
 
-		<RadzenButton Text="Cancel" Size="ButtonSize.ExtraSmall" Click="Cancel"></RadzenButton>
-		<hr />
-	</RadzenColumn>
-	<RadzenColumn SizeLG="4" Size="0" Style="overflow:auto">
-		<RadzenText TextAlign="TextAlign.Center" TextStyle="TextStyle.DisplayH6" Text="Audio"></RadzenText>
-		<RadzenText TextAlign="TextAlign.Center" TextStyle="TextStyle.Subtitle1" Text="Select a chapter to listen"></RadzenText>
-		@if (AppState.NovelInfo.ChapterOutlines.Count > 0)
-		{
-			<CascadingValue Name="Title" Value="@AppState.NovelConcepts.Title" TValue="string">
-				<RadzenAccordion>
-					<Items>
-						@foreach (var chapter in AppState.NovelInfo.ChapterOutlines)
-						{
+        <RadzenButton Text="Cancel" Size="ButtonSize.ExtraSmall" Click="Cancel"></RadzenButton>
+        <hr />
+    </RadzenColumn>
+    <RadzenColumn SizeLG="4" Size="0" Style="overflow:auto">
+        <RadzenText TextAlign="TextAlign.Center" TextStyle="TextStyle.DisplayH6" Text="Audio"></RadzenText>
+        <RadzenText TextAlign="TextAlign.Center" TextStyle="TextStyle.Subtitle1" Text="Select a chapter to listen"></RadzenText>
+        @if (AppState.NovelInfo.ChapterOutlines.Count > 0)
+        {
+            <CascadingValue Name="Title" Value="@AppState.NovelConcepts.Title" TValue="string">
+                <RadzenAccordion>
+                    <Items>
+                        @foreach (var chapter in AppState.NovelInfo.ChapterOutlines)
+                        {
                             <RadzenAccordionItem Text="@chapter.Title.TrimStart('#')" Style="max-height:15rem; overflow:auto">
                                 <RadzenButton Size="ButtonSize.ExtraSmall" Disabled="@(string.IsNullOrEmpty(chapter.FullText))" Click="@(() => chapter.ShowAudio = true)" Icon="record_voice_over" Text="Too lazy even to read it"></RadzenButton>
                                 <RadzenCard Style="padding:0; display:flex; align-items:center; justify-content:center">
@@ -48,15 +48,27 @@
                                             @((MarkupString)AsHtml(chapter.Text))
                                         </RadzenCard>
                                     </Popup>
-                                    <RadzenButton Size="ButtonSize.ExtraSmall" @ref="_button" Click="@(() => _popup.ToggleAsync(_button!.Element))" Text="See Outline"></RadzenButton>
+                                    <RadzenButton Size="ButtonSize.ExtraSmall" @ref="_button" Click="@(() => ShowInlineDialog(chapter.Text))" Text="See Outline"></RadzenButton>
                                 </RadzenCard>
                             </RadzenAccordionItem>
-						}
-					</Items>
-				</RadzenAccordion>
-			</CascadingValue>
-		}
+                        }
+                    </Items>
+                </RadzenAccordion>
+            </CascadingValue>
+        }
 
 
-	</RadzenColumn>
+    </RadzenColumn>
 </RadzenRow>
+@code
+{
+    async Task ShowInlineDialog(string text)
+    {
+        var result = await DialogService.OpenAsync("Simple Dialog", ds =>
+            @<RadzenStack>
+                <RadzenCard Style="overflow-wrap:break-word; white-space:pre-wrap">
+                    @((MarkupString)AsHtml(text))
+                </RadzenCard>
+            </RadzenStack>);
+    }
+}

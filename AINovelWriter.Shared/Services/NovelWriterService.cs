@@ -33,9 +33,9 @@ public class NovelWriterService(IConfiguration configuration) : INovelWriter
     public event EventHandler<ReadOnlyMemory<byte>?>? SendAudioResponse;
     public event EventHandler<AudioState>? SendAudioStateUpdate;
 
-    public async Task<NovelInfo> ReverseEngineerNovel(string directoryPath, int volume, string title)
+    public async Task<NovelInfo> ReverseEngineerNovel(string epubFileData, string title)
 	{
-		var chapters = ReverseWriterService.ParseNovelChapters(directoryPath).Where(x => x.Volume == volume).ToList();
+		var chapters = ReverseWriterService.ParseEpubChapters(epubFileData);
 		var kernel = CreateKernel();
 		var chapterOuts = new List<ChapterOutline>();
         var settings = new OpenAIPromptExecutionSettings() { MaxTokens = 2048 };

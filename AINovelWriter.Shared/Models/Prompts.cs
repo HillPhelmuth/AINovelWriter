@@ -285,9 +285,9 @@ namespace AINovelWriter.Shared.Models
 			""";
 		public const string OutlineReversePrompt =
 			"""
-			Write an outline of the chapter using the format below.
+			Write an outline of the chapter using the format below. Only include accurate information from the Chapter Text
 			
-			# Outline of a Chapter
+			# Format
 					
 			## Chapter 1: {Name of Chapter}
 					
@@ -304,7 +304,7 @@ namespace AINovelWriter.Shared.Models
 			 - _Purpose:_ The chapter should contribute to the overall plot of the novel. It should move the story forward, even if subtly.
 			 - _Conflict and Tension:_ Introduce or escalate conflict, whether internal or external. This creates tension and keeps the reader invested.
 						
-			 # Chapter Text
+			 # Chapter Text to use
 			 ```
 			 {{$novel_chapter}}
 			 ```
