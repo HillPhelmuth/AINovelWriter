@@ -23,14 +23,11 @@ public interface ITextToSpeechService
 
 public interface INovelWriterStreaming : ITextToSpeechService
 {
-    event Action<string>? SendChapters;
-    event EventHandler<string>? SendChapterText;
+    event Action<string>? SendOutline;
+    event EventHandler<ChapterEventArgs>? SendChapterText;
     event EventHandler<string>? TextToImageUrl;
 	IAsyncEnumerable<string> WriteNovel(string outline, string authorStyle = "", AIModel aiModel = AIModel.Gpt4O,
 		CancellationToken cancellationToken = default);
-
-	event EventHandler<string>? SendTitle;
-    event EventHandler<ReadOnlyMemory<byte>?>? SendAudioResponse;
 }
 public interface INovelWriter : INovelWriterService, INovelWriterStreaming
 {
@@ -39,4 +36,6 @@ public interface INovelWriter : INovelWriterService, INovelWriterStreaming
     Task<Feedback> ProvideRewriteFeedback(string chapterText, AIModel aiModel = AIModel.GeminiFlash, string? additionalInstructions = null);
     Task<string> RewriteChapter(ChapterOutline chapterOutline, Feedback feedback, AIModel aiModel = AIModel.GeminiFlash);
     Task<NovelInfo> ReverseEngineerNovel(string epubFileData, string title);
+    IAsyncEnumerable<string> ReviewFullNovel(NovelInfo novel, ReviewContext reviewContext,
+        AIModel aiModel = AIModel.Gpt4O);
 }

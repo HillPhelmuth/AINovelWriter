@@ -26,36 +26,35 @@ namespace AINovelWriter.Shared.Services;
 
 public class NovelWriterService(IConfiguration configuration) : INovelWriter
 {
-    public event Action<string>? SendChapters;
-    public event EventHandler<string>? SendChapterText;
+    public event Action<string>? SendOutline;
+    public event EventHandler<ChapterEventArgs>? SendChapterText;
     public event EventHandler<string>? TextToImageUrl;
-    public event EventHandler<string>? SendTitle;
     public event EventHandler<ReadOnlyMemory<byte>?>? SendAudioResponse;
     public event EventHandler<AudioState>? SendAudioStateUpdate;
 
     public async Task<NovelInfo> ReverseEngineerNovel(string epubFileData, string title)
-	{
-		var chapters = ReverseWriterService.ParseEpubChapters(epubFileData);
-		var kernel = CreateKernel();
-		var chapterOuts = new List<ChapterOutline>();
+    {
+        var chapters = ReverseWriterService.ParseEpubChapters(epubFileData);
+        var kernel = CreateKernel();
+        var chapterOuts = new List<ChapterOutline>();
         var settings = new OpenAIPromptExecutionSettings() { MaxTokens = 2048 };
         Console.WriteLine($"ReverseEngineerNovel Chapters: {chapters.Count}");
         foreach (var chapter in chapters)
-		{
+        {
             Console.WriteLine($"Chapter Tokens: {StringHelpers.GetTokens200K(chapter.Text)}");
-			var args = new KernelArguments(settings) { ["novel_chapter"] = chapter.Text };
-			var chapterOutline = await kernel.InvokePromptAsync<string>(Prompts.OutlineReversePrompt, args);
-			chapter.Outline = chapterOutline;
-			chapterOuts.Add(new ChapterOutline($"Chapter: 00{chapter.Part}-{chapter.Chapter}", chapter.Outline){FullText = chapter.Text});
-		}
+            var args = new KernelArguments(settings) { ["novel_chapter"] = chapter.Text };
+            var chapterOutline = await kernel.InvokePromptAsync<string>(Prompts.OutlineReversePrompt, args);
+            chapter.Outline = chapterOutline;
+            chapterOuts.Add(new ChapterOutline($"Chapter {chapter.Chapter}: {chapter.Title}", chapter.Outline) { FullText = chapter.Text });
+        }
         var novelInfo = new NovelInfo
         {
             Outline = string.Join("\n", chapters.Select(x => x.Outline)),
-            Text = string.Join("\n", chapters.Select(x => x.Text)), 
+            Text = string.Join("\n", chapters.Select(x => x.Text)),
             ChapterOutlines = chapterOuts,
             Title = title
         };
-        const string Prompt = """
+        const string prompt = """
                               You are a novel Summarizer. Given a novel outline, provide a summary using the following json output format:
                               ## Output
                               Your output must be in json using the following format:
@@ -71,17 +70,17 @@ public class NovelWriterService(IConfiguration configuration) : INovelWriter
                               
                               {{ $novel }}
                               """;
-        
+
         var novelArgs = new KernelArguments(settings) { ["novel"] = novelInfo.Outline };
-        var json = await kernel.InvokePromptAsync<string>(Prompt, novelArgs);
+        var json = await kernel.InvokePromptAsync<string>(prompt, novelArgs);
         //var concepts = JsonSerializer.Deserialize<NovelConcepts>(json.Replace("```json", "").Replace("```", "").Trim('\n'));
         //concepts.Title = title;
-        novelInfo.ConceptDescription =json;
+        novelInfo.ConceptDescription = json;
         //var args = new KernelArguments() { ["novel_chapter"] = JsonSerializer.Serialize(chapters) };
         //var novelInfo = await reverseEngineerFunc.InvokeAsync<NovelInfo>(kernel, args);
         return novelInfo;
-	}
-	public async Task<NovelConcepts> GenerateNovelIdea(GenreCategoryItem genre, List<Genre> subgenres)
+    }
+    public async Task<NovelConcepts> GenerateNovelIdea(GenreCategoryItem genre, List<Genre> subgenres)
     {
         var random = new Random();
         var roll = random.Next(1, 7);
@@ -182,7 +181,7 @@ public class NovelWriterService(IConfiguration configuration) : INovelWriter
         var summarizeChapterFunc = plugin["SummarizeChapter"];
         var summaryBuilder = new StringBuilder();
         var previousChapter = "none, 1st chapter";
-        SendChapters?.Invoke(JsonSerializer.Serialize(chapters));
+        SendOutline?.Invoke(JsonSerializer.Serialize(chapters));
         foreach (var chapter in chapters)
         {
             if (cancellationToken.IsCancellationRequested) break;
@@ -206,7 +205,7 @@ public class NovelWriterService(IConfiguration configuration) : INovelWriter
                 yield return token;
                 chapterText += token;
             }
-            SendChapterText?.Invoke(this, chapterText);
+
             //SendTitle?.Invoke(this, "\n\n  ");
             yield return "\n\n  ";
             //AdditionalAgentText?.Invoke($"<p>{chapterText}</p>");
@@ -216,7 +215,8 @@ public class NovelWriterService(IConfiguration configuration) : INovelWriter
                 ["chapterText"] = chapterText
             };
             var summary = await summarizeChapterFunc.InvokeAsync<string>(kernel, summarizeArgs, cancellationToken);
-            summaryBuilder.AppendLine(chapterText);
+            SendChapterText?.Invoke(this, new ChapterEventArgs(chapterText, summary!));
+            summaryBuilder.AppendLine(summary);
 
         }
         //var image = await TextToImage(outline);
@@ -225,7 +225,7 @@ public class NovelWriterService(IConfiguration configuration) : INovelWriter
     public async IAsyncEnumerable<string> WriteChapterStreaming(Kernel kernel, KernelArguments args, AIModel aiModel, string authorStyle = "", [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         var settings = GetWritingSettingsFromModel(aiModel);
-        
+
         var chat = kernel.GetRequiredService<IChatCompletionService>();
         var systemMessage = $"""
                              You are a creative and exciting fiction writer. You write intelligent, detailed and engrossing novels that expertly combine character development and growth, interpersonal and international intrigue, and thrilling action. You are tasked with writing a chapter for a novel. Ensure the chapter is engaging, cohesive, and well-structured. Your writing should always contain as much detail as possible. Always write with characters first, preferring dialog over exposition. Most importantly, follow the provided Writing Guide.
@@ -276,10 +276,10 @@ public class NovelWriterService(IConfiguration configuration) : INovelWriter
         var settings = GetRewriteSettingsFromModel(aiModel);
         var args = new KernelArguments(settings) { ["chapterText"] = chapterText, ["notes"] = additionalInstructions };
         var result = await kernel.InvokePromptAsync<string>(Prompts.ChapterImprovementPrompt, args);
-        
+
         var formattedResult = result!.Replace("```json", "").Replace("```", "").Trim('\n');
         Console.WriteLine($"Feedback:\n--------------------------------------------\n{formattedResult}\n--------------------------------------------\n");
-		var feedback = JsonSerializer.Deserialize<Feedback>(formattedResult);
+        var feedback = JsonSerializer.Deserialize<Feedback>(formattedResult);
         return feedback!;
     }
     public async Task<string> RewriteChapter(ChapterOutline chapterOutline, Feedback feedback,
@@ -294,7 +294,17 @@ public class NovelWriterService(IConfiguration configuration) : INovelWriter
 
         return rewrittenChapter;
     }
+    public IAsyncEnumerable<string> ReviewFullNovel(NovelInfo novel, ReviewContext reviewContext,
+        AIModel aiModel = AIModel.Gpt4O)
+    {
+        var kernel = CreateKernel(aiModel);
+        var promptTemplate = reviewContext == ReviewContext.None ? Prompts.NovelFullCoverageReviewPrompt : Prompts.NovelContextSpecificReviewPrompt;
+        var reviewNovelFunc = KernelFunctionFactory.CreateFromPrompt(promptTemplate);
+        var contextPrompt = reviewContext.GetPromptContext();
 
+        var args = new KernelArguments() { ["novelText"] = novel.Text, ["context"] = contextPrompt };
+        return reviewNovelFunc.InvokeStreamingAsync<string>(kernel, args);
+    }
     private static PromptExecutionSettings GetWritingSettingsFromModel(AIModel model)
     {
         var providor = model.GetModelProvidors().FirstOrDefault();
@@ -311,9 +321,9 @@ public class NovelWriterService(IConfiguration configuration) : INovelWriter
         var providor = model.GetModelProvidors().FirstOrDefault();
         return providor switch
         {
-            "GoogleAI" => new GeminiPromptExecutionSettings { },
+            "GoogleAI" => new GeminiPromptExecutionSettings {  },
             "MistralAI" => new MistralAIPromptExecutionSettings { },
-            "OpenAI" or "AzureOpenAI" => new OpenAIPromptExecutionSettings { ChatSystemPrompt = "Provide feedback as a novel editor. Locate the flaws and provide notes for a re-write, if necessary. Use json format in response", Temperature = 0.7 },
+            "OpenAI" or "AzureOpenAI" => new OpenAIPromptExecutionSettings { ChatSystemPrompt = "Provide feedback as a novel editor. Locate the flaws and provide notes for a re-write, if necessary. Use json format in response", Temperature = 0.7, ResponseFormat = "json_object"},
             _ => new OpenAIPromptExecutionSettings { Temperature = 0.7 }
         };
     }
@@ -478,7 +488,7 @@ public class NovelWriterService(IConfiguration configuration) : INovelWriter
         return providor switch
         {
             "GoogleAI" => new GeminiPromptExecutionSettings { ExtensionData = new Dictionary<string, object> { ["responseMimeType"] = "application/json" }, MaxTokens = maxTokens, Temperature = tempurature },
-            "MistralAI" => new MistralAIPromptExecutionSettings { MaxTokens = maxTokens, Temperature = tempurature, ExtensionData = new Dictionary<string, object> { ["response_format"] = new {type = "json_object" } }, },
+            "MistralAI" => new MistralAIPromptExecutionSettings { MaxTokens = maxTokens, Temperature = tempurature, ExtensionData = new Dictionary<string, object> { ["response_format"] = new { type = "json_object" } }, },
             "OpenAI" or "AzureOpenAI" => new OpenAIPromptExecutionSettings { MaxTokens = maxTokens, Temperature = tempurature, ResponseFormat = "json_object" },
             _ => new OpenAIPromptExecutionSettings { MaxTokens = maxTokens, Temperature = tempurature }
         };

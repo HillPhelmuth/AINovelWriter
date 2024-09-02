@@ -1,6 +1,10 @@
+﻿using System.Text;
 ﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 using AINovelWriter.Shared.Models;
 using AINovelWriter.Shared.Services;
+using Microsoft.AspNetCore.Components;
+using Radzen;
 
 namespace AINovelWriter.Web.Pages;
 
@@ -51,7 +55,11 @@ public partial class Home
         AppState.NovelInfo.IsComplete = true;
         AppState.NovelOutline.Outline = AppState.NovelInfo.Outline;
         _isBusy = false;
-        _isBusy = false;
+       var isNavigate = await DialogService.Confirm("Sometimes and epub file will be extracted with unnecessary chapters and sections. It's often best to modify or remove them.<br/> Do you want to edit to the uploaded novel?", "Edit Novel Upload");
+        if (isNavigate == true)
+        {
+            NavigationManager.NavigateTo("/edit/2");
+        }
 		StateHasChanged();
 	}
 	// Extract base64 string from data url

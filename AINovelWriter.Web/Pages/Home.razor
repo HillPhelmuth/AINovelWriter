@@ -14,20 +14,19 @@
 				<RadzenText TextStyle="TextStyle.Body1">If your laziness is not limited to writing, but extends to reading as well, we've got you covered! Let an AI read the story to you, just as a parent would a child!</RadzenText>
 				<br />
 				<RadzenButton Style="margin-left:auto; margin-right:auto" Click="@(() => NavigationManager.NavigateTo("concept"))" Text="Get Started!"></RadzenButton>
-			</RadzenCard>
-			@* @if (_isCheat)
-			{
-				<RadzenButton Style="margin-left:auto; margin-right:auto" Text="Cheat" Click="Cheat" IsBusy="_isBusy" BusyText="Cheating..."></RadzenButton>
-			} *@
-            <RadzenToggleButton Style="margin-left:auto; margin-right:auto" @bind-Value="_isReverse" Text="@(_isReverse ? "Start Novel" : "Upload Novel")"></RadzenToggleButton>
+                <RadzenLabel Style="margin-left:auto; margin-right:auto">
+                    <RadzenCheckBox @bind-Value="_isReverse"></RadzenCheckBox>
+                    @(_isReverse ? "Start Novel" : "Upload Novel")
+                </RadzenLabel>
 			@if (_isReverse)
             {
 				<RadzenTemplateForm Style="margin-left:auto; margin-right:auto" Data="_fileUploadForm" TItem="FileUploadForm" Submit="UploadEpub">
                     <RadzenFileInput ChooseText="Upload Epub" Accept="*" Name="File" @bind-Value="@_fileUploadForm.FileContent" @bind-FileName="@_fileUploadForm.FileName" @bind-FileSize="_fileUploadForm.FileSize"></RadzenFileInput>
-					<RadzenCustomValidator Component="File" Validator="@(() => _fileUploadForm.FileName.Contains(".epub"))" Text="Upload epub file"></RadzenCustomValidator>
-                    <RadzenButton ButtonType="ButtonType.Submit" Text="Upload and Submit" IsBusy="_isBusy" BusyText="Reverse Engineering..."></RadzenButton>
+                        @*  <RadzenCustomValidator Component="File" Validator="@(() => _fileUploadForm.FileName.Contains(".epub"))" Text="Upload epub file"></RadzenCustomValidator> *@
+                        <RadzenButton Visible="@(_fileUploadForm.FileName?.Contains(".epub") == true)" ButtonType="ButtonType.Submit" Text="Upload and Submit" IsBusy="_isBusy" BusyText="Reverse Engineering..."></RadzenButton>
                 </RadzenTemplateForm>
             }
 		</RadzenCard>
+        </RadzenCard>
 	</RadzenColumn>
 </RadzenRow>

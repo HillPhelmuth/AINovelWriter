@@ -10,7 +10,7 @@ namespace AINovelWriter.Shared.Plugins;
 
 public class NovelWriterPlugin(AIModel aIModel = AIModel.Gpt4O)
 {
-    public const string SummaryPrompt = "Summarize all the character details and plot events in the novel chapter. Summarize chapter by chapter:```\n {{$novel_chapter}} \n ```";
+    public const string SummaryPrompt = "Summarize the following chapter, focusing on character development, plot progression, and important details. Include specific actions, emotions, and relationships that are revealed. Pay attention to any shifts in character motivations or relationships. The summary should be detailed and insightful, providing more than just a basic overview of the events. \n\n```\n {{$novel_chapter}} \n ```";
     private AIModel _aIModel = aIModel;
 
 	[KernelFunction, Description("Write a chapter of a novel based on the provided outline, previous chapter, and summary of the full novel so far")]

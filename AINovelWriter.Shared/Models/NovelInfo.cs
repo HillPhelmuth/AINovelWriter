@@ -64,4 +64,10 @@ public record ChapterOutline(string Title, string Text)
 {
 	public string? FullText { get; set; }
 	public bool ShowAudio { get; set; }
+	public string? Summary { get; set; }
+}
+public class ChapterEventArgs(string chapterText, string chapterSummary) : EventArgs
+{
+	public string ChapterText { get; set; } = chapterText;
+    public string ChapterSummary { get; set; } = chapterSummary;
 }
