@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
 using System.ComponentModel;
 using System.Text.Json;
+using Radzen;
 
 namespace AINovelWriter.Web.Shared;
 
@@ -21,14 +22,16 @@ public abstract class AppComponentBase : ComponentBase, IDisposable
 	protected NavigationManager NavigationManager { get; set; } = default!;
     [Inject]
     protected CosmosService CosmosService { get; set; } = default!;
-    [CascadingParameter]
+	[Inject]
+	protected DialogService DialogService { get; set; } = default!;
+	[CascadingParameter]
 	protected Task<AuthenticationState>? AuthenticationState { get; set; }
 	protected bool IsNovelComplete { get; set; }
 	protected override async Task OnInitializedAsync()
 	{
 		AppState.PropertyChanged += HandlePropertyChanged;
 		NovelWriterService.SendChapterText += HandleChapterFullText;
-		NovelWriterService.SendChapters += HandleChapterOutline;
+		NovelWriterService.SendOutline += HandleChapterOutline;
         if (AuthenticationState is not null && !string.IsNullOrEmpty(AppState.UserData.UserName))
         {
             var state = await AuthenticationState;
@@ -71,10 +74,11 @@ public abstract class AppComponentBase : ComponentBase, IDisposable
 		StateHasChanged();
 	}
 	private int _chapterIndex;
-	protected void HandleChapterFullText(object? sender, string args)
+	protected void HandleChapterFullText(object? sender, ChapterEventArgs args)
 	{
-		AppState.NovelInfo.ChapterOutlines[_chapterIndex].FullText = args;
-		_chapterIndex++;
+		AppState.NovelInfo.ChapterOutlines[_chapterIndex].FullText = args.ChapterText;
+		AppState.NovelInfo.ChapterOutlines[_chapterIndex].Summary = args.ChapterSummary;
+        _chapterIndex++;
 		StateHasChanged();
 	}
 	private void HandleImageGen(object? sender, string url)
@@ -101,7 +105,7 @@ public abstract class AppComponentBase : ComponentBase, IDisposable
 		{
 			AppState.PropertyChanged -= HandlePropertyChanged;
 			NovelWriterService.SendChapterText -= HandleChapterFullText;
-			NovelWriterService.SendChapters -= HandleChapterOutline;
+			NovelWriterService.SendOutline -= HandleChapterOutline;
 			NovelWriterService.TextToImageUrl -= HandleImageGen;
 		}
 	}

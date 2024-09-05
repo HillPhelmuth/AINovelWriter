@@ -12,6 +12,10 @@ public partial class EditNovel
     private List<ChapterOutline> ChapterOutlines => AppState.NovelInfo.ChapterOutlines;
     
     private static Dictionary<AIModel, string> AIModelDescriptions => GetEnumsWithDescriptions<AIModel>().ToDictionary(x => x.Key, y => y.Value);
+    private static Dictionary<ReviewContext, string> ReviewContextDescriptions => GetEnumsWithDescriptions<ReviewContext>().ToDictionary(x => x.Key, y => y.Value);
+
+    
+
     private class EditNovelForm
     {
         public ChapterOutline? ChapterOutline { get; set; }
@@ -19,6 +23,11 @@ public partial class EditNovel
         public AIModel AIModel { get; set; }
     }
 
+    private class ReviewNovelForm
+    {
+        public AIModel AIModel { get; set; }
+        public ReviewContext ReviewContext { get; set; }
+    }
    
     private EditNovelForm _editNovelForm = new();
     private Feedback? _feedback;
@@ -31,6 +40,36 @@ public partial class EditNovel
     private ApplySuggestionForm _applySuggestionForm = new();
     private bool _isBusy;
     private string _originalText = "";
+    private string _fullReviewText = "";
+    private ReviewNovelForm _reviewNovelForm = new();
+
+    [Parameter]
+    public int SelectedTabIndex { get; set; }
+
+    protected override Task OnParametersSetAsync()
+    {
+        if (SelectedTabIndex > 0)
+        {
+            StateHasChanged();
+        }
+        return base.OnParametersSetAsync();
+    }
+
+    private async Task FullReview(ReviewNovelForm form)
+    {
+        _isBusy = true;
+        StateHasChanged();
+        await Task.Delay(1);
+        var model = form.AIModel;
+        _fullReviewText = "";
+        await foreach (var review in NovelWriterService.ReviewFullNovel(AppState.NovelInfo, form.ReviewContext, model))
+		{
+			_fullReviewText += review;
+			await InvokeAsync(StateHasChanged);
+		}
+        _isBusy = false;
+        StateHasChanged();
+    }
     private async void GetFeedback(EditNovelForm form)
     {
         _isBusy = true;
@@ -67,18 +106,19 @@ public partial class EditNovel
         AppState.NovelInfo.Text = string.Join("\n\n", ChapterOutlines.Select(x => x.FullText));
         AppState.NovelInfo.TextPages.Clear();
     }
-    private class ChapterTextEdit(string orignalTitle, string originalText)
+    private class ChapterTextEdit(string orignalTitle, string originalText, string outlineText)
     {
         public string OriginalText { get; } = originalText;
         public string OriginalTitle { get; } = orignalTitle;
         public string NewTitle { get; set; } = orignalTitle;
         public string NewText { get; set; } = originalText;
+        public string OutlineText { get; } = outlineText;
     }
 
     private ChapterTextEdit? _chapterTextEdit;
     private void EditChapter(ChapterOutline chapterOutline)
     {
-        _chapterTextEdit = new ChapterTextEdit(chapterOutline.Title, chapterOutline.FullText);
+        _chapterTextEdit = new ChapterTextEdit(chapterOutline.Title, chapterOutline.FullText, chapterOutline.Text);
         StateHasChanged();
     }
     private async void SubmitEdit(ChapterTextEdit chapterTextEdit)
@@ -86,11 +126,25 @@ public partial class EditNovel
         var confirm = await DialogService.Confirm("Are you sure you want to save these changes?", "Save Changes");
         if (confirm != true) return;
         var originalChapter = AppState.NovelInfo.ChapterOutlines.First(x => x.Title == chapterTextEdit.OriginalTitle);
-        var newChapter = new ChapterOutline(chapterTextEdit.NewTitle, chapterTextEdit.NewText){FullText = chapterTextEdit.NewText};
+        var newChapter = new ChapterOutline(chapterTextEdit.NewTitle, chapterTextEdit.OutlineText){FullText = chapterTextEdit.NewText};
         AppState.NovelInfo.ChapterOutlines[AppState.NovelInfo.ChapterOutlines.IndexOf(originalChapter)] = newChapter;
         AppState.NovelInfo.Text = string.Join("\n\n", ChapterOutlines.Select(x => x.FullText));
         AppState.NovelInfo.TextPages.Clear();
+        AppState.NovelInfo.Outline = string.Join("\n\n", ChapterOutlines.Select(x => x.Text));
+        AppState.NovelOutline.Outline = AppState.NovelInfo.Outline;
         _chapterTextEdit = null;
+        StateHasChanged();
+    }
+
+    private async Task DeleteChapter(ChapterOutline chapterOutline)
+    {
+        var confirm = await DialogService.Confirm("Are you sure you want to delete this chapter?", "Delete Chapter");
+        if (confirm != true) return;
+        AppState.NovelInfo.ChapterOutlines.Remove(chapterOutline);
+        AppState.NovelInfo.Text = string.Join("\n\n", ChapterOutlines.Select(x => x.FullText));
+        AppState.NovelInfo.TextPages.Clear();
+        AppState.NovelInfo.Outline = string.Join("\n\n", ChapterOutlines.Select(x => x.Text));
+        AppState.NovelOutline.Outline = AppState.NovelInfo.Outline;
         StateHasChanged();
     }
 }

@@ -12,19 +12,7 @@ public enum AIModel
     [ModelProvidor("OpenAI")]
     [ModelProvidor("AzureOpenAI")]
 	Gpt4Mini,
-	[ModelName("gpt-3.5-turbo")]
-	[AzureOpenAIModel("gpt-35-turbo")]
-	[Description("Latest gpt-3.5-turbo")]
-	[ModelProvidor("OpenAI")]
-	[ModelProvidor("AzureOpenAI")]
-	Gpt35Turbo,
-	[ModelName("gpt-4-turbo")]
-    [AzureOpenAIModel("gpt-4")]
-    [Description("Latest gpt-4-turbo")]
-    [ModelProvidor("OpenAI")]
-    [ModelProvidor("AzureOpenAI")]
-	Gpt4Turbo,
-    [ModelName("gpt-4o-2024-08-06")]
+	[ModelName("gpt-4o-2024-08-06")]
     [AzureOpenAIModel("gpt-4o")]
     [Description("Latest gpt-4o")]
     [ModelProvidor("OpenAI")]
@@ -33,7 +21,19 @@ public enum AIModel
 	[ModelName("chatgpt-4o-latest")]
 	[Description("Dynamic gpt-4o")]
 	[ModelProvidor("OpenAI")]
-	Gpt4OChatGptLatest,
+	Gpt4OChatGptLatest,//ft:gpt-4o-mini-2024-07-18:hillphelmuth:novel-gen-mini:A138kqIT
+    [ModelName("gpt-3.5-turbo")]
+    [AzureOpenAIModel("gpt-35-turbo")]
+    [Description("Latest gpt-3.5-turbo")]
+    [ModelProvidor("OpenAI")]
+    [ModelProvidor("AzureOpenAI")]
+    Gpt35Turbo,
+    [ModelName("gpt-4-turbo")]
+    [AzureOpenAIModel("gpt-4")]
+    [Description("Latest gpt-4-turbo")]
+    [ModelProvidor("OpenAI")]
+    [ModelProvidor("AzureOpenAI")]
+    Gpt4Turbo,
     [ModelName("gemini-pro")]
     [Description("Latest Gemini 1.0 Pro")]
     [ModelProvidor("GoogleAI")]
@@ -42,7 +42,7 @@ public enum AIModel
     [Description("Latest Gemini 1.5 Pro")]
     [ModelProvidor("GoogleAI")]
 	Gemini15,
-	[ModelName("gemini-1.5-pro-exp-0801")]
+	[ModelName("gemini-1.5-pro-exp-0827")]
 	[Description("Experimental Gemini 1.5 Pro")]
 	[ModelProvidor("GoogleAI")]
 	Gemini15Exp,
@@ -87,4 +87,11 @@ public class AzureOpenAIModelAttribute(string model) : Attribute
 public class ModelProvidorAttribute(string providor) : Attribute
 {
     public string Providor { get; set; } = providor;
+}
+
+
+[AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
+public sealed class PromptAttribute(string promptText) : Attribute
+{
+    public string PromptText { get; } = promptText;
 }

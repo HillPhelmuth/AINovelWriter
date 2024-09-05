@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Text;
 
 namespace AINovelWriter.Shared.Models;
 
@@ -53,6 +54,16 @@ public static class EnumHelpers
 			.ToList();
 		return enumList;
 	}
+
+    public static string GetPromptContext(this ReviewContext context)
+    {
+        var sb = new StringBuilder();
+        var description = context.GetDescription();
+        var prompt = context.GetPromptText();
+        sb.AppendLine($"**Context Description:** {description}");
+        sb.AppendLine($"**Context specific instruction:** {prompt}");
+        return sb.ToString();
+    }
     public static string GetDescription(this Enum value)
     {
         var fi = value.GetType().GetField(value.ToString());
@@ -67,6 +78,13 @@ public static class EnumHelpers
 
 		return attributes is { Length: > 0 } ? attributes[0].DisplayName : value.ToString();
 	}
+    public static string GetPromptText(this Enum value)
+    {
+        var fi = value.GetType().GetField(value.ToString());
+        var attributes = (PromptAttribute[])fi.GetCustomAttributes(typeof(PromptAttribute), false);
+
+        return attributes is { Length: > 0 } ? attributes[0].PromptText : string.Empty;
+    }
     public static List<string> GetSubGenreList(this NovelGenre genre)
     {
         var fi = genre.GetType().GetField(genre.ToString());

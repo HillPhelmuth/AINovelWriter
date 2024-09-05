@@ -33,7 +33,8 @@ public partial class UserProfile
 			Dialog.Close();
         }
 		AppState.NovelInfo = novel;
-        AppState.NovelOutline.Outline = novel.Outline;
+        AppState.NovelOutline.Outline = string.Join("\n\n", AppState.NovelInfo.ChapterOutlines.Select(x => x.Text));
+		AppState.NovelInfo.Outline = AppState.NovelOutline.Outline;
         Dialog.Close();
 	}
 	private async Task DeleteNovel(UserNovelData userNovelData)

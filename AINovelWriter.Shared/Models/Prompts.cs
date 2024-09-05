@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace AINovelWriter.Shared.Models
 {
-	public class Prompts
-	{
-		public class Authors
-		{
-			public const string JoeAbercrombie =
-				"""
+    public class Prompts
+    {
+        public class Authors
+        {
+            public const string JoeAbercrombie =
+                """
 				Joe Abercrombie is a British fantasy author who has gained a strong following for his gritty, realistic approach to the genre. His writing style, often described as "grimdark," subverts many traditional fantasy tropes.
 				**Key aspects of Abercrombie's action writing:**
 				
@@ -24,8 +24,8 @@ namespace AINovelWriter.Shared.Models
 				Notable works include "The First Law" trilogy and the standalone novels set in the same world, such as "The Heroes," which is essentially one long battle scene.
 				""";
 
-			public const string LeeChild =
-				"""
+            public const string LeeChild =
+                """
 				Lee Child, born James Dover Grant,  best known for his Jack Reacher thriller series. 
 				**Key aspects of Child's action writing:**
 				
@@ -37,8 +37,8 @@ namespace AINovelWriter.Shared.Models
 				
 				The Jack Reacher series has been hugely successful, with many of the books adapted into films and a streaming series. Child's writing style, particularly his action scenes, has been praised for its engaging, cinematic quality.
 				""";
-			public const string StevenErikson =
-				"""
+            public const string StevenErikson =
+                """
 			    Steven Erikson (Malazan Book of the Fallen)
 			    **Key aspects of action writing style:**
 			    1 Epic Scale and Scope: Erikson's battles are often sprawling, involving hundreds, thousands, even tens of thousands of combatants. He masterfully orchestrates these massive conflicts, shifting perspectives between individual soldiers, squad leaders, and overall commanders, giving the reader a sense of the vastness and chaos of war.
@@ -47,8 +47,8 @@ namespace AINovelWriter.Shared.Models
 			    4. Intricate and Layered: Erikson's battles are often complex and multi-layered, with shifting alliances, hidden agendas, and unexpected twists. He keeps the reader guessing, constantly raising the stakes and challenging expectations.                                
 			    """;
 
-			public const string BrandonSanderson =
-				"""
+            public const string BrandonSanderson =
+                """
 				Brandon Sanderson (Mistborn, Stormlight Archive)
 				**Key aspects of action writing style:**
 				1. Clarity and Precision: Sanderson's fight scenes are known for their clarity and precision. He meticulously describes the movements and techniques of his characters, making the action easy to follow and visualize.
@@ -56,9 +56,9 @@ namespace AINovelWriter.Shared.Models
 				3. Emphasis on Strategy and Tactics: Sanderson's battles are not just about brute force; they often involve clever strategies and tactical maneuvers. His characters use their unique abilities and the environment to their advantage, creating dynamic and engaging confrontations.
 				4. Focus on Character Growth: Sanderson uses action scenes as opportunities for character development. His characters often face overwhelming odds and must overcome their limitations to succeed. These trials forge them into stronger, more capable individuals.                          
 				""";
-		}
-		public const string ChapterOutlineEditorPrompt =
-			"""
+        }
+        public const string ChapterOutlineEditorPrompt =
+            """
 			# Objective
 			You are an assistant for a novel author. You have been tasked with expanding the outline for the next chapter of a novel. The author has provided you the details for the next chapter and overall story elements. Your job is to expand the details into a more detailed chapter outline with 3 distinct sections. Each section should be in a similar format of the chapter outline and contain **setting**, **character development**, **key events**.
 			Your response should always begin with the chapter name using markdown header 2 (e.g. ## Chapter 1 - The Beginning), and then use a markdown line (`---`) to distinguish each sections.
@@ -106,8 +106,67 @@ namespace AINovelWriter.Shared.Models
             
             """;
 
+        public const string NovelFullCoverageReviewPrompt =
+            """
+	        ## Instructions
+	        
+	        Provide comprehensive novel coverage for the following novel. I would like the coverage to be as detailed and insightful as possible, utilizing your advanced capabilities. Please adhere to the following structure:
+	        
+	        ## Output structure
+	        
+	        1. **Logline:** Craft a concise and compelling logline that captures the essence of the story.
+	        
+	        2. **Synopsis:** Provide a detailed synopsis of the plot, highlighting key turning points and character arcs.
+	        
+	        3. **Strengths:** Identify and elaborate on the novel's most impressive aspects. This may include elements such as:
+	        
+	        - **Concept:** Originality, marketability, and overall appeal of the story idea
+	        - **Characters:** Depth, development, believability, and relatability of the characters
+	        - **Structure:** Pacing, plot construction, act breaks, and overall narrative flow
+	        - **Dialogue:** Naturalness, wit, subtext, and contribution to character development
+	        - **Theme:** Clarity, relevance, and impact of the underlying message(s)
+	        - **Emotional Impact:** Ability to evoke emotions, create tension, and resonate with the audience
+	        
+	        4. **Weaknesses:** Pinpoint areas where the novel could be improved, offering constructive solutions. Potential areas of focus could be:
+	        
+	        - **Plot Holes:** Inconsistencies, illogical developments, or unresolved storylines
+	        - **Character Motivations:** Unclear or unconvincing reasons behind character actions
+	        - **Pacing Issues:** Scenes or sequences that drag or feel rushed
+	        - **Dialogue Problems:** Stilted, unnatural, or on-the-nose conversations
+	        - **Lack of Clarity:** Confusing plot points, underdeveloped themes, or ambiguous character arcs
+	        
+	        5. **Overall Assessment & Recommendation:** Summarize your evaluation of the novel's potential. Provide a clear recommendation on whether the novel is considered:
+	        
+	        - **Pass:** The novel has significant flaws and requires substantial revisions.
+	        - **Consider:** The novel shows promise but needs further development and refinement.
+	        - **Recommend:** The novel is strong and ready to be moved forward in the development process.
+	        - **Additional Considerations:**
+	        
+	        Please provide specific examples from the novel to support your analysis in each section.
+	        Feel free to comment on any other aspects of the novel that you deem relevant, such as genre conventions or target audience.
+	        
+	        ## Novel Text
+	        ```
+	        {{ $novelText }}
+	        ```
+	        """;
+
+        public const string NovelContextSpecificReviewPrompt =
+            """
+            ## Instructions
+            Write a review of the novel below. Use the context instructions to guide your review. Always start with a concise and compelling **logline** that captures the essence of the story and a detailed **synopsis** of the plot, highlighting key turning points and character arcs.
+            
+            ## Context Instructions
+            
+            {{ $context }}
+            
+            ## Novel Text
+            ```
+            {{ $novelText }}
+            ```
+            """;
         public const string ChapterRewritePrompt =
-			$$$"""
+            $$$"""
             ## Instructions
             
             - Rewrite the chapter below by applying the Feedback suggestions. 
@@ -136,7 +195,7 @@ namespace AINovelWriter.Shared.Models
             {{ $chapterText }}
                                         
             """;
-		public const string ChapterWriterPrompt =
+        public const string ChapterWriterPrompt =
             $$$"""
 			## Instructions
 			         
@@ -186,8 +245,8 @@ namespace AINovelWriter.Shared.Models
 			
 			Now, take a deep breath and start writing with an authentic voice. 
 			""";
-		public const string ChapterWriterPrompt2 =
-			$$$"""
+        public const string ChapterWriterPrompt2 =
+            $$$"""
 			## Instructions
 			         
 			1. Write only 1 long and very detailed chapter based on the Chapter Outline.
@@ -236,8 +295,8 @@ namespace AINovelWriter.Shared.Models
 			
 			Now, take a deep breath and start writing with the provided voice. 
 			""";
-		public const string OutlineWriterPrompt =
-			"""
+        public const string OutlineWriterPrompt =
+            """
 			# Objective
 
 			Write a novel outline about the theme specified in Theme or Topic. Include the characters provided in Character Details and the plot events in Plot Events.
@@ -283,11 +342,11 @@ namespace AINovelWriter.Shared.Models
 			 - _Conflict and Tension:_ Introduce or escalate conflict, whether internal or external. This creates tension and keeps the reader invested.
 			
 			""";
-		public const string OutlineReversePrompt =
-			"""
-			Write an outline of the chapter using the format below.
+        public const string OutlineReversePrompt =
+            """
+			Write an outline of the chapter using the format below. Only include accurate information from the Chapter Text
 			
-			# Outline of a Chapter
+			# Format
 					
 			## Chapter 1: {Name of Chapter}
 					
@@ -304,7 +363,7 @@ namespace AINovelWriter.Shared.Models
 			 - _Purpose:_ The chapter should contribute to the overall plot of the novel. It should move the story forward, even if subtly.
 			 - _Conflict and Tension:_ Introduce or escalate conflict, whether internal or external. This creates tension and keeps the reader invested.
 						
-			 # Chapter Text
+			 # Chapter Text to use
 			 ```
 			 {{$novel_chapter}}
 			 ```
@@ -326,7 +385,7 @@ namespace AINovelWriter.Shared.Models
             """;
 
         public const string StyleGuide =
-	        """
+            """
 	        1. **Detailed Descriptions and Proper Pace:** You will prioritize **very** detailed descriptions of the setting, characters, and events. Imagine the reader is experiencing the story through their senses – sight, sound, touch, smell, and taste. Paint a vivid picture with your words. You will also prefer a slower pace of events, focusing on character development, inner thoughts, and nuanced interactions. Allow the reader to fully immerse themselves in the world and connect with the characters on a deeper level.
 	        
 	        2. **Cinematic Action: Immerse Your Reader in the Fight:**

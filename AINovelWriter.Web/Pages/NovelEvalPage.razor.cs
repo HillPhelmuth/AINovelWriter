@@ -49,6 +49,12 @@ public partial class NovelEvalPage
         await base.OnAfterRenderAsync(firstRender);
     }
 
+    private string? GetChapterText(FlatChapterEval eval)
+    {
+        if (AppState.NovelInfo.ChapterOutlines.Count < eval.ChapterNumber)
+            return "";
+        return AppState.NovelInfo.ChapterOutlines[eval.ChapterNumber - 1].FullText;
+    }
     private async Task EvaluateNovel()
     {
         _chapterEvals.Clear();

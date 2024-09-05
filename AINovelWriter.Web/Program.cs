@@ -1,7 +1,6 @@
 using AINovelWriter.Shared.Models;
 using AINovelWriter.Shared.Services;
 using AINovelWriter.Web;
-using AINovelWriter.Web.Data;
 using Auth0.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -24,7 +23,7 @@ services.AddHttpClient();
 services.AddCascadingAuthenticationState();
 services.AddRazorComponents()
     .AddInteractiveServerComponents();
-services.AddSingleton<WeatherForecastService>();
+
 services.AddSignalR(o =>
 {
     o.MaximumReceiveMessageSize = null;
