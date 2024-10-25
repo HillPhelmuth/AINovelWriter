@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using System.Text.Json;
+using HillPhelmuth.SemanticKernel.LlmAsJudgeEvals;
 using Microsoft.SemanticKernel;
-using PromptFlowEvalsAsPlugins;
 
 namespace AINovelWriter.Evals;
 

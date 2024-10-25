@@ -8,27 +8,24 @@ execution_settings:
     presence_penalty: 0
     frequency_penalty: 0
 input_variables:
-- name: details
-  description: the details and themes provided by the user.
-  default: ''
 - name: chapter
   description: The generated chapter to evaluate.
   default: ''
 
 template: |
- Character Development measures how well the characters are portrayed and developed within the generated chapter. It involves assessing the depth, growth, and consistency of the characters in relation to the narrative. When evaluating character development, consider how well the characters are brought to life and how convincingly they evolve throughout the chapter. Given the details and chapter, mercilessly score the character development of the chapter between one to ten stars as if you were a writing critic using the following rating scale:
+ ## Evaluate Character Development (1-10 Stars) - Critical Assessment
 
-    1 star: the characters are poorly developed or inconsistent
-    5 stars: the characters are somewhat developed but lack depth or consistency
-    10 stars: the characters are professional level, fully developed, consistent, and compelling, and is the stuff of best-selling professional writing.
+ **Focus:** Analyze the portrayal and development of characters within the chapter.  Assess their depth, growth, consistency, and how effectively they are brought to life within the narrative.
 
-    This rating value should always be an integer between 1 and 10. So, the rating produced should be 1, or 2, or 3, etc.
-    Respond ONLY with the number.
-        
+ **Rating Scale (Provide ONLY the number):**
 
-   
+ * **1-3 Stars:**  Weak character development. Characters are poorly defined, inconsistent, or lack depth. 
+ * **4-6 Stars:**  Rudimentary character development. Characters show some potential but lack depth or convincing growth. 
+ * **7-9 Stars:**  Good character development. Characters are well-defined, consistent, and show believable growth within the narrative.
+ * **10 Stars:**  Exceptional character development. Characters are compelling, complex, and demonstrate a level of depth and nuance found in professional-level writing.
 
-    ## Real Work
-    details: {{$details}}
-    chapter: {{$chapter}}
-    stars:    
+ **Important:** Avoid bias towards higher scores. Actively look for weaknesses in character portrayal and development.  Be honest and critical in your assessment.
+
+ **Chapter:** {{$chapter}}
+
+ **Stars:** 

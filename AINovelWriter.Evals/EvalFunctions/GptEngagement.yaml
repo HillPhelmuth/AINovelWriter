@@ -13,16 +13,19 @@ input_variables:
   default: ''
 
 template: |
- Engagement measures how captivating and engaging the generated chapter is. It involves assessing the level of interest the chapter generates and whether it keeps the reader eager to continue reading. When evaluating engagement, consider how compelling the narrative is and how much it draws the reader in. Mercilessly score the Engagement of the chapter between one to ten stars as if you were a writing critic using the following rating scale:
+   ## Evaluate Chapter Engagement (1-10 Stars) - Critical Assessment
 
-    1 star: the chapter is dull, uninteresting, or fails to capture the reader's attention
-    5 stars: the chapter is somewhat engaging but lacks consistency in keeping the reader captivated
-    10 stars: the chapter is professional level, highly engaging, captivating, and leaves the reader eager to read more, and is the stuff of best-selling professional writing.
+   **Focus:**  Analyze the chapter's ability to captivate and engage the reader. Does it maintain interest and compel the reader to continue?  Consider the narrative's effectiveness, pacing, and ability to draw the reader in.
 
-    This rating value should always be an integer between 1 and 10. So, the rating produced should be 1, or 2, or 3, etc.
-    Respond ONLY with the number.
+   **Rating Scale (Provide ONLY the number):**
 
-          
-    ## Real Work
-    chapter: {{$chapter}}
-    stars:    
+   * **1-3 Stars:**  Fails to engage.  Dull, uninteresting, or actively repels the reader. 
+   * **4-6 Stars:**  Minimally engaging.  Some moments hold interest, but overall the chapter struggles to maintain reader engagement.  
+   * **7-9 Stars:**  Engaging and well-written.  Keeps the reader interested and invested in the narrative.
+   * **10 Stars:**  Exceptionally engaging and captivating.  Demonstrates mastery of storytelling, leaving the reader eager for more.  
+
+   **Important:**  Avoid bias towards higher scores.  Actively look for weaknesses and areas where the chapter fails to fully engage the reader.  Be honest and critical in your assessment. 
+
+   **Chapter:** {{$chapter}}
+
+   **Stars:**     

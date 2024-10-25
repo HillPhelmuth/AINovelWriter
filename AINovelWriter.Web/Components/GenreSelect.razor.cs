@@ -24,7 +24,8 @@ public partial class GenreSelect
         {
             var enumType = Category switch
             {
-                GenreCategory.LiteratureAndFiction => typeof(LiteratureAndFiction),
+                GenreCategory.GenreFiction => typeof(GenreFiction),
+                GenreCategory.ThemeFiction => typeof(ThemeFiction),
                 GenreCategory.CrimeAndThrillers => typeof(CrimeAndThrillers),
                 GenreCategory.Fantasy => typeof(Fantasy),
                 GenreCategory.ScienceFiction => typeof(ScienceFiction),

@@ -16,3 +16,13 @@ public class PromptFilter : IPromptRenderFilter
             $"Prompt Rendered:\n----------------------------------------\n{context.RenderedPrompt}\n---------------------------------\n");
     }
 }
+
+public class AutoFilter : IAutoFunctionInvocationFilter
+{
+    public async Task OnAutoFunctionInvocationAsync(AutoFunctionInvocationContext context, Func<AutoFunctionInvocationContext, Task> next)
+    {
+        Console.WriteLine($"Auto Function Invoked:\n--------------------------------------\n{context.Function.Name}\n---------------------------------\n");
+        await next(context);
+
+    }
+}

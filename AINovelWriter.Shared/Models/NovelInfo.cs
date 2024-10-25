@@ -60,11 +60,19 @@ public class NovelInfo
 	public bool IsComplete { get; set; }
  
 }
-public record ChapterOutline(string Title, string Text)
+public record ChapterOutline(string Title, string Text, int ChapterNumber)
 {
-	public string? FullText { get; set; }
+    public int ChapterNumber { get; set; } = ChapterNumber;
+    public string? FullText { get; set; }
 	public bool ShowAudio { get; set; }
 	public string? Summary { get; set; }
+    public int TokenCount => string.IsNullOrEmpty(FullText) ? 0 : StringHelpers.GetTokens200K(FullText);
+
+    public void Deconstruct(out string Title, out string Text)
+    {
+        Title = this.Title;
+        Text = this.Text;
+    }
 }
 public class ChapterEventArgs(string chapterText, string chapterSummary) : EventArgs
 {

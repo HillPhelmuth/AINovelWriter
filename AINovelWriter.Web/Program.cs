@@ -2,6 +2,7 @@ using AINovelWriter.Shared.Models;
 using AINovelWriter.Shared.Services;
 using AINovelWriter.Web;
 using Auth0.AspNetCore.Authentication;
+using ChatComponents;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components;
@@ -30,6 +31,7 @@ services.AddSignalR(o =>
 });
 services.AddNovelWriterServices(config);
 services.AddRadzenComponents();
+services.AddChat();
 builder.Services.AddAzureClients(clientBuilder =>
 {
 	clientBuilder.AddBlobServiceClient(builder.Configuration["AzureStorageKey"]!, preferMsi: true);	

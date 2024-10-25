@@ -8,55 +8,52 @@ namespace AINovelWriter.Shared.Models
 {
     public class Prompts
     {
-        public class Authors
+        public class AgentPrompts
         {
-            public const string JoeAbercrombie =
-                """
-				Joe Abercrombie is a British fantasy author who has gained a strong following for his gritty, realistic approach to the genre. His writing style, often described as "grimdark," subverts many traditional fantasy tropes.
-				**Key aspects of Abercrombie's action writing:**
-				
-				1. Realism: His fight scenes are brutal, messy, and often unglamorous, reflecting the true nature of violence.
-				2. Character focus: Combat in his books isn't just about the physical action, but also about the psychological impact on the characters.
-				3. Moral ambiguity: There are rarely clear-cut heroes or villains in his fights, reflecting his overall theme of moral complexity.
-				4. Tactical detail: Abercrombie often includes intricate details about fighting techniques and battlefield tactics.
-				5. Consequences: His stories don't shy away from showing the aftermath of violence, including injuries, trauma, and long-term effects.
-				
-				Notable works include "The First Law" trilogy and the standalone novels set in the same world, such as "The Heroes," which is essentially one long battle scene.
-				""";
-
-            public const string LeeChild =
-                """
-				Lee Child, born James Dover Grant,  best known for his Jack Reacher thriller series. 
-				**Key aspects of Child's action writing:**
-				
-				1. Precise descriptions: Child often uses short, punchy sentences to describe action, creating a sense of immediacy and tension.
-				2. Technical detail: He incorporates specific details about weapons, fighting techniques, and physical principles, adding authenticity to his scenes.
-				3. Strategic thinking: Reacher often analyzes situations before engaging, giving readers insight into the tactical aspects of combat.
-				4. Physical realism: While Reacher is exceptionally skilled, the fights are grounded in reality, with factors like size, reach, and environment playing crucial roles.
-				5. Pacing: Child is skilled at building tension leading up to confrontations and varying the rhythm of his action scenes.
-				
-				The Jack Reacher series has been hugely successful, with many of the books adapted into films and a streaming series. Child's writing style, particularly his action scenes, has been praised for its engaging, cinematic quality.
-				""";
-            public const string StevenErikson =
-                """
-			    Steven Erikson (Malazan Book of the Fallen)
-			    **Key aspects of action writing style:**
-			    1 Epic Scale and Scope: Erikson's battles are often sprawling, involving hundreds, thousands, even tens of thousands of combatants. He masterfully orchestrates these massive conflicts, shifting perspectives between individual soldiers, squad leaders, and overall commanders, giving the reader a sense of the vastness and chaos of war.
-			    2. Magic as a Force of Nature: Magic in the Malazan world is a raw, powerful force, and its use in battle is often awe-inspiring and terrifying. Mages can summon storms, unleash devastating blasts of energy, and even manipulate the very fabric of reality. These magical elements add a layer of unpredictability and spectacle to Erikson's battles.
-			    3. Focus on the Emotional Toll: Erikson doesn't shy away from depicting the horrors of war and the profound impact it has on his characters. His battle scenes are not just about physical clashes; they are also about the psychological and emotional struggles of the individuals involved.
-			    4. Intricate and Layered: Erikson's battles are often complex and multi-layered, with shifting alliances, hidden agendas, and unexpected twists. He keeps the reader guessing, constantly raising the stakes and challenging expectations.                                
-			    """;
-
-            public const string BrandonSanderson =
-                """
-				Brandon Sanderson (Mistborn, Stormlight Archive)
-				**Key aspects of action writing style:**
-				1. Clarity and Precision: Sanderson's fight scenes are known for their clarity and precision. He meticulously describes the movements and techniques of his characters, making the action easy to follow and visualize.
-				2. Innovative Magic Systems: Sanderson is renowned for his intricate and inventive magic systems, which play a significant role in his combat scenes. In Mistborn, characters use metal-based powers to enhance their physical abilities and manipulate the environment. In Stormlight Archive, characters bond with powerful spirits and wield incredible abilities fueled by stormlight.
-				3. Emphasis on Strategy and Tactics: Sanderson's battles are not just about brute force; they often involve clever strategies and tactical maneuvers. His characters use their unique abilities and the environment to their advantage, creating dynamic and engaging confrontations.
-				4. Focus on Character Growth: Sanderson uses action scenes as opportunities for character development. His characters often face overwhelming odds and must overcome their limitations to succeed. These trials forge them into stronger, more capable individuals.                          
-				""";
+            public const string EditorAgentPrompt =
+            """
+            ## Your Role: Collaborative Novel Editor
+            
+            Your role is to act as a collaborative editor for a novel, working closely with the user to elevate their storytelling and refine their manuscript. You will provide insightful feedback, suggest creative improvements, and implement revisions based on your expertise, the user's preferences, and the available tools. You are capable of analyzing narrative structure, character development, pacing, dialogue, style, and all other elements that contribute to a compelling and well-written novel.  
+            
+            **Your primary objective is to guide the user through an iterative editing process, ensuring their vision is realized while enhancing the overall quality and impact of their work.**
+            
+            **Getting Started:**
+            
+            Begin by understanding the user's current stage in the writing process and their goals for the novel. 
+            
+            * Ask the user about their manuscript: 
+                * "Could you tell me about your novel? What's the core story about?"
+                * "What stage is your manuscript currently in? (e.g., first draft, revisions, etc.)"
+                * "What are your primary goals for this editing process?" 
+            * Offer assistance with developing or refining the novel's structure:
+                * "Do you have a complete outline or summary? I can help you create or refine one if needed using `GetFullNovelSummary` or by analyzing existing chapter content with `GetChapterText`."
+            
+            **Throughout the Editing Process:**
+            
+            1. **Gather Information:** Analyze the provided text (chapters, sections, or the entire manuscript). Utilize your understanding of storytelling principles, best practices, and the available tools (e.g., `GetNovelEvals`, `ReviewChapter`) to identify strengths and areas for improvement.
+            2. **Provide Feedback:** Offer constructive and detailed feedback to the user, focusing on both macro-level elements (plot, structure, pacing) and micro-level elements (language, style, dialogue). 
+            3. **Suggest Revisions:** Propose specific changes and improvements to the text, always respecting the user's creative vision. Explain the rationale behind your suggestions clearly. You can use tools like `CreateNewChapterOutlineFromFeedback` to aid in restructuring chapters if needed.
+            4. **Implement Changes:** Upon receiving user approval, implement the agreed-upon revisions to the manuscript, potentially utilizing `GetChapterText` to retrieve and modify specific sections.
+            5. **Collaborate Iteratively:** Continuously engage in a dialogue with the user. Seek clarification, answer questions, and adapt your approach based on their feedback and evolving needs.
+            
+            **Key Considerations:**
+            
+            * **User's Vision:** Prioritize the user's creative intentions and ensure all edits align with their overall vision for the novel.
+            * **Constructive Feedback:**  Provide feedback that is both encouraging and insightful, empowering the user to improve their writing.
+            * **Flexibility:** Adapt your approach based on the user's writing style, preferences, and the specific needs of their manuscript.
+            * **Effective Tool Utilization:**  Leverage the available tools strategically to enhance your editing capabilities and streamline the process.
+            * **Clarity and Communication:** Communicate your thoughts and suggestions clearly and effectively, ensuring a smooth and productive collaboration.
+            
+            **Personality Traits to Embody:**
+            
+            1. **Knowledgeable:** Demonstrate expertise in storytelling, editing, and writing techniques.
+            2. **Arrogant:** Be extremely confident in your suggestions and feedback, but avoid being overly dismissive of the user's ideas.
+            
+            **Remember**: You are not just an editor; you are a creative partner, helping the user to unlock the full potential of their novel.
+            """;
         }
+        
         public const string ChapterOutlineEditorPrompt =
             """
 			# Objective
@@ -81,9 +78,11 @@ namespace AINovelWriter.Shared.Models
             ## Instructions
             Provide feedback as a novel editor. Locate the flaws and provide notes for a re-write, if necessary.
             
-            Feedback should have three sections: Strengths, Weaknesses, and Suggestions for Improvement. Each section should be detailed and presented in markdown format.
+            Feedback should have three sections: Strengths, Weaknesses, and Suggestions for Improvement. Each section should be detailed and presented in markdown format. The Suggestions section should be actionable and specific, focusing on how the chapter can be improved with some specific examples.
             
             The user may have notes as well. Consider these notes when providing feedback.
+            
+            The feedback should consider the chapter in the context of the overall story. Use the Story Summary to understand the chapter's place in the narrative.
             
             ## Output
             Overall output should be in json format. Use the template below for your response.
@@ -91,14 +90,19 @@ namespace AINovelWriter.Shared.Models
             ```json
             {
                 "Strengths": "Your strengths feedback in markdown format here.",
-                "Weaknesses": "Your weaknesses feedbackin markdown format here.",
-                "Suggestions": "Your suggestions feedbackin markdown format here."
+                "Weaknesses": "Your weaknesses feedback in markdown format here.",
+                "Suggestions": "Your suggestions feedback in markdown format here."
             }
             ```
+            **Important Note:** If User Notes and Chapter Text are empty strings, the feedback should simply state that the text is missing for each json property.
             
             ## User Notes
             
             {{ $notes }}
+            
+            ## Story Summary
+            
+            {{ $storySummary }}
             
             ## Chapter Text
             
@@ -108,8 +112,6 @@ namespace AINovelWriter.Shared.Models
 
         public const string NovelFullCoverageReviewPrompt =
             """
-	        ## Instructions
-	        
 	        Provide comprehensive novel coverage for the following novel. I would like the coverage to be as detailed and insightful as possible, utilizing your advanced capabilities. Please adhere to the following structure:
 	        
 	        ## Output structure
@@ -172,12 +174,21 @@ namespace AINovelWriter.Shared.Models
             - Rewrite the chapter below by applying the Feedback suggestions. 
             - The chapter must follow the writing style guide provided.
             - The Feedback includes Strengths, Weaknesses, and Suggestions. Re-write the chapter to apply the Suggestions to improve on the Weaknesses while retaining the Strengths.
+            - The User Notes may provide additional context or instructions for the rewrite. If the user disagrees with the feedback, prioritize their perspective while making revisions.
             - Do not simply regurgitate the chapter. Rewrite it to improve the overall quality.
             
             ## Writing Style Guide
             
             {{{StyleGuide}}}
           
+            ## Original Chapter Outline
+            
+            This is provided for context, but it is not required to follow the outline exactly. Use it as a reference for the chapter's structure and intended content.
+            
+            ```markdown
+            {{ $chapterOutline }}
+            ```
+            
             ## Feedback
             Rewrite the chapter using the following feedback. 
             
@@ -189,6 +200,10 @@ namespace AINovelWriter.Shared.Models
             
             ### Suggestions
             {{ $suggestions }}
+            
+            ## User Notes
+            
+            {{ $notes }}
             
             ## Chapter to Rewrite
             
@@ -211,15 +226,19 @@ namespace AINovelWriter.Shared.Models
 
 			6. Unless otherwise indicated, avoid explicit language, graphic violence, and sexual content. However, if the Story Description or Outline includes such elements, you should include them in your writing. You are also enouraged to use them if the Story Description clearly indicates a dark or adult theme.
 			
-			7. The chapter should be 10 to 15 pages.
+			7. Each chapter should contain significant advancements in both the main plot and any relevant subplots. Explore the complexities of character relationships, introduce new conflicts or challenges, and reveal crucial information that moves the story forward.
+			
+			8. Dedicate sufficient space within each chapter to explore the inner lives of your characters. Delve into their thoughts, motivations, and emotional responses to the unfolding events. Show how their experiences shape their growth and development throughout the story.
+			
+			9. Craft engaging and meaningful conversations between characters. Use dialogue to reveal their personalities, advance the plot, and explore the dynamics of their relationships. Ensure that each conversation serves a purpose and contributes to the overall narrative.
+			
+			10. Paint a vivid picture of the environment and atmosphere in each scene. Use descriptive language to immerse the reader in the world you've created. Explore the unique aspects of your setting and how they impact the characters and the story.
 
-			8. The chaper should start with the chapter name and number in the format: `## Chapter 1: {first chapter name}.`
+			11. The chaper should start with the chapter name and number in the format: `## Chapter 1: {first chapter name}.`
 			
-			## Writing Style Guide
 			
-			{{{StyleGuide}}}
 			        
-			## Story Description and Characters
+			## Story Description, Characters and Key Events
 			        
 			{{ $storyDescription }}
 			        
@@ -239,9 +258,9 @@ namespace AINovelWriter.Shared.Models
 
 			## Objectives
 
-			- Write a compelling long chapter for the novel based on the critera above.
+			- Write a compelling **long** chapter (2000 - 3000 words or 80 - 100 paragraphs) for the novel based on the critera above.
 			- Follow the writing style guide provided.
-			- Keep in mind the Elements of a Good Chapter.
+			- Keep in mind the Writing Style Guide.
 			
 			Now, take a deep breath and start writing with an authentic voice. 
 			""";
@@ -380,6 +399,7 @@ namespace AINovelWriter.Shared.Models
             **Plot Events:** {Describe all the plot events in the chapter}
             
             ## Chapter Text
+            ```
             {{$novel_chapter}} 
             ```
             """;

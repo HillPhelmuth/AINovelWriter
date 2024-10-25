@@ -24,6 +24,7 @@
 		<Content Remove="Pages\_Host.cshtml" />
 		<Content Remove="Pages\_Layout.cshtml" />
 		<Content Remove="Shared\AccessControl.razor" />
+		<Content Remove="The Glitch in the Matrix_genAndEdit.json" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -41,13 +42,14 @@
 
 	<ItemGroup>
 		<PackageReference Include="Auth0.AspNetCore.Authentication" Version="1.4.1" />
-		<PackageReference Include="Radzen.Blazor" Version="5.0.2" />
+		<PackageReference Include="Radzen.Blazor" Version="5.3.3" />
 		<PackageReference Include="Markdig" Version="0.37.0" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\AINovelWriter.Audio\AINovelWriter.Audio.csproj" />
 		<ProjectReference Include="..\AINovelWriter.Shared\AINovelWriter.Shared.csproj" />
+		<ProjectReference Include="..\ChatComponents\ChatComponents.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

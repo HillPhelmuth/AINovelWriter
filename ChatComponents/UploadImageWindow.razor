@@ -1,0 +1,15 @@
+﻿
+<RadzenCard Visible="IsVisible" Variant="Variant.Text" Style="position:absolute:top:0">
+    <RadzenText TextAlign="TextAlign.Center" TextStyle="TextStyle.Subtitle1" Text="Attach an Image to Your Message"></RadzenText>
+    <RadzenTemplateForm Data=FileUpload TItem="FileUpload" Submit="Submit">
+        @* <RadzenFormField Text="Image Upload">
+			<ChildContent>
+				<RadzenFileInput MaxFileSize="maxFileSize" @bind-Value=FileUpload.FileBase64 @bind-FileName=FileUpload.FileName MaxHeight="600" MaxWidth="600" ChooseText="Select Image"></RadzenFileInput>
+			</ChildContent>
+        </RadzenFormField><br /> *@
+        <div style="margin-left:40%">
+            <RadzenFileInput MaxFileSize="maxFileSize" @bind-Value="FileUpload.FileBase64" @bind-FileName=FileUpload.FileName MaxHeight="600" MaxWidth="600" ChooseText="Select An Image"></RadzenFileInput><br />
+            <RadzenButton Size="ButtonSize.Small" Visible="@(!string.IsNullOrEmpty(FileUpload.FileBase64))" ButtonType="ButtonType.Submit" Icon="attach_file" Text="Attach"></RadzenButton>
+        </div>
+    </RadzenTemplateForm>
+</RadzenCard>

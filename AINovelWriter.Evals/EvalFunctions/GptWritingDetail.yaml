@@ -13,15 +13,19 @@ input_variables:
   default: ''
 
 template: |
- WritingDetail measures how well the generated chapter adheres to the instruction for detailed descriptions and a slower pace. It involves assessing the richness of sensory details, the depth of character exploration, and the pacing of events. When evaluating writing detail, consider how vividly the setting, characters, and events are described and whether the chapter takes the time to develop these elements thoroughly. Score the writing detail of the chapter between one to ten stars using the following rating scale:
+ ## Evaluate Writing Detail & Pacing (1-10 Stars) - Critical Assessment 
 
-    1 star: the chapter lacks detail and moves too quickly, with little attention to sensory description or depth
-    5 stars: the chapter provides moderate detail with a balanced pace, but lacks the richness needed for full immersion
-    10 stars: the chapter is richly detailed, immersive, and deliberately paced, fully capturing the reader's senses and emotions, and is the stuff of best-selling professional writing.
+ **Focus:** Analyze the chapter's use of detail, sensory descriptions, and pacing. Does it effectively "show, don't tell"? Consider the richness of details about the setting, characters, and events, as well as the pacing's impact on immersion and engagement.
 
-    This rating value should always be an integer between 1 and 10. So, the rating produced should be 1, or 2, or 3, etc.
-    Respond ONLY with the number.
+ **Rating Scale (Provide ONLY the number):**
 
-    ## Real Work
-    **chapter:** {{$chapter}}
-    stars:    
+ * **1-3 Stars:**  Lacks detail and depth.  Telling rather than showing.  Pacing may be rushed or uneven. Fails to immerse the reader.
+ * **4-6 Stars:**  Moderate level of detail. Some attempts at "showing," but may lack consistency or richness. Pacing may be adequate but not exceptional.
+ * **7-9 Stars:**  Good use of detail and sensory language. Effectively "shows" rather than "tells."  Pacing is well-managed and enhances the narrative. Immersive and engaging.
+ * **10 Stars:**  Exceptional use of detail and descriptive language. Creates a vivid and immersive experience for the reader. Masterful pacing that builds tension and enhances emotional impact.  
+
+ **Important:**  Avoid bias towards higher scores.  Actively look for instances where the writing lacks detail, relies on telling instead of showing, or where the pacing detracts from the reader's experience. Be honest and critical in your assessment.
+
+ **Chapter:** {{$chapter}}
+
+ **Stars:** 

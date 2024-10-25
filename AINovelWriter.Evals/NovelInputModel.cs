@@ -1,5 +1,6 @@
-﻿using Microsoft.SemanticKernel;
-using PromptFlowEvalsAsPlugins;
+﻿using HillPhelmuth.SemanticKernel.LlmAsJudgeEvals;
+using Microsoft.SemanticKernel;
+
 
 namespace AINovelWriter.Evals;
 

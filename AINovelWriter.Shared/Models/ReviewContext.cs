@@ -6,6 +6,9 @@ public enum ReviewContext
 {
     [Description("You Choose!")]
     None,
+    [Description("Full Coverage: Comprehensive Analysis, In-Depth Review")]
+    [Prompt(Prompts.NovelFullCoverageReviewPrompt)]
+    FullCoverage,
     [Description("Literary Criticism: Academic Purposes, Thematic Exploration")]
     [Prompt("Analyze this novel with a focus on its literary elements, such as theme, narrative technique, and its place in the literary canon. Provide a thoughtful critique, drawing comparisons to other significant works if relevant.")]
     LiteraryCriticism,
