@@ -47,7 +47,7 @@ public partial class NovelStreamingPage
 		await base.OnAfterRenderAsync(firstRender);
 	}
 
-	private async Task GenerateNovelAsync()
+	public async Task GenerateNovelAsync()
 	{
 		if (string.IsNullOrEmpty(AppState.NovelOutline.Outline)) return;
 		AppState.NovelInfo.Text = "";

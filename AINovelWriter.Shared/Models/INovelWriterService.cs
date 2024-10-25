@@ -1,11 +1,11 @@
-﻿using PromptFlowEvalsAsPlugins;
+﻿using Microsoft.SemanticKernel.ChatCompletion;
 
 namespace AINovelWriter.Shared.Models;
 
 public interface INovelWriterService
 {
     
-    Task<NovelConcepts> GenerateNovelIdea(GenreCategoryItem genre, List<Genre> subgenres);
+    Task<NovelConcepts> GenerateNovelIdea(GenreCategoryItem genre, List<Genre> subgenres, NovelLength length);
 
     Task<string> CreateNovelOutline(string theme, string characterDetails = "", string plotEvents = "",
         string novelTitle = "", int chapters = 15, AIModel aIModel = AIModel.Gpt4O);
@@ -32,10 +32,13 @@ public interface INovelWriterStreaming : ITextToSpeechService
 public interface INovelWriter : INovelWriterService, INovelWriterStreaming
 {
 	Task<string> TextToImage(string novelOutline, string imageStyle = "photo-realistic");
-	Task<List<ResultScore>> ExecuteChapterEval(string chapterText, string details);
-    Task<Feedback> ProvideRewriteFeedback(string chapterText, AIModel aiModel = AIModel.GeminiFlash, string? additionalInstructions = null);
-    Task<string> RewriteChapter(ChapterOutline chapterOutline, Feedback feedback, AIModel aiModel = AIModel.GeminiFlash);
+    Task<Feedback> ProvideRewriteFeedback(ChapterOutline chapterOutline, AIModel aiModel = AIModel.GeminiFlash,
+        string? additionalInstructions = null);
+    Task<string> RewriteChapter(ChapterOutline chapterOutline, Feedback feedback,
+        AIModel aiModel = AIModel.GeminiFlash, string? userNotes = null);
     Task<NovelInfo> ReverseEngineerNovel(string epubFileData, string title);
     IAsyncEnumerable<string> ReviewFullNovel(NovelInfo novel, ReviewContext reviewContext,
         AIModel aiModel = AIModel.Gpt4O);
+
+    IAsyncEnumerable<string> ExecuteEditorAgentChat(ChatHistory chatHistory, AIModel aiModel = AIModel.Gpt4O);
 }

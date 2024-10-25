@@ -6,255 +6,354 @@ namespace AINovelWriter.Shared.Models;
 
 public enum NovelGenre
 {
-	None,
-	[SubGenre("High Fantasy, Low Fantasy, Dark Fantasy, Urban Fantasy, Sword and Sorcery")]
-	Fantasy,
-	[SubGenre("Hard Sci-Fi, Soft Sci-Fi, Space Opera, Cyberpunk, Dystopian")]
-	ScienceFiction,
-	[SubGenre("Cozy Mystery, Hard-Boiled Mystery, Police Procedural, Noir, Historical Mystery")]
-	Mystery,
-	[SubGenre("Contemporary Romance, Historical Romance, Paranormal Romance, Romantic Suspense, Erotic Romance")]
-	Romance,
-	[SubGenre("Psychological Thriller, Crime Thriller, Legal Thriller, Espionage Thriller, Horror Thriller")]
-	Thriller,
-	[SubGenre("Alternative History, Military History, Saga, Biographical Fiction")]
-	HistoricalFiction,
-	[SubGenre("Gothic Horror, Cosmic Horror, Slasher, Paranormal Horror, Body Horror")]
-	Horror,
-	[SubGenre("Contemporary YA, Fantasy YA, Sci-Fi YA, Romance YA, Dystopian YA")]
-	YoungAdult,
-	[SubGenre("Modernist Literature, Postmodern Literature, Magical Realism, Experimental Fiction")]
-	LiteraryFiction,
-	[SubGenre("Post-Apocalyptic, Apocalyptic, Political Dystopia, Social Dystopia")]
-	Dystopian,
-	[SubGenre("Action-Adventure, Historical Adventure, Swashbuckler, Survival")]
-	Adventure,
-	[SubGenre("Detective Fiction, Legal Thriller, Gangster Fiction, Noir, Hard-Boiled")]
-	Crime,
-	[SubGenre("Fabulism, Surrealism, Magic Realism")]
-	MagicalRealism,
-	[SubGenre("Slice of Life, Social Commentary, Domestic Fiction, Coming-of-Age")]
-	Contemporary,
-	[SubGenre("Classic Western, Contemporary Western, Weird Western, Space Western")]
-	Western
+    None,
+    [SubGenre("High Fantasy, Low Fantasy, Dark Fantasy, Urban Fantasy, Sword and Sorcery")]
+    [Display("Fantasy")]
+    Fantasy,
+    [SubGenre("Hard Sci-Fi, Soft Sci-Fi, Space Opera, Cyberpunk, Dystopian")]
+    [Display("Science Fiction")]
+    ScienceFiction,
+    [SubGenre("Cozy Mystery, Hard-Boiled Mystery, Police Procedural, Noir, Historical Mystery")]
+    [Display("Mystery")]
+    Mystery,
+    [SubGenre("Contemporary Romance, Historical Romance, Paranormal Romance, Romantic Suspense, Erotic Romance")]
+    [Display("Romance")]
+    Romance,
+    [SubGenre("Psychological Thriller, Crime Thriller, Legal Thriller, Espionage Thriller, Horror Thriller")]
+    [Display("Thriller")]
+    Thriller,
+    [SubGenre("Alternative History, Military History, Saga, Biographical Fiction")]
+    [Display("Historical Fiction")]
+    HistoricalFiction,
+    [SubGenre("Gothic Horror, Cosmic Horror, Slasher, Paranormal Horror, Body Horror")]
+    [Display("Horror")]
+    Horror,
+    [SubGenre("Contemporary YA, Fantasy YA, Sci-Fi YA, Romance YA, Dystopian YA")]
+    [Display("Young Adult")]
+    YoungAdult,
+    [SubGenre("Modernist Literature, Postmodern Literature, Magical Realism, Experimental Fiction")]
+    [Display("Literary Fiction")]
+    LiteraryFiction,
+    [SubGenre("Post-Apocalyptic, Apocalyptic, Political Dystopia, Social Dystopia")]
+    [Display("Dystopian")]
+    Dystopian,
+    [SubGenre("Action-Adventure, Historical Adventure, Swashbuckler, Survival")]
+    [Display("Adventure")]
+    Adventure,
+    [SubGenre("Detective Fiction, Legal Thriller, Gangster Fiction, Noir, Hard-Boiled")]
+    [Display("Crime")]
+    Crime,
+    [SubGenre("Fabulism, Surrealism, Magic Realism")]
+    [Display("Magical Realism")]
+    MagicalRealism,
+    [SubGenre("Slice of Life, Social Commentary, Domestic Fiction, Coming-of-Age")]
+    [Display("Contemporary")]
+    Contemporary,
+    [SubGenre("Classic Western, Contemporary Western, Weird Western, Space Western")]
+    [Display("Western")]
+    Western
 }
 public enum GenreCategory
 {
-	[Description("Various forms of literature focusing on imaginative storytelling.")]
-	[GenreType(typeof(LiteratureAndFiction))]
-	LiteratureAndFiction,
+   
+    [Description("Fiction exploring diverse themes and settings, focusing on imaginative narratives.")]
+    [GenreType(typeof(ThemeFiction))]
+    [Display("Themes Fiction")]
+    ThemeFiction,
 
-	[Description("A mix of crime and mystery, often with suspenseful and thrilling narratives.")]
-	[GenreType(typeof(CrimeAndThrillers))]
-	CrimeAndThrillers,
+    [Description("Distinct styles and approaches to storytelling within the realm of fiction.")]
+    [GenreType(typeof(GenreFiction))]
+    [Display("Genre Fiction")]
+    GenreFiction,
+    [Description("A mix of crime and mystery, often with suspenseful and thrilling narratives.")]
+    [GenreType(typeof(CrimeAndThrillers))]
+    [Display("Crime and Thrillers")]
+    CrimeAndThrillers,
 
-	[Description("Fiction with magical, supernatural, or fantastical elements.")]
-	[GenreType(typeof(Fantasy))]
-	Fantasy,
+    [Description("Fiction with magical, supernatural, or fantastical elements.")]
+    [GenreType(typeof(Fantasy))]
+    [Display("Fantasy")]
+    Fantasy,
 
-	[Description("Stories grounded in science or speculative scientific advancements.")]
-	[GenreType(typeof(ScienceFiction))]
-	ScienceFiction,
+    [Description("Stories grounded in science or speculative scientific advancements.")]
+    [GenreType(typeof(ScienceFiction))]
+    [Display("Science Fiction")]
+    ScienceFiction,
 
-	[Description("Exciting, adventurous tales often involving daring exploits and escapades.")]
-	[GenreType(typeof(ActionAndAdventure))]
-	ActionAndAdventure
+    [Description("Exciting, adventurous tales often involving daring exploits and escapades.")]
+    [GenreType(typeof(ActionAndAdventure))]
+    [Display("Action and Adventure")]
+    ActionAndAdventure
 }
-public enum LiteratureAndFiction
+
+public enum ThemeFiction
 {
-	[Description("Fiction that delves into the absurd, often highlighting the illogical aspects of human existence.")]
-	AbsurdistFiction,
+    [Description("Fiction that delves into the absurd, often highlighting the illogical aspects of human existence.")]
+    [Display("Absurdist Fiction")]
+    AbsurdistFiction,
 
-	[Description("Stories that center around animals, either as main characters or as central themes.")]
-	AnimalFiction,
+    [Description("Stories that center around animals, either as main characters or as central themes.")]
+    [Display("Animal Fiction")]
+    AnimalFiction,
 
-	[Description("Narratives based on or inspired by real-life biographies.")]
-	BiographicalFiction,
+    [Description("Fiction that explores the intricacies of city life and urban experiences.")]
+    [Display("City Life Fiction")]
+    CityLifeFiction,
 
-	[Description("Fiction that explores the intricacies of city life and urban experiences.")]
-	CityLifeFiction,
+    [Description("Stories that follow characters through the challenges and growth of adolescence.")]
+    [Display("Coming-of-Age Fiction")]
+    ComingOfAgeFiction,
 
-	[Description("Stories that follow characters through the challenges and growth of adolescence.")]
-	ComingOfAgeFiction,
+    [Description("Fiction that focuses on the dynamics and relationships within families.")]
+    [Display("Family Life Fiction")]
+    FamilyLifeFiction,
 
-	[Description("Narratives told through letters, diary entries, or other forms of written communication.")]
-	EpistolaryFiction,
+    [Description("Multi-generational sagas centered around the history and evolution of a family.")]
+    [Display("Family Saga Fiction")]
+    FamilySagaFiction,
 
-	[Description("Fiction that focuses on the dynamics and relationships within families.")]
-	FamilyLifeFiction,
+    [Description("Light-hearted fiction intended to uplift and provide a feel-good experience.")]
+    [Display("Feel-Good Fiction")]
+    FeelGoodFiction,
 
-	[Description("Multi-generational sagas centered around the history and evolution of a family.")]
-	FamilySagaFiction,
+    [Description("Stories centered on the deep bonds and trials of friendship.")]
+    [Display("Friendship Fiction")]
+    FriendshipFiction,
 
-	[Description("Light-hearted fiction intended to uplift and provide a feel-good experience.")]
-	FeelGoodFiction,
+    [Description("Stories themed around holidays, often imbued with festive spirit.")]
+    [Display("Holiday Fiction")]
+    HolidayFiction,
 
-	[Description("Stories centered on the deep bonds and trials of friendship.")]
-	FriendshipFiction,
+    [Description("Fiction that explores LGBTQ+ themes, characters, and experiences.")]
+    [Display("LGBTQ+ Genre Fiction")]
+    LGBTQPlusGenreFiction,
 
-	[Description("Fiction that combines elements of gaming and literature, often with RPG elements.")]
-	GameLitAndLitRPGFiction,
+    [Description("Stories centered around medical themes, hospitals, or the healthcare industry.")]
+    [Display("Medical Fiction")]
+    MedicalFiction,
 
-	[Description("Dark, mysterious tales with a focus on the macabre and the supernatural.")]
-	GothicFiction,
+    [Description("Fiction that captures the essence of life in small towns or rural settings.")]
+    [Display("Small Town and Rural Fiction")]
+    SmallTownAndRuralFiction,
 
-	[Description("Fiction set in or inspired by historical events or periods.")]
-	HistoricalFiction,
+    [Description("Stories deeply rooted in the traditions, culture, and atmosphere of the American South.")]
+    [Display("Southern Fiction")]
+    SouthernFiction,
 
-	[Description("Stories themed around holidays, often imbued with festive spirit.")]
-	HolidayFiction,
+    [Description("Fiction that revolves around sports, athletes, and competitive events.")]
+    [Display("Sports Fiction")]
+    SportsFiction,
 
-	[Description("Literature meant to evoke fear, horror, or suspenseful dread.")]
-	HorrorLiteratureAndFiction,
+    [Description("Urban-centered stories, often focusing on the complexities of modern city life.")]
+    [Display("Urban Life Fiction")]
+    FictionUrbanLife,
 
-	[Description("Fiction that explores LGBTQ+ themes, characters, and experiences.")]
-	LGBTQPlusGenreFiction,
+    [Description("Tales of life in the American West, often with cowboys, outlaws, and frontier life.")]
+    [Display("Westerns")]
+    Westerns
+}
 
-	[Description("A blend of various genres, creating unique and often experimental fiction.")]
-	MashupFiction,
+public enum GenreFiction
+{
+    [Description("Narratives based on or inspired by real-life biographies.")]
+    [Display("Biographical Fiction")]
+    BiographicalFiction,
 
-	[Description("Stories centered around medical themes, hospitals, or the healthcare industry.")]
-	MedicalFiction,
+    [Description("Narratives told through letters, diary entries, or other forms of written communication.")]
+    [Display("Epistolary Fiction")]
+    EpistolaryFiction,
 
-	[Description("Fiction that delves into spiritual, existential, or philosophical themes.")]
-	MetaphysicalAndVisionaryFiction,
+    [Description("Fiction that combines elements of gaming and literature, often with RPG elements.")]
+    [Display("GameLit and LitRPG Fiction")]
+    GameLitAndLitRPGFiction,
 
-	[Description("Stories with a focus on political themes, ideologies, and conflicts.")]
-	PoliticalFiction,
+    [Description("Dark, mysterious tales with a focus on the macabre and the supernatural.")]
+    [Display("Gothic Fiction")]
+    GothicFiction,
 
-	[Description("Fiction that explores the intricacies of the human mind and psychological states.")]
-	PsychologicalFiction,
+    [Description("Fiction set in or inspired by historical events or periods.")]
+    [Display("Historical Fiction")]
+    HistoricalFiction,
 
-	[Description("Literature with strong religious or spiritual themes.")]
-	ReligiousLiteratureAndFiction,
+    [Description("Literature meant to evoke fear, horror, or suspenseful dread.")]
+    [Display("Horror Literature and Fiction")]
+    HorrorLiteratureAndFiction,
 
-	[Description("Fiction that uses humor and irony to critique or satirize aspects of society.")]
-	FictionSatire,
+    [Description("A blend of various genres, creating unique and often experimental fiction.")]
+    [Display("Mashup Fiction")]
+    MashupFiction,
 
-	[Description("Stories centered around seafaring adventures and life at sea.")]
-	SeaStories,
+    [Description("Fiction that delves into spiritual, existential, or philosophical themes.")]
+    [Display("Metaphysical and Visionary Fiction")]
+    MetaphysicalAndVisionaryFiction,
 
-	[Description("Fiction that captures the essence of life in small towns or rural settings.")]
-	SmallTownAndRuralFiction,
+    [Description("Stories with a focus on political themes, ideologies, and conflicts.")]
+    [Display("Political Fiction")]
+    PoliticalFiction,
 
-	[Description("Stories deeply rooted in the traditions, culture, and atmosphere of the American South.")]
-	SouthernFiction,
+    [Description("Fiction that explores the intricacies of the human mind and psychological states.")]
+    [Display("Psychological Fiction")]
+    PsychologicalFiction,
 
-	[Description("Fiction that revolves around sports, athletes, and competitive events.")]
-	SportsFiction,
+    [Description("Literature with strong religious or spiritual themes.")]
+    [Display("Religious Literature and Fiction")]
+    ReligiousLiteratureAndFiction,
 
-	[Description("Urban-centered stories, often focusing on the complexities of modern city life.")]
-	FictionUrbanLife,
+    [Description("Fiction that uses humor and irony to critique or satirize aspects of society.")]
+    [Display("Satirical Fiction")]
+    FictionSatire,
 
-	[Description("Fiction based on wars, both historical and speculative.")]
-	WarFiction,
+    [Description("Stories centered around seafaring adventures and life at sea.")]
+    [Display("Sea Stories")]
+    SeaStories,
 
-	[Description("Tales of life in the American West, often with cowboys, outlaws, and frontier life.")]
-	Westerns
+    [Description("Fiction based on wars, both historical and speculative.")]
+    [Display("War Fiction")]
+    WarFiction
 }
 public enum CrimeAndThrillers
 {
-	[Description("Thrillers focused on crime investigations, often involving detectives and criminal minds.")]
-	CrimeThrillers,
+    [Description("Thrillers focused on crime investigations, often involving detectives and criminal minds.")]
+    [Display("Crime Thrillers")]
+    CrimeThrillers,
 
-	[Description("Domestic-centered thrillers with a focus on family, relationships, and home life.")]
-	DomesticThrillers,
+    [Description("Domestic-centered thrillers with a focus on family, relationships, and home life.")]
+    [Display("Domestic Thrillers")]
+    DomesticThrillers,
 
-	[Description("Thrillers with a financial twist, involving corporate espionage, banking, or the stock market.")]
-	FinancialThrillers,
+    [Description("Thrillers with a financial twist, involving corporate espionage, banking, or the stock market.")]
+    [Display("Financial Thrillers")]
+    FinancialThrillers,
 
-	[Description("Historical settings provide the backdrop for these suspenseful thrillers.")]
-	HistoricalThrillers,
+    [Description("Historical settings provide the backdrop for these suspenseful thrillers.")]
+    [Display("Historical Thrillers")]
+    HistoricalThrillers,
 
-	[Description("Thrillers centered around legal battles, courtrooms, and justice.")]
-	LegalThrillers,
+    [Description("Thrillers centered around legal battles, courtrooms, and justice.")]
+    [Display("Legal Thrillers")]
+    LegalThrillers,
 
-	[Description("Medical-themed thrillers often set in hospitals or involving health crises.")]
-	MedicalThrillers,
+    [Description("Medical-themed thrillers often set in hospitals or involving health crises.")]
+    [Display("Medical Thrillers")]
+    MedicalThrillers,
 
-	[Description("Military-focused thrillers involving armed forces, war strategies, and battlefield suspense.")]
-	MilitaryThrillers,
+    [Description("Military-focused thrillers involving armed forces, war strategies, and battlefield suspense.")]
+    [Display("Military Thrillers")]
+    MilitaryThrillers,
 
-	[Description("Psychologically intense thrillers exploring mental states and mind games.")]
-	PsychologicalThrillers,
+    [Description("Psychologically intense thrillers exploring mental states and mind games.")]
+    [Display("Psychological Thrillers")]
+    PsychologicalThrillers,
 
-	[Description("Thrillers involving spies, espionage, and political intrigue.")]
-	SpiesAndPoliticalThrillers,
+    [Description("Thrillers involving spies, espionage, and political intrigue.")]
+    [Display("Spies and Political Thrillers")]
+    SpiesAndPoliticalThrillers,
 
-	[Description("Supernatural elements add a chilling twist to these thrillers.")]
-	SupernaturalThrillers,
+    [Description("Supernatural elements add a chilling twist to these thrillers.")]
+    [Display("Supernatural Thrillers")]
+    SupernaturalThrillers,
 
-	[Description("High-stakes thrillers with intense suspense and action-packed narratives.")]
-	SuspenseThrillers,
+    [Description("High-stakes thrillers with intense suspense and action-packed narratives.")]
+    [Display("Suspense Thrillers")]
+    SuspenseThrillers,
 
-	[Description("Thrillers focused on technology, cyber warfare, and futuristic scenarios.")]
-	Technothrillers
+    [Description("Thrillers focused on technology, cyber warfare, and futuristic scenarios.")]
+    [Display("Techno Thrillers")]
+    Technothrillers
 }
 public enum Fantasy
 {
-	[Description("Fantasy with epic battles, legendary heroes, and grand quests.")]
-	HighFantasy,
+    [Description("Fantasy with epic battles, legendary heroes, and grand quests.")]
+    [Display("High Fantasy")]
+    HighFantasy,
 
-	[Description("Fantasy with a more grounded, realistic tone and setting.")]
-	LowFantasy,
+    [Description("Fantasy with a more grounded, realistic tone and setting.")]
+    [Display("Low Fantasy")]
+    LowFantasy,
 
-	[Description("Dark, often grim fantasy with elements of horror or moral ambiguity.")]
-	DarkFantasy,
+    [Description("Dark, often grim fantasy with elements of horror or moral ambiguity.")]
+    [Display("Dark Fantasy")]
+    DarkFantasy,
 
-	[Description("Fantasy set in modern urban environments, blending the magical with the mundane.")]
-	UrbanFantasy,
+    [Description("Fantasy set in modern urban environments, blending the magical with the mundane.")]
+    [Display("Urban Fantasy")]
+    UrbanFantasy,
 
-	[Description("Heroic fantasy with elements of swordplay, magic, and adventure.")]
-	SwordAndSorcery
+    [Description("Heroic fantasy with elements of swordplay, magic, and adventure.")]
+    [Display("Sword and Sorcery")]
+    SwordAndSorcery
 }
 public enum ScienceFiction
 {
-	[Description("Sci-fi with a focus on scientific accuracy and realistic technology.")]
-	HardSciFi,
+    [Description("Sci-fi with a focus on scientific accuracy and realistic technology.")]
+    [Display("Hard Sci-Fi")]
+    HardSciFi,
 
-	[Description("Sci-fi with a more imaginative or speculative approach, often with less focus on scientific realism.")]
-	SoftSciFi,
+    [Description("Sci-fi with a more imaginative or speculative approach, often with less focus on scientific realism.")]
+    [Display("Soft Sci-Fi")]
+    SoftSciFi,
 
-	[Description("Epic space adventures often involving starships, intergalactic battles, and large-scale conflicts.")]
-	SpaceOpera,
+    [Description("Epic space adventures often involving starships, intergalactic battles, and large-scale conflicts.")]
+    [Display("Space Opera")]
+    SpaceOpera,
 
-	[Description("Sci-fi exploring dystopian futures, often with themes of societal collapse or authoritarian regimes.")]
-	Dystopian,
+    [Description("Sci-fi exploring dystopian futures, often with themes of societal collapse or authoritarian regimes.")]
+    [Display("Dystopian")]
+    Dystopian,
 
-	[Description("A subgenre of sci-fi centered on futuristic, high-tech societies, often with a focus on hacking and AI.")]
-	Cyberpunk
+    [Description("A subgenre of sci-fi centered on futuristic, high-tech societies, often with a focus on hacking and AI.")]
+    [Display("Cyberpunk")]
+    Cyberpunk,
+    [Description("High tech, near future espionage that blends the elements of espionage thrillers with science fiction concepts.")]
+    SpyFi
 }
 public enum ActionAndAdventure
 {
-	[Description("Classic tales of adventure, often with daring heroes and exotic settings.")]
-	ClassicActionAndAdventure,
+    [Description("Classic tales of adventure, often with daring heroes and exotic settings.")]
+    [Display("Classic Action and Adventure")]
+    ClassicActionAndAdventure,
+    [Description("Modern stories of espionage, intrigue, and high-tech action.")]
+    [Display("Modern Espionage Action")]
+    ModernEspionageAction,
+    [Description("Adventure stories set in fantastical worlds with elements of magic and myth.")]
+    [Display("Fantasy Action and Adventure")]
+    FantasyActionAndAdventure,
 
-	[Description("Adventure stories set in fantastical worlds with elements of magic and myth.")]
-	FantasyActionAndAdventure,
+    [Description("Action-packed fiction with a focus on male protagonists and traditional masculine themes.")]
+    [Display("Men's Adventure Fiction")]
+    MensAdventureFiction,
 
-	[Description("Action-packed fiction with a focus on male protagonists and traditional masculine themes.")]
-	MensAdventureFiction,
+    [Description("Thrilling adventures with elements of mystery, suspense, and high-stakes action.")]
+    [Display("Mystery, Thriller, and Suspense Action Fiction")]
+    MysteryThrillerAndSuspenseActionFiction,
 
-	[Description("Thrilling adventures with elements of mystery, suspense, and high-stakes action.")]
-	MysteryThrillerAndSuspenseActionFiction,
+    [Description("Adventure stories with a romantic subplot, often with high-stakes drama and excitement.")]
+    [Display("Romantic Action and Adventure")]
+    RomanticActionAndAdventure,
 
-	[Description("Adventure stories with a romantic subplot, often with high-stakes drama and excitement.")]
-	RomanticActionAndAdventure,
+    [Description("Sci-fi adventures with a focus on exploration, technology, and futuristic escapades.")]
+    [Display("Science Fiction Adventures")]
+    ScienceFictionAdventures,
 
-	[Description("Sci-fi adventures with a focus on exploration, technology, and futuristic escapades.")]
-	ScienceFictionAdventures,
+    [Description("Superhero-themed adventures with larger-than-life characters and epic battles.")]
+    [Display("Superhero Action Adventure")]
+    SuperHeroActionAdventure,
 
-	[Description("Adventure stories centered around the high seas, with sailors, pirates, and naval battles.")]
-	SeaAdventuresFiction,
+    [Description("Adventure stories centered around the high seas, with sailors, pirates, and naval battles.")]
+    [Display("Sea Adventures Fiction")]
+    SeaAdventuresFiction,
 
-	[Description("Short stories with fast-paced action and adventurous plots.")]
-	ActionAndAdventureShortStories,
+    [Description("Short stories with fast-paced action and adventurous plots.")]
+    [Display("Action and Adventure Short Stories")]
+    ActionAndAdventureShortStories,
 
-	[Description("Military-themed adventures with a focus on war, combat, and military strategies.")]
-	WarAndMilitaryActionFiction,
+    [Description("Military-themed adventures with a focus on war, combat, and military strategies.")]
+    [Display("War and Military Action Fiction")]
+    WarAndMilitaryActionFiction,
 
-	[Description("Adventure fiction featuring strong female protagonists and empowering narratives.")]
-	WomensAdventureFiction
+    [Description("Adventure fiction featuring strong female protagonists and empowering narratives.")]
+    [Display("Women's Adventure Fiction")]
+    WomensAdventureFiction
 }
 
 public class GenreForm
@@ -298,7 +397,7 @@ public class GenreConverter
 			.Select(category => new GenreCategoryItem
 			{
 				Category = category,
-				Name = category.ToString(),
+				Name = category.GetDisplayName(),
 				Description = category.GetDescription(),
 				Genres = GetGenresForCategory(category).ToList()
 			});
@@ -319,7 +418,7 @@ public class GenreConverter
 			.Cast<Enum>()
 			.Select(genre => new Genre
 			{
-				Name = genre.ToString(),
+				Name = genre.GetDisplayName(),
 				Description = genre.GetDescription()
 			});
 	}
@@ -334,25 +433,27 @@ public class GenreConverter
 
 public class GenreCategoryItem
 {
-	public GenreCategory Category { get; set; }
-	[JsonPropertyName("Name")]
-	public string Name { get; set; }
+    public GenreCategory Category { get; set; }
 
-	[JsonPropertyName("Description")]
-	public string Description { get; set; }
+    [JsonPropertyName("Name")]
+    public string Name { get; set; }
 
-	[JsonPropertyName("Genres")]
-	public List<Genre> Genres { get; set; }
+    [JsonPropertyName("Description")]
+    public string Description { get; set; }
+
+    [JsonPropertyName("Genres")]
+    public List<Genre> Genres { get; set; }
 }
 
 public class Genre
 {
-	[JsonPropertyName("Name")]
-	public string Name { get; set; }
+    [JsonPropertyName("Name")]
+    public string Name { get; set; }
 
-	[JsonPropertyName("Description")]
-	public string Description { get; set; }
-	public override string ToString()
+    [JsonPropertyName("Description")]
+    public string Description { get; set; }
+
+    public override string ToString()
     {
         return $"{Name} - {Description}";
     }

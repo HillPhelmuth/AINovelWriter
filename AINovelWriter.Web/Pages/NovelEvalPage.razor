@@ -109,24 +109,7 @@
                     </RadzenDataGridColumn>
                 </Columns>
             </RadzenDataGrid>
-            @*  <RadzenDataList Data="_chapterResults" AllowPaging="true" PageSize="5">
-            <Template Context="chapter">
-
-
-            <RadzenCard>
-            <RadzenStack Orientation="Orientation.Horizontal" Gap="1rem" AlignItems="AlignItems.Center">
-            <RadzenText Text="@($"Chapter {chapter.Key.ToString()}")" TextAlign="TextAlign.Center" TextStyle="TextStyle.DisplayH6"></RadzenText>
-            @foreach (var eval in chapter.Value)
-            {
-            <RadzenCard>
-            <RadzenText TextAlign="TextAlign.Center">@eval.EvalName</RadzenText>
-            <RadzenText TextAlign="TextAlign.Center">@eval.ProbScore.ToString("N3")</RadzenText>
-            </RadzenCard>
-            }
-            </RadzenStack>
-            </RadzenCard>
-            </Template>
-            </RadzenDataList> *@
+           
         </RadzenCard>
     </RadzenColumn>
 </RadzenRow>

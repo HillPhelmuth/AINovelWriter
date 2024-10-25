@@ -22,6 +22,12 @@ public enum AIModel
 	[Description("Dynamic gpt-4o")]
 	[ModelProvidor("OpenAI")]
 	Gpt4OChatGptLatest,//ft:gpt-4o-mini-2024-07-18:hillphelmuth:novel-gen-mini:A138kqIT
+    //ft:gpt-4o-mini-2024-07-18:hillphelmuth:novel-gen2-1:A7ylbj6Q
+    [ModelName("ft:gpt-4o-mini-2024-07-18:hillphelmuth:novel-gen-fixed:AA4IWyZr")]
+    [Description("Latest Fine-tuned gpt-4o-mini")]
+    [ModelProvidor("OpenAI")]
+    [ModelProvidor("AzureOpenAI")]
+    Gpt4MiniFineTuned,
     [ModelName("gpt-3.5-turbo")]
     [AzureOpenAIModel("gpt-35-turbo")]
     [Description("Latest gpt-3.5-turbo")]
@@ -38,7 +44,7 @@ public enum AIModel
     [Description("Latest Gemini 1.0 Pro")]
     [ModelProvidor("GoogleAI")]
 	Gemini10,
-    [ModelName("gemini-1.5-pro-latest")]
+    [ModelName("gemini-1.5-pro-002")]
     [Description("Latest Gemini 1.5 Pro")]
     [ModelProvidor("GoogleAI")]
 	Gemini15,
@@ -53,7 +59,7 @@ public enum AIModel
     [ModelName("open-mistral-nemo")]
 	[Description("Open Mistral Nemo")]
 	[ModelProvidor("MistralAI")]
-	OpenMistral7B,
+	OpenMistralNemo,
 	[ModelName("open-mixtral-8x7b")]
 	[Description("Open Mixtral 8x7B")]
 	[ModelProvidor("MistralAI")]
@@ -66,14 +72,15 @@ public enum AIModel
 	[Description("Mistral Small Latest")]
 	[ModelProvidor("MistralAI")]
 	MistralSmallLatest,
-	[ModelName("mistral-medium-latest")]
-	[Description("Mistral Medium Latest")]
-	[ModelProvidor("MistralAI")]
-	MistralMediumLatest,
 	[ModelName("mistral-large-latest")]
 	[Description("Mistral Large Latest")]
 	[ModelProvidor("MistralAI")]
-	MistralLargeLatest
+	MistralLargeLatest,
+    [ModelName("Local Model")]
+    [Description("LM Studio loaded Model")]
+    [ModelProvidor("OpenAI")]
+    LocalModel
+
 }
 public class ModelNameAttribute(string model) : Attribute
 {

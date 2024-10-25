@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AINovelWriter.Web", "AINove
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AINovelWriter.Evals", "AINovelWriter.Evals\AINovelWriter.Evals.csproj", "{68CACA3A-683F-4DFB-BDFA-FB1BA3C1BF83}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChatComponents", "ChatComponents\ChatComponents.csproj", "{6B00F0A0-D6DB-4127-BE9D-585D5E467D32}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{68CACA3A-683F-4DFB-BDFA-FB1BA3C1BF83}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{68CACA3A-683F-4DFB-BDFA-FB1BA3C1BF83}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{68CACA3A-683F-4DFB-BDFA-FB1BA3C1BF83}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B00F0A0-D6DB-4127-BE9D-585D5E467D32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B00F0A0-D6DB-4127-BE9D-585D5E467D32}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B00F0A0-D6DB-4127-BE9D-585D5E467D32}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B00F0A0-D6DB-4127-BE9D-585D5E467D32}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

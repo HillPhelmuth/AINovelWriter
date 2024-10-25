@@ -21,14 +21,14 @@ public class CosmosService(CosmosClient cosmosClient)
 	{
 		try
 		{
-			var item = await _userContainer.ReadItemAsync<UserData>(username, new PartitionKey(username));
+            UserData item = await _userContainer.ReadItemAsync<UserData>(username, new PartitionKey(username));
             var query = _novelContainer.GetItemLinqQueryable<NovelInfo>().Where(x => x.User == username);
             var feed = query.ToFeedIterator();
-			item.Resource.SavedNovels.Clear();
+			item.SavedNovels.Clear();
             while (feed.HasMoreResults)
             {
                 var results = await feed.ReadNextAsync();
-				item.Resource.SavedNovels.AddRange(results.Select(x => new UserNovelData(x.id,x.Title, x.CreatedOn)));
+				item.SavedNovels.AddRange(results.Select(x => new UserNovelData(x.id,x.Title, x.CreatedOn)));
             }
             return item;
 		}

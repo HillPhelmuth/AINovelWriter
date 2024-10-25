@@ -18,12 +18,29 @@ public class NovelConcepts
 	{
         return $"""
 		        Title: {Title}
-		        Genre: {Genre.ToString()}
-		        Description: {GenreDescription}
+		        Genre: {Genre.ToString()} - {Genre.GetDescription()}
 		        {(SubGenres.Count > 0 ? "Subgenres: " + string.Join("\n", SubGenres.Select(x => x.ToString())) : string.Empty)}
 		        Theme: {Theme}
 		        Characters:{Characters}
-		        Plot Events: {PlotEvents}
+		        Primary Plot Events: {PlotEvents}
 		        """;
 	}
+}
+
+public class NovelConceptFailover
+{
+    public string? Theme { get; set; }
+    public string[]? Characters { get; set; }
+    public string[]? PlotEvents { get; set; }
+    public string? Title { get; set; }
+    public NovelConcepts AsNovelConcepts()
+    {
+        return new NovelConcepts
+        {
+            Theme = Theme,
+            Characters = string.Join("\n", Characters ?? [""]),
+            PlotEvents = string.Join("\n", PlotEvents ?? [""]),
+            Title = Title
+        };
+    }
 }

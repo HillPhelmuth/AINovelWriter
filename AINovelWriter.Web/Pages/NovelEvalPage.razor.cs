@@ -1,8 +1,8 @@
 ﻿using AINovelWriter.Evals;
 using AINovelWriter.Shared.Models;
+using HillPhelmuth.SemanticKernel.LlmAsJudgeEvals;
 using Microsoft.AspNetCore.Components;
 using Microsoft.SemanticKernel;
-using PromptFlowEvalsAsPlugins;
 using Radzen;
 using Radzen.Blazor;
 

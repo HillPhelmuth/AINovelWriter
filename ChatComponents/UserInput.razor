@@ -1,0 +1,59 @@
+﻿@using Radzen.Blazor.Rendering
+<RadzenRow Style="position:absolute; bottom:2px; height:max-content; width:95%">
+    <RadzenColumn Size="12" SizeLG="12">
+        <RadzenCard Style="padding-top:2px;padding-bottom:6px" Variant="Variant.Text">
+            <RadzenTemplateForm Data="_requestForm" TItem="RequestForm" Submit="SubmitRequest">
+                <UploadImageWindow FileUploadChanged="HandleFileAdded" IsVisible="_isShow"></UploadImageWindow>
+                <RadzenRow>
+                    <RadzenColumn Size="10">
+                        @*  <Popup @ref="_popup" Lazy="true" Style="display:none;position:absolute;margin-left:-200px;margin-top: -130px;height:max-content;width:max-content;padding:5px;border:var(--rz-panel-border);background-color:var(--rz-panel-background-color);">
+                            <UploadImageWindow @bind-FileUpload="_requestForm.UserInputRequest.FileUpload"></UploadImageWindow>
+                        </Popup> *@
+
+                        <RadzenFormField Text="@HelperText" Style="width: 100%" @ref="_formField">
+                            <ChildContent>
+                                @switch (UserInputFieldType)
+                                {
+                                    case UserInputFieldType.TextBox:
+                                        <RadzenTextBox ReadOnly="_isDisabled" Name="Input" Style="width: 100%" @bind-Value="@_requestForm.UserInputRequest.ChatInput"></RadzenTextBox>
+                                        break;
+                                    case UserInputFieldType.TextArea:
+                                        <RadzenTextArea ReadOnly="_isDisabled" Name="Input" Style="width: 100%; height:5rem" @bind-Value="@_requestForm.UserInputRequest.ChatInput"></RadzenTextArea>
+                                        break;
+                                }
+
+                            </ChildContent>
+                            <Helper>
+                                <RadzenRequiredValidator Visible="IsRequired" Component="Input" Text="@($"{HelperText} required")"></RadzenRequiredValidator>
+                            </Helper>
+                        </RadzenFormField>
+                        @if (_requestForm.ShowImageInput)
+                        {
+                            <RadzenFormField Text="Image Url" Style="width: 100%">
+                                <ChildContent>
+                                    <RadzenTextBox Name="Image" Style="width: 100%" @bind-Value="_requestForm.UserInputRequest.ImageUrlInput"></RadzenTextBox>
+                                </ChildContent>
+                            </RadzenFormField>
+                        }
+
+                    </RadzenColumn>
+                    <RadzenColumn Size="2" SizeLG="2" Style="display: flex; align-items:center">
+                        <RadzenCard Variant="Variant.Text" Style="display: flex; align-items: center; justify-items: center; justify-content:center; justify-items:center; padding:0">
+                            <RadzenButton ButtonStyle="ButtonStyle.Info" Size="ButtonSize.ExtraSmall" Icon="@(UserInputFieldType == UserInputFieldType.TextBox ? "expand" : "unfold_less")" Click="ToggleInputType"></RadzenButton>
+                            <RadzenButton Disabled="_isDisabled" ButtonType="ButtonType.Submit" Size="ButtonSize.Small" Icon="send" IsBusy="IsBusy" BusyText="Sending..." Text="@ButtonLabel"></RadzenButton>
+
+                            <RadzenButton Size="ButtonSize.Small" Icon="block" Click="Cancel"></RadzenButton>
+                            <RadzenToggleButton ToggleButtonStyle="ButtonStyle.Dark" @bind-Value="_isShow" Size="ButtonSize.Small" Icon="attach_file" ButtonStyle="ButtonStyle.Secondary"></RadzenToggleButton>
+                            @if (!string.IsNullOrEmpty(_requestForm.UserInputRequest.FileUpload?.FileBase64))
+                            {
+                                <RadzenImage Style="width:2rem;height:2rem" Path="@($"{_requestForm.UserInputRequest.FileUpload.FileBase64}")"></RadzenImage>
+                            }
+
+                        </RadzenCard>
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenTemplateForm>
+        </RadzenCard>
+
+    </RadzenColumn>
+</RadzenRow>
