@@ -676,8 +676,11 @@ public class NovelWriterService : INovelWriter
 		    kernelBuilder.AddMistralChatCompletion(aiModel.GetAIModelName(), ConfigurationSettings.MistralAI!.ApiKey!);
         if (providor == "AnthropicAI")
             kernelBuilder.AddBedrockChatCompletionService(aiModel.GetAIModelName());
+#if DEBUG
         if (aiModel == AIModel.LocalModel)
-		    kernelBuilder.AddOpenAIChatCompletion(aiModel.GetAIModelName(), apiKey: "", endpoint: new Uri("http://localhost:1234/v1"));
+            kernelBuilder.AddOpenAIChatCompletion(aiModel.GetAIModelName(), apiKey: "", endpoint: new Uri("http://localhost:1234/v1"));
+#endif
+
     }
 
     private static ValueTask<bool> RetryShouldHandle(RetryPredicateArguments<HttpResponseMessage> args)
