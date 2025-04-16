@@ -31,7 +31,7 @@ public class AppState : INotifyPropertyChanged
         {
             if (string.IsNullOrEmpty(NovelConcepts.Theme))
             {
-				NovelConcepts = new NovelConcepts { Title = value.Title, Theme = value.ConceptDescription };
+				NovelConcepts = value.Concepts ?? new NovelConcepts { Title = value.Title, Theme = value.ConceptDescription };
             }
             SetField(ref _novelInfo, value);
         }
@@ -54,12 +54,14 @@ public class AppState : INotifyPropertyChanged
 		get => _userData;
 		set => SetField(ref _userData, value);
 	}
+
 	public List<string> GeneratedImages { get; set; } = [];
 	public void NovelComplete()
 	{
 		NovelInfo.IsComplete = true;
 		OnPropertyChanged(nameof(NovelInfo));
 	}
+
 	public void AddCover(string image)
 	{
 		NovelInfo.ImageUrl = image;

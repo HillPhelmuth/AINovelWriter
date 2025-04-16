@@ -71,7 +71,7 @@ public class FileHelper
         // Calculate the starting Y position to center the text block
         double totalHeight = titleLines.Count * lineHeight;
         double startY = (coverPage.Height - totalHeight) / 4;
-
+        titleLines.Clear();
         // Draw each line centered
         for (int i = 0; i < titleLines.Count; i++)
         {
@@ -80,21 +80,7 @@ public class FileHelper
 	        gfx.DrawString(titleLines[i], titleFont, textBrush, new XRect(startX, startY + i * lineHeight, lineWidth, lineHeight), XStringFormats.TopLeft);
         }
 		// Measure the title size
-		//var titleSize = gfx.MeasureString(coverTitle, titleFont);
-
-		//// Calculate the position to center the title on the cover
-		//double titleX = (coverPage.Width - titleSize.Width) / 2;
-		//double titleY = (coverPage.Height - titleSize.Height) / 2 - 200;
-		// Define the area where the title will be drawn (cover page width with some padding)
-		//double margin = 20; // Adjust margin as needed
-		//XRect titleRect = new XRect(margin, coverPage.Height / 4 - 100, coverPage.Width - (2 * margin), coverPage.Height / 2);
-
-		//// Draw the title within the specified rectangle, centered and wrapped
-		//gfx.DrawString(coverTitle, titleFont, textBrush, titleRect, XStringFormats.Center);
-
-		// Draw the title on the cover image
-		//gfx.DrawString(coverTitle, titleFont, textBrush, new XRect(titleX, titleY, titleSize.Width, titleSize.Height), XStringFormats.TopLeft);
-
+		
 
 		// Create a new MigraDoc document
 		var doc = new Document();
@@ -118,13 +104,8 @@ public class FileHelper
             // Add the chapter content
             section.AddParagraph(content);
 
-            // Ensure each chapter starts on a new page
-            //section.AddPageBreak();
         }
-        //var section = doc.AddSection();
-
-        //// Add the novel text to the section
-        //section.AddParagraph(novelText);
+       
 
         // Render the MigraDoc document to the PdfDocument
         var renderer = new PdfDocumentRenderer
@@ -147,16 +128,7 @@ public class FileHelper
         pdfDocument.Save(finalStream, false);
         return finalStream.ToArray();
 
-        // Append the novel text pages to the PDF document
-        //foreach (var page in renderer.PdfDocument.Pages)
-        //{
-        //    pdfDocument.AddPage(page);
-        //}
-
-        //// Save the PDF document to the specified path
-        //using var stream = new MemoryStream();
-        //pdfDocument.Save(stream, false);
-        //return stream.ToArray();
+        
     }
     public static async Task<byte[]> CreateAndCompressFilesAsync(string text, string? imageUrl = null)
     {

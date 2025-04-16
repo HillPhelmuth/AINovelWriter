@@ -54,7 +54,7 @@ public partial class NovelStreamingPage
 		_isBusy = true;
 		StateHasChanged();
 		var ctoken = _cancellationTokenSource.Token;
-		await foreach (var token in NovelWriterService.WriteNovel(AppState.NovelOutline.Outline!,AppState.NovelInfo.AuthorStyle ?? "", AppState.NovelOutline.WriterAIModel, ctoken))
+		await foreach (var token in NovelWriterService.WriteFullNovel(AppState.NovelOutline.Outline!,AppState.NovelInfo.AuthorStyle ?? "", AppState.NovelOutline.WriterAIModel, ctoken))
 		{
 			AppState.NovelInfo.Text += token;
 			await InvokeAsync(StateHasChanged);

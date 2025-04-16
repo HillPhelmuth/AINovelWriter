@@ -18,7 +18,9 @@ public class NovelInfo
 	public string Outline { get; set; } = "";
 	public string ImageUrl { get; set; } = "";
 	public string ConceptDescription { get; set; } = "";
+	public NovelConcepts? Concepts { get; set; }
 	public List<string> TextPages { get; private set; } = [];
+	
 	[JsonIgnore]
 	[Ignore]
 	public string ImgHtml => $"<img src='{ImageUrl}' />";
@@ -67,12 +69,6 @@ public record ChapterOutline(string Title, string Text, int ChapterNumber)
 	public bool ShowAudio { get; set; }
 	public string? Summary { get; set; }
     public int TokenCount => string.IsNullOrEmpty(FullText) ? 0 : StringHelpers.GetTokens200K(FullText);
-
-    public void Deconstruct(out string Title, out string Text)
-    {
-        Title = this.Title;
-        Text = this.Text;
-    }
 }
 public class ChapterEventArgs(string chapterText, string chapterSummary) : EventArgs
 {

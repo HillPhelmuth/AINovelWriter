@@ -17,6 +17,10 @@ public class FlatChapterEval
     [JsonIgnore]
     [Ignore]
     public string? ChapterText { get; set; }
+    public override string ToString()
+    {
+        return $"Chapter {ChapterNumber}: {Overall}";
+    }
 }
 public class FullNovelEval
 {
@@ -33,7 +37,16 @@ public class FullNovelEval
     {
         // return a markdown table from the list of chapter evaluations
         var table = new StringBuilder();
-        table.AppendLine("| Chapter | Character Development | Clarity | Creativity | Engagement | Relevance | Writing Detail | Overall |");
+        table.AppendLine("**Overall Eval Scores**");
+		table.AppendLine($"Character Development: {CharacterDevelopment}");
+		table.AppendLine($"Clarity: {Clarity}");
+		table.AppendLine($"Creativity: {Creativity}");
+		table.AppendLine($"Engagement: {Engagement}");
+		table.AppendLine($"Relevance: {Relevance}");
+		table.AppendLine($"Writing Detail: {WritingDetail}");
+		table.AppendLine($"Overall: {Overall}");
+		table.AppendLine("**Chapter Evals**");
+		table.AppendLine("| Chapter | Character Development | Clarity | Creativity | Engagement | Relevance | Writing Detail | Overall |");
         table.AppendLine("| --- | --- | --- | --- | --- | --- | --- | --- |");
         foreach (var chapterEval in ChapterEvals)
         {

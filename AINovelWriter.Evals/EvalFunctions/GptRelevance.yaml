@@ -16,17 +16,28 @@ input_variables:
   default: ''
 
 template: |
- Relevance measures how well the generated fiction content aligns with the specific details and themes provided by the user. It involves assessing the degree to which the chapter adheres to the given details, maintaining consistency with the user's expectations. When evaluating relevance, consider how closely the chapter matches the user's input. Given the details and chapter, score the relevance of the chapter between one to ten stars using the following rating scale:
+ 
+ ## Evaluate Chapter Adherence To Style and Details (1-10 Stars) - Critical Assessment
+ 
+ **Task:** Evaluate the relevance and stylistic coherence of a provided fiction chapter against a set of details and themes) and a **Writing Style Guide**. Assign a single integer score between 1 and 10 (inclusive) that reflects the overall quality of the chapter's alignment with these elements.
 
-    1 star: the chapter is completely irrelevant to the details provided
-    5 stars: the chapter is somewhat relevant, but with significant deviations
-    10 stars: the chapter is professional level, highly relevant, and aligns perfectly with the details
+ **Scoring Scale:**
 
-    This rating value should always be an integer between 1 and 10. So, the rating produced should be 1, or 2, or 3, etc.
-    Respond ONLY with the number.
+ *   **1-3:** Minimal relevance; significant deviations from details, themes, and style.
+ *   **4-6:** Some relevance; noticeable deviations from details, themes, or style.
+ *   **7-9:** Strong relevance; minor inconsistencies with details, themes, or style.
+ *   **10:** Exceptional relevance; perfect alignment with details, themes, and style.
 
-    
-    ## Real Work
-    details: {{$details}}
-    chapter: {{$chapter}}
-    stars:    
+ **Important:** Avoid bias towards higher scores. Actively look for instances where the chapter deviates from the provided details, themes, or style guide. Be honest and critical in your assessment, imagining yourself as a discerning editor.
+
+ **Output:**
+
+ You must output only a **single integer** representing the relevance score. Do not include any text other than the single integer score.
+
+ **Input Data:**
+
+ *   **Details and Themes:** `{{$details}}`
+ *   **Writing Style Guide:** `{{$styleGuide}}`
+ *   **Chapter:** `{{$chapter}}`
+
+ **Provide your numerical assessment now.**

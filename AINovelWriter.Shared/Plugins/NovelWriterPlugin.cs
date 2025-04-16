@@ -5,10 +5,13 @@ using Microsoft.SemanticKernel.Connectors.Google;
 using Microsoft.SemanticKernel.Connectors.MistralAI;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
 using System.ComponentModel;
+using AINovelWriter.Shared.Services;
+using Microsoft.Extensions.AI;
+using Microsoft.SemanticKernel.Connectors.Amazon;
 
 namespace AINovelWriter.Shared.Plugins;
 
-public class NovelWriterPlugin(AIModel aIModel = AIModel.Gpt4O)
+public class NovelWriterPlugin(AIModel aIModel = AIModel.Gpt41)
 {
     public const string SummaryPrompt = "Summarize the following chapter, focusing on character development, plot progression, and important details. Include specific actions, emotions, and relationships that are revealed. Pay attention to any shifts in character motivations or relationships. The summary should be detailed and insightful, providing more than just a basic overview of the events. \n\n```\n {{$novel_chapter}} \n ```";
     private AIModel _aIModel = aIModel;
@@ -56,7 +59,7 @@ public class NovelWriterPlugin(AIModel aIModel = AIModel.Gpt4O)
 	[KernelFunction, Description("Summarize all the character details and plot events in the novel chapter")]
 	public async Task<string> SummarizeChapter(Kernel kernel, [Description("Chapter text to summarize")] string chapterText)
 	{
-		var settings = new OpenAIPromptExecutionSettings { MaxTokens = 1028};
+		var settings = new OpenAIPromptExecutionSettings { Store = true, Metadata = new Dictionary<string, string>() { ["Function"] = nameof(SummarizeChapter)}, MaxTokens = 1028};
 		var args = new KernelArguments(settings)
 		{
 			["novel_chapter"] = chapterText
@@ -65,10 +68,12 @@ public class NovelWriterPlugin(AIModel aIModel = AIModel.Gpt4O)
 		return response;
 	}
 	[KernelFunction, Description("Create an outline for a novel")]
-	public async Task<string> CreateNovelOutline(Kernel kernel, [Description("The central topic or theme of the story")] string theme, [Description("A list of character details that must be included in the outline")] string characterDetails = "", [Description("Plot events that must occurr in the outline")] string plotEvents = "", [Description("The title of the novel")] string novelTitle = "", [Description("Number of chapters to include")] int chapters = 15)
+	public async Task<string> CreateNovelOutline(Kernel kernel, [Description("The central topic or theme of the story")] string theme, [Description("A list of character details that must be included in the outline")] string characterDetails = "", [Description("Plot events that must occurr in the outline")] string plotEvents = "", [Description("The title of the novel")] string novelTitle = "", [Description("Number of chapters to include")] int chapters = 15, string additionalInstructions = "")
 	{
-
-		var settings = GetPromptExecutionSettingsFromModel(_aIModel, 0.85);
+		var promptFilter = new PromptFilter();
+		var kernelClone = kernel.Clone();
+        kernelClone.PromptRenderFilters.Add(promptFilter);
+        var settings = GetPromptExecutionSettingsFromModel(_aIModel, 0.55);
 		var args = new KernelArguments(settings)
 		{
 			["theme"] = theme,
@@ -77,7 +82,10 @@ public class NovelWriterPlugin(AIModel aIModel = AIModel.Gpt4O)
 			["novelTitle"] = novelTitle,
 			["chapterCount"] = chapters
 		};
-		var response = await kernel.InvokePromptAsync<string>(Prompts.OutlineWriterPrompt, args);
+        var instructions = string.IsNullOrEmpty(additionalInstructions) ? "" : $"## Additional User Instructions\n\n{additionalInstructions}\n";
+        args["additionalInstructions"] = instructions;
+        
+        var response = await kernelClone.InvokePromptAsync<string>(Prompts.OutlineWriterPrompt, args);
 		return response;
 	}
 	[KernelFunction, Description("Create an outline for a novel")]
@@ -89,7 +97,7 @@ public class NovelWriterPlugin(AIModel aIModel = AIModel.Gpt4O)
 			["outline"] = outline,
 			["storyDescription"] = storyDescription
 		};
-		var response = await kernel.InvokePromptAsync<string>(Prompts.ChapterOutlineEditorPrompt, args);
+		var response = await kernel.InvokePromptAsync<string>(Prompts.ChapterOutlineExpansionPrompt, args);
 		return response;
 	}
 	[KernelFunction, Description("Create title for a novel")]
@@ -120,8 +128,9 @@ public class NovelWriterPlugin(AIModel aIModel = AIModel.Gpt4O)
 		{
 			"GoogleAI" => new GeminiPromptExecutionSettings {  Temperature = tempurature },
 			"MistralAI" => new MistralAIPromptExecutionSettings {  Temperature = tempurature },
-			"OpenAI" or "AzureOpenAI" => new OpenAIPromptExecutionSettings {  Temperature = tempurature},
-			_ => new OpenAIPromptExecutionSettings {  Temperature = tempurature }
+			"OpenAI" or "AzureOpenAI" => new OpenAIPromptExecutionSettings { Store = true,  Temperature = tempurature},
+			"AnthropicAI" => new AmazonClaudeExecutionSettings(){MaxTokensToSample = 8192, Temperature = (float)tempurature},
+			_ => new OpenAIPromptExecutionSettings { Store = true,  Temperature = tempurature }
 		};
 	}
 }

@@ -34,7 +34,7 @@
                         @foreach (var chapter in AppState.NovelInfo.ChapterOutlines)
                         {
                             <RadzenAccordionItem Text="@chapter.Title.TrimStart('#')" Style="max-height:15rem; overflow:auto">
-                                <RadzenButton Size="ButtonSize.ExtraSmall" Disabled="@(string.IsNullOrEmpty(chapter.FullText))" Click="@(() => chapter.ShowAudio = true)" Icon="record_voice_over" Text="Too lazy even to read it"></RadzenButton>
+                                <RadzenButton Size="ButtonSize.Small" Disabled="@(string.IsNullOrEmpty(chapter.FullText))" Click="@(() => chapter.ShowAudio = true)" Icon="record_voice_over" Text="Too lazy even to read it"></RadzenButton>
                                 <RadzenCard Style="padding:0; display:flex; align-items:center; justify-content:center">
 
                                     @if (chapter.ShowAudio)

@@ -12,7 +12,8 @@ public partial class EditorAgent
         if (firstRender)
         {
             var chatHistory = new ChatHistory();
-            chatHistory.AddUserMessage("First, get the full summary of the active novel. Then, introduce yourself, your purpose, and the services you provide");
+            //chatHistory.AddUserMessage("First, get the full summary of the active novel. Then, introduce yourself, your purpose, and the services you provide");
+            chatHistory.AddUserMessage("Hi! Tell me about yourself.");
             var response = NovelWriterService.ExecuteEditorAgentChat(chatHistory);
             await HandleStreaming(response);
         }

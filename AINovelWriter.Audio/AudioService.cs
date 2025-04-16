@@ -87,6 +87,10 @@ namespace AINovelWriter.Audio
         {
             await (await moduleTask.Value).InvokeVoidAsync("changeProgress", value, elementId);
         }
+        public async ValueTask PlayFromBase64String(string base64String, string elementId)
+        {
+            await (await moduleTask.Value).InvokeVoidAsync("playBase64Audio", base64String, elementId);
+        }
         public async ValueTask DownloadFile(string fileName, byte[] fileData)
         {
             await (await moduleTask.Value).InvokeVoidAsync("downloadFile", fileName, fileData);

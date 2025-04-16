@@ -15,7 +15,7 @@ public static class ServiceCollectionExts
 	public static IServiceCollection AddNovelWriterServices(this IServiceCollection services, IConfiguration config)
 	{
 		var cosmosClient = new CosmosClient(config["Cosmos:ConnectionString"]);
-		services.AddScoped<INovelWriter, NovelWriterService>().AddScoped<ImageGenService>().AddScoped<AppState>().AddScoped<ITextToSpeechService, TextToSpeechService>().AddSingleton(cosmosClient).AddSingleton<CosmosService>();
+		services.AddScoped<INovelWriter, NovelWriterService>().AddScoped<ImageGenService>().AddScoped<AppState>().AddScoped<ITextToSpeechService, NovelWriterService>().AddSingleton(cosmosClient).AddSingleton<CosmosService>();
 		return services;
 	}
 }

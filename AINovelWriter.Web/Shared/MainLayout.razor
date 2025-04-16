@@ -41,7 +41,9 @@
 				<RadzenBreadCrumbItem Icon="palette" Visible="@AppState.NovelInfo.IsComplete" Path="cover" Text="'Create' your cover art"></RadzenBreadCrumbItem>
                 <RadzenBreadCrumbItem Icon="auto_stories" Visible="@(!string.IsNullOrEmpty(AppState.NovelInfo.ImageUrl))" Path="book" Text="Read 'your' book!"></RadzenBreadCrumbItem>
 				<RadzenBreadCrumbItem Icon="edit_note" Visible="@AppState.NovelInfo.IsComplete" Path="edit/0" Text="Improve 'your' book!"></RadzenBreadCrumbItem>
-				<RadzenBreadCrumbItem Icon="quiz" Visible="@AppState.NovelInfo.IsComplete" Path="eval" Text="Evaluate 'your' book!"></RadzenBreadCrumbItem>
+                <RadzenBreadCrumbItem Icon="quiz" Visible="@AppState.NovelInfo.IsComplete" Path="eval" Text="Evaluate 'your' book!"></RadzenBreadCrumbItem>
+				<RadzenBreadCrumbItem Icon="psychology_alt" Visible="@AppState.NovelInfo.IsComplete" Path="chat" Text="Character Chat"></RadzenBreadCrumbItem>
+                
 			</ChildContent>
 		</RadzenBreadCrumb>
 		<div>

@@ -160,11 +160,12 @@ public partial class NovelConceptPage
         StateHasChanged();
         await Task.Delay(1);
         AppState.NovelInfo = new NovelInfo() { User = AppState.UserData.UserName };
-        var theme = $"Genre:\n{novelConcepts.Genre.ToString() + "\n" + novelConcepts.Genre.GetDescription()}\n\n{(novelConcepts.SubGenres.Count > 0 ? "Subgenres:\n" + string.Join("\n", novelConcepts.SubGenres.Select(x => x.ToString())) : string.Empty)}\nTheme/Description: {novelConcepts.Theme}";
-        AppState.NovelOutline.Outline = await NovelWriterService.CreateNovelOutline(theme, novelConcepts.Characters, novelConcepts.PlotEvents, novelConcepts.Title, novelConcepts.ChapterCount, novelConcepts.OutlineAIModel);
+        //novelConcepts.Theme = $"Genre:\n{novelConcepts.Genre.ToString() + "\n" + novelConcepts.Genre.GetDescription()}\n\n{(novelConcepts.SubGenres.Count > 0 ? "Subgenres:\n" + string.Join("\n", novelConcepts.SubGenres.Select(x => x.ToString())) : string.Empty)}\nTheme/Description: {novelConcepts.Theme}";
+        AppState.NovelOutline.Outline = await NovelWriterService.CreateNovelOutline(novelConcepts);
         AppState.NovelInfo.Outline = AppState.NovelOutline.Outline;
         AppState.NovelInfo.Title = novelConcepts.Title;
         AppState.NovelInfo.ConceptDescription = novelConcepts.ToString();
+        AppState.NovelInfo.Concepts = novelConcepts;
         //AppState.NovelInfo.AuthorStyle = novelConcepts.AuthorStyle;
         if (!_tempHide)
             _isBusy = false;
@@ -201,7 +202,7 @@ public partial class NovelConceptPage
         _isBusy = true;
         StateHasChanged();
         var ctoken = _cancellationTokenSource.Token;
-        await foreach (var token in NovelWriterService.WriteNovel(AppState.NovelOutline.Outline!, AppState.NovelInfo.AuthorStyle ?? "", AIModel.Gpt4MiniFineTuned, ctoken))
+        await foreach (var token in NovelWriterService.WriteFullNovel(AppState.NovelOutline.Outline!, AppState.NovelInfo.AuthorStyle ?? "", AIModel.Gpt4MiniFineTuned, ctoken))
         {
             AppState.NovelInfo.Text += token;
             await InvokeAsync(StateHasChanged);

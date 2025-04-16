@@ -22,32 +22,30 @@ using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Microsoft.SemanticKernel.TextToImage;
+using Microsoft.SemanticKernel.Connectors.Amazon;
+using OpenAI.Audio;
+using BinaryContent = System.ClientModel.BinaryContent;
 
 
 namespace AINovelWriter.Shared.Services;
 
-public class FineTuneLine
+public class NovelWriterService : INovelWriter
 {
-    [JsonPropertyName("messages")]
-    public List<Message> Messages { get; set; }
-}
-
-public class Message
-{
-    [JsonPropertyName("role")]
-    public string Role { get; set; }
-
-    [JsonPropertyName("content")]
-    public string Content { get; set; }
-}
-public class NovelWriterService(IConfiguration configuration, AppState appState) : INovelWriter
-{
-    public event Action<string>? SendOutline;
+	public event Action<string>? SendOutline;
     public event EventHandler<ChapterEventArgs>? SendChapterText;
     public event EventHandler<string>? TextToImageUrl;
     public event EventHandler<ReadOnlyMemory<byte>?>? SendAudioResponse;
     public event EventHandler<AudioState>? SendAudioStateUpdate;
-
+    public static ILoggerFactory _loggerFactory;
+    private AppState appState;
+    private IConfiguration configuration;
+    public NovelWriterService(IConfiguration configuration, AppState appState, ILoggerFactory loggerFactory)
+    {
+        this.appState = appState;
+        _loggerFactory = loggerFactory;
+        this.appState = appState;
+        this.configuration = configuration;
+    }
     public async Task<NovelInfo> ReverseEngineerNovel(string epubFileData, string title)
     {
         var chapters = ReverseWriterService.ParseEpubChapters(epubFileData);
@@ -99,66 +97,35 @@ public class NovelWriterService(IConfiguration configuration, AppState appState)
     public async Task<NovelConcepts> GenerateNovelIdea(GenreCategoryItem genre, List<Genre> subgenres, NovelLength length)
     {
         var random = new Random();
-        var roll = random.Next(1, 7);
+        var roll = random.Next(2, 10);
         var aIModel = roll switch
         {
-            1 => AIModel.Gpt35Turbo,
-            2 => AIModel.Gpt4Mini,
+            1 => AIModel.Gpt41Mini,
+            2 => AIModel.Gpt4OMini,
             3 => AIModel.GeminiFlash,
-            4 => AIModel.Gpt4O,
+            4 => AIModel.Gpt41,
             5 => AIModel.OpenMistralNemo,
             6 => AIModel.Gemini15,
-            _ => AIModel.Gemini10
+            7 => AIModel.Gpt4OCurrent,
+            8 => AIModel.Gpt41Nano,
+            9 => AIModel.Grok3,
+            _ => AIModel.Gpt4OMini
         };
+        aIModel = AIModel.Gpt41;
         var kernel = CreateKernel(aIModel);
         var rng = new Random();
         var personality = Enum.GetValues<Personality>()[rng.Next(Enum.GetValues<Personality>().Length)];
         
         var personality2 = Enum.GetValues<Personality>()[rng.Next(Enum.GetValues<Personality>().Length)];
         var personalityVar =
-            $"**{personality.ToString()} ** as in {personality.GetDescription()} or **{personality2.ToString()}** as in {personality2.GetDescription()}.";
+            $"**{personality.ToString()}** as in _{personality.GetDescription()}_ or **{personality2.ToString()}** as in _{personality2.GetDescription()}_ .";
         var lengthDescription = length.GetDescription();
-        string Prompt = $$$"""
-                              You are a creative novel idea generator. Your task is to assist the user in developing a unique and captivating novel idea.
-                              
-                              You will receive a **Genre** and **Sub-genre**. Use them to shape the **Theme** of the story. The generated idea must include the following components:  
-                              
-                              - **Title**: Use the provided title if available, otherwise generate one.  
-                              - **Theme**: Use the given theme if provided, otherwise create one. Ensure the theme reflects the genre and sub-genre.  
-                              - **Character Details**: Incorporate any provided character details; otherwise, create compelling characters.  
-                              - **Key Plot Events**: Include any plot events provided; otherwise, generate significant events to drive the narrative.
-                              
-                              ### Audience:  
-                              This novel should resonate with readers who are **{{ $personalities }}**.  
-                              
-                              ### Length:  
-                              The content should align with the following length description (longer novels will require more characters and plot events): **{{ $lengthDescription }}**.  
-                              
-                              ### Required Output Format:  
-                              Generate your response in the following JSON structure. Modify only empty properties:
-                              
-                              ```json
-                              {
-                                 "Title": "Title of the Novel",
-                                 "Theme": "Theme of the Novel described in 1-3 sentances",
-                                 "Characters": "3 - 7 main Character Details (Short novels should get 3, long or epic should get 7)",
-                                 "PlotEvents": "3 - 10 primary Plot Events (short novels should get 3-4, medium 5-6, long 7-8, epic 9-10)"
-                              }
-                              ```
-                              
-                              ### Genre:  
-                              **{{ $genre }}**  
-                              
-                              ### Sub-genres:  
-                              **{{ $subgenre }}**
-                              
-                              """;
-       
+
         var settings = GetPromptExecutionSettingsFromModel(aIModel, 0.9);
         var subgenreString = string.Join("\n", subgenres.Select(x => x.ToString()));
         Console.WriteLine($"Subgenres: \n---------------------\n{subgenreString}\n------------------------------------\n");
         var args = new KernelArguments(settings) { ["genre"] = $"{genre.Name}\n{genre.Description}", ["subgenre"] = subgenreString, ["personalities"] = personalityVar, ["lengthDescription"] = lengthDescription };
-        var json = await kernel.InvokePromptAsync<string>(Prompt, args);
+        var json = await kernel.InvokePromptAsync<string>(Prompts.IdeaGeneratePrompt, args);
         Console.WriteLine($"Novel Idea:\n------------------------------------\n {json}\n------------------------------------\n");
         NovelConcepts? concepts;
         var rawJson = json.Replace("```json", "").Replace("```", "").Trim('\n');
@@ -169,7 +136,11 @@ public class NovelWriterService(IConfiguration configuration, AppState appState)
         catch (JsonException ex)
         {
             Console.WriteLine($"Json Exception: {ex.Message}");
-            concepts = JsonSerializer.Deserialize<NovelConceptFailover>(rawJson)?.AsNovelConcepts();
+            var repairKernel = CreateKernel();
+            var repairSettings = GetPromptExecutionSettingsFromModel(AIModel.Gpt4OMini, 0.9);
+            var repairArgs = new KernelArguments(repairSettings) { ["concepts"] = rawJson };
+            var repairJson = await repairKernel.InvokePromptAsync<string>(Prompts.IdeaRepairPrompt, repairArgs);
+            concepts = JsonSerializer.Deserialize<NovelConcepts>(repairJson!);
         }
 
         concepts.Genre = genre.Category;
@@ -177,15 +148,22 @@ public class NovelWriterService(IConfiguration configuration, AppState appState)
         return concepts;
 
     }
-    public async Task<string> CreateNovelOutline(string theme, string characterDetails = "", string plotEvents = "",
-        string novelTitle = "", int chapters = 15, AIModel aIModel = AIModel.Gpt4O)
+    public async Task<string> CreateNovelOutline(NovelConcepts concepts)
     {
+        var aIModel = concepts.OutlineAIModel;
+        var novelTitle = concepts.Title;
+        var theme = concepts.Description;
+        var characterDetails = concepts.Characters;
+        var plotEvents = concepts.PlotEvents;
+        var chapters = concepts.ChapterCount;
+        var additionalInstructions = concepts.AdditionalInstructions;
         var kernel = CreateKernel(aIModel);
         var novelWriter = new NovelWriterPlugin(aIModel);
         var plugin = kernel.ImportPluginFromObject(novelWriter);
         var createOutlineFunc = plugin["CreateNovelOutline"];
         _title = novelTitle;
-        var args = new KernelArguments()
+        var settings = GetOutlinePromptExecutionSettingsFromModel(aIModel);
+        var args = new KernelArguments(settings)
         {
             ["theme"] = theme,
             ["characterDetails"] = characterDetails,
@@ -193,6 +171,38 @@ public class NovelWriterService(IConfiguration configuration, AppState appState)
             ["novelTitle"] = novelTitle,
             ["chapters"] = chapters
         };
+        var instructions = string.IsNullOrEmpty(additionalInstructions) ? "" : $"## Additional User Instructions\n\n{additionalInstructions}\n";
+        args["additionalInstructions"] = instructions;
+       
+        var outline = await createOutlineFunc.InvokeAsync<string>(kernel, args);
+        _description = concepts.ToString();
+        
+        return outline;
+    }
+
+    public async Task<string> CreateNovelOutline(string theme, string characterDetails = "", string plotEvents = "",
+        string novelTitle = "", int chapters = 15, AIModel aIModel = AIModel.Gpt41, string additionalInstructions = "")
+    {
+        var kernel = CreateKernel(aIModel);
+        var novelWriter = new NovelWriterPlugin(aIModel);
+        var plugin = kernel.ImportPluginFromObject(novelWriter);
+        var createOutlineFunc = plugin["CreateNovelOutline"];
+        _title = novelTitle;
+        var settings = GetOutlinePromptExecutionSettingsFromModel(aIModel);
+        var args = new KernelArguments(settings)
+        {
+            ["theme"] = theme,
+            ["characterDetails"] = characterDetails,
+            ["plotEvents"] = plotEvents,
+            ["novelTitle"] = novelTitle,
+            ["chapters"] = chapters
+        };
+        var instructions = string.IsNullOrEmpty(additionalInstructions) ? "" : $"## Additional User Instructions\n\n{additionalInstructions}\n";
+        if (!string.IsNullOrEmpty(additionalInstructions))
+        {
+            
+            args["additionalInstructions"] = instructions;
+        }
         var outline = await createOutlineFunc.InvokeAsync<string>(kernel, args);
         _description =
             $"""
@@ -204,6 +214,8 @@ public class NovelWriterService(IConfiguration configuration, AppState appState)
 
              Plot Events:
              {plotEvents}
+             
+             {instructions}
              """;
         //AdditionalAgentText?.Invoke($"<p>{outline}</p>");
         return outline;
@@ -211,23 +223,16 @@ public class NovelWriterService(IConfiguration configuration, AppState appState)
     private string _description = "";
     private string _title = "";
 
-    public async IAsyncEnumerable<string> WriteNovel(string outline, string authorStyle = "", AIModel aiModel = AIModel.Gpt4O,
+    public async IAsyncEnumerable<string> WriteFullNovel(string outline, string authorStyle = "", AIModel aiModel = AIModel.Gpt41,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         //var chapterOutline = JsonSerializer.Deserialize<ChapterOutline>(outline.Replace("```json","").Replace("```","").Trim('\n'));
         var chapters = SplitMarkdownByHeaders(outline);
         var kernel = CreateKernel(aiModel);
+        var summerizeKernel = CreateKernel(AIModel.Gpt41Mini);
         var novelPlugin = new NovelWriterPlugin(aiModel);
         var plugin = kernel.ImportPluginFromObject(novelPlugin);
-
-        var initialContext = new KernelArguments()
-        {
-            ["chapters"] = outline,
-            ["description"] = _description,
-            ["title"] = _title
-        };
-        var writeChapterFunc = plugin["WriteChapterStreaming"];
-        var expandChapterFunc = plugin["ExpandChapterOutline"];
+       
         var summarizeChapterFunc = plugin["SummarizeChapter"];
         var summaryBuilder = new StringBuilder();
         var previousChapter = "none, 1st chapter";
@@ -237,10 +242,10 @@ public class NovelWriterService(IConfiguration configuration, AppState appState)
             if (cancellationToken.IsCancellationRequested) break;
 
             var chapterCopy = chapter;
-            
+           
             var writeArgs = new KernelArguments()
             {
-                ["outline"] = chapterCopy/*chapterExpanded*/,
+                ["outline"] = chapterCopy /*chapterExpanded*/,
                 ["previousChapter"] = previousChapter,
                 ["summary"] = summaryBuilder.ToString(),
                 ["storyDescription"] = _description
@@ -248,14 +253,12 @@ public class NovelWriterService(IConfiguration configuration, AppState appState)
             var chapterText = "";
             
 
-            await foreach (var token in WriteChapterStreaming(kernel, writeArgs, aiModel, chapterCopy, cancellationToken))
+            await foreach (var token in WriteChapterStreaming(kernel, writeArgs, aiModel, cancellationToken))
             {
-                //SendTextResponse?.Invoke(this, token);
                 yield return token;
                 chapterText += token;
             }
 
-            //SendTitle?.Invoke(this, "\n\n  ");
             yield return "\n\n  ";
             
             previousChapter = chapterText;
@@ -263,16 +266,52 @@ public class NovelWriterService(IConfiguration configuration, AppState appState)
             {
                 ["chapterText"] = chapterText
             };
-            var summary = await summarizeChapterFunc.InvokeAsync<string>(kernel, summarizeArgs, cancellationToken);
+            var summary = await summarizeChapterFunc.InvokeAsync<string>(summerizeKernel, summarizeArgs, cancellationToken);
             SendChapterText?.Invoke(this, new ChapterEventArgs(chapterText, summary!));
             summaryBuilder.AppendLine(summary);
 
         }
-        //var image = await TextToImage(outline);
-        //TextToImageUrl?.Invoke(this, image);
+        
+    }
+
+    public async Task<string> WriteChapter(Kernel kernel, KernelArguments args, AIModel aiModel, CancellationToken cancellationToken)
+    {
+        var settings = GetWritingSettingsFromModel(aiModel);
+
+        var chat = kernel.GetRequiredService<IChatCompletionService>();
+        var systemMessage = $"""
+                             You are a creative and exciting fiction writer. You write intelligent, detailed and engrossing novels that expertly combine character development and growth, interpersonal and international intrigue, and thrilling action. You are tasked with writing a chapter for a novel. Ensure the chapter is engaging, cohesive, and well-structured. Your writing should always contain as much detail as possible. Always write with characters first, preferring natural sounding dialog over exposition. Most importantly, follow the provided **Writing Guide**.
+
+                             ## Writing Style Guide
+
+                             {Prompts.StyleGuide}
+
+                             """;
+
+
+        var promptTemplateFactory = new KernelPromptTemplateFactory();
+        var systemPrompt = await promptTemplateFactory.Create(new PromptTemplateConfig(Prompts.ChapterWriterPrompt)).RenderAsync(kernel, args, cancellationToken);
+        var chatHistory = new ChatHistory(systemMessage);
+
+        chatHistory.AddUserMessage(systemPrompt);
+
+        var hasMore = false;
+        var currentChapter = "";
+        var response = await chat.GetChatMessageContentAsync(chatHistory, settings, kernel, cancellationToken);
+        return response.Content!;
+    }
+
+   
+    public async Task<string> RewriteChapter(string original, string feedback, AIModel model = AIModel.Gpt41)
+    {
+        var kernel = CreateKernel(model);
+        var settings = GetWritingSettingsFromModel(model);
+        var args = new KernelArguments(settings) { ["original"] = original, ["feedback"] = feedback };
+        var newChapter = await kernel.InvokePromptAsync<string>(Prompts.ChapterRevisitPrompt, args);
+        return newChapter!;
     }
     private async IAsyncEnumerable<string> WriteChapterStreaming(Kernel kernel, KernelArguments args, AIModel aiModel,
-        string outline, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         var settings = GetWritingSettingsFromModel(aiModel);
 
@@ -288,31 +327,18 @@ public class NovelWriterService(IConfiguration configuration, AppState appState)
 
         
         var promptTemplateFactory = new KernelPromptTemplateFactory();
-        var systemPrompt = await promptTemplateFactory.Create(new PromptTemplateConfig(Prompts.ChapterWriterPrompt)).RenderAsync(kernel, args, cancellationToken);
+        var writerPrompt = await promptTemplateFactory.Create(new PromptTemplateConfig(Prompts.ChapterWriterPrompt)).RenderAsync(kernel, args, cancellationToken);
         var chatHistory = new ChatHistory(systemMessage);
         
-        chatHistory.AddUserMessage(systemPrompt);
+        chatHistory.AddUserMessage(writerPrompt);
         
-        var hasMore = false;
         var currentChapter = "";
         await foreach (var message in chat.GetStreamingChatMessageContentsAsync(chatHistory, settings, kernel, cancellationToken))
         {
             var messageContent = message.Content!;
             currentChapter += messageContent;
             yield return messageContent;
-            if (aiModel != AIModel.Gpt4O) continue;
-            if (message.Metadata?["FinishReason"] is not ChatFinishReason item) continue;
-            Console.WriteLine($"Finish Reason: {(ChatFinishReason?)item}");
-            hasMore = item == ChatFinishReason.Length;
         }
-        if (!hasMore) yield break;
-        chatHistory.AddAssistantMessage(currentChapter);
-        chatHistory.AddUserMessage("Continue the chapter");
-        await foreach (var message in chat.GetStreamingChatMessageContentsAsync(chatHistory, settings, kernel, cancellationToken))
-        {
-            yield return message.Content!;
-        }
-        //return kernel.InvokePromptStreamingAsync<string>(ChapterWriterPrompt, args);
 
     }
 
@@ -350,7 +376,7 @@ public class NovelWriterService(IConfiguration configuration, AppState appState)
         //return rewrittenChapter;
     }
     public IAsyncEnumerable<string> ReviewFullNovel(NovelInfo novel, ReviewContext reviewContext,
-        AIModel aiModel = AIModel.Gpt4O)
+        AIModel aiModel = AIModel.Gpt41)
     {
         var kernel = CreateKernel(aiModel);
         var promptTemplate = reviewContext == ReviewContext.None ? Prompts.NovelFullCoverageReviewPrompt : Prompts.NovelContextSpecificReviewPrompt;
@@ -361,16 +387,47 @@ public class NovelWriterService(IConfiguration configuration, AppState appState)
         return reviewNovelFunc.InvokeStreamingAsync<string>(kernel, args);
     }
 
-    
-    public async IAsyncEnumerable<string> ExecuteEditorAgentChat(ChatHistory chatHistory, AIModel aiModel = AIModel.Gpt4O)
+    public async Task<string> CompareTwoChapterVersions(string originalChapter, string revisedChapter,
+        AIModel aiModel = AIModel.Gpt41)
+    {
+        var kernel = CreateKernel(aiModel);
+        
+        var promptConfig = new PromptTemplateConfig(Prompts.HeadToHeadEval)
+        {
+            InputVariables = [
+                new() { Name = "versionA", AllowDangerouslySetContent = true },
+                new() { Name = "versionB", AllowDangerouslySetContent = true }
+            ]
+        };
+        var compareFunc = KernelFunctionFactory.CreateFromPrompt(promptConfig);
+        var promptTemplateFactory = new KernelPromptTemplateFactory();
+        var promptTemplate = promptTemplateFactory.Create(promptConfig);
+        
+        var args = new KernelArguments() { ["versionA"] = originalChapter, ["versionB"] = revisedChapter };
+        var prompt = promptTemplate.RenderAsync(kernel, args);
+        Console.WriteLine($"Prompt:\n {prompt}\n");
+        return await compareFunc.InvokeAsync<string>(kernel, args) ?? string.Empty;
+    }
+    public async IAsyncEnumerable<string> ExecuteEditorAgentChat(ChatHistory chatHistory, AIModel aiModel = AIModel.Gpt41)
     {
         var kernel = CreateKernel(aiModel);
         kernel.ImportPluginFromType<EditorAgentPlugin>();
         var filter = new AutoFilter();
         kernel.AutoFunctionInvocationFilters.Add(filter);
         var chat = kernel.GetRequiredService<IChatCompletionService>();
-        var history = new ChatHistory(Prompts.AgentPrompts.EditorAgentPrompt);
-        foreach (var message in chatHistory)
+        var template = new KernelPromptTemplateFactory().Create(new PromptTemplateConfig(Prompts.AgentPrompts.EditorAgentPrompt));
+        var novelText = appState.NovelInfo.Text;
+        var title = appState.NovelInfo.Title;
+        var conceptDescription = appState.NovelInfo.ConceptDescription;
+        var startIndex = conceptDescription.IndexOf("Characters:");
+        var endIndex = conceptDescription.IndexOf("Primary Plot Events:");
+		var characters = conceptDescription.Substring(startIndex, endIndex - startIndex);
+        Console.WriteLine($"Characters: {characters}");
+        var prompt = await template.RenderAsync(kernel, new KernelArguments() { ["novelText"] = novelText, ["title"] = title });
+		// ---------------------------------------TEMP CHANGE ONLY----------------------------------------------------
+		var history = new ChatHistory(prompt);
+		// ---------------------------------------REMOVE THIS LINE----------------------------------------------------
+		foreach (var message in chatHistory)
         {
             history.Add(message);
         }
@@ -380,15 +437,49 @@ public class NovelWriterService(IConfiguration configuration, AppState appState)
             yield return message.Content!;
         }
     }
+
+    public async IAsyncEnumerable<string> ExecuteCharacterAgentChat(ChatHistory chatHistory, AIModel aiModel = AIModel.Gpt41)
+    {
+		var kernel = CreateKernel(aiModel);
+		kernel.ImportPluginFromType<EditorAgentPlugin>();
+		var filter = new AutoFilter();
+		kernel.AutoFunctionInvocationFilters.Add(filter);
+		var chat = kernel.GetRequiredService<IChatCompletionService>();
+		var template = new KernelPromptTemplateFactory().Create(new PromptTemplateConfig(Prompts.AgentPrompts.AsCharacterPrompt));
+		var novelText = appState.NovelInfo.Text;
+		var title = appState.NovelInfo.Title;
+		var conceptDescription = appState.NovelInfo.ConceptDescription;
+		var startIndex = conceptDescription.IndexOf("Characters:");
+		var endIndex = conceptDescription.IndexOf("Plot ");
+		var characters = conceptDescription.Substring(startIndex, endIndex - startIndex);
+		Console.WriteLine($"Characters: {characters}");
+		var prompt = await template.RenderAsync(kernel, new KernelArguments() { ["novelText"] = novelText, ["title"] = title, ["characters"] = characters });
+		var history = new ChatHistory(prompt);
+		foreach (var message in chatHistory)
+		{
+			history.Add(message);
+		}
+		var settings = GetToolCallPromptExecutionSettings(aiModel);
+		await foreach (var message in chat.GetStreamingChatMessageContentsAsync(history, settings, kernel))
+		{
+			yield return message.Content!;
+		}
+	}
+
     private static PromptExecutionSettings GetWritingSettingsFromModel(AIModel model)
     {
         var providor = model.GetModelProvidors().FirstOrDefault();
+        if (model is AIModel.O3Mini or AIModel.Grok3Mini)
+        {
+            return new OpenAIPromptExecutionSettings { Store = true, MaxTokens = 34000, ReasoningEffort = "low" };
+        }
         return providor switch
         {
             "GoogleAI" => new GeminiPromptExecutionSettings { },
             "MistralAI" => new MistralAIPromptExecutionSettings { },
-            "OpenAI" or "AzureOpenAI" => new OpenAIPromptExecutionSettings { Temperature = 0.9, MaxTokens = 8000, ExtensionData = new Dictionary<string, object> { ["store"] =true }, },
-            _ => new OpenAIPromptExecutionSettings { Temperature = 0.8 }
+            "OpenAI" or "AzureOpenAI" => new OpenAIPromptExecutionSettings { Store = true, Temperature = 0.9, MaxTokens = 8000 },
+            "AnthropicAI" => new AmazonClaudeExecutionSettings(){MaxTokensToSample = 8192, Temperature = 0.9f},
+            _ => new OpenAIPromptExecutionSettings { Store = true, Temperature = 0.9 }
         };
     }
     private static PromptExecutionSettings GetRewriteSettingsFromModel(AIModel model)
@@ -398,8 +489,9 @@ public class NovelWriterService(IConfiguration configuration, AppState appState)
         {
             "GoogleAI" => new GeminiPromptExecutionSettings {  },
             "MistralAI" => new MistralAIPromptExecutionSettings { },
-            "OpenAI" or "AzureOpenAI" => new OpenAIPromptExecutionSettings { ChatSystemPrompt = "Provide feedback as a novel editor. Locate the flaws and provide notes for a re-write, if necessary. Use json format in response", Temperature = 0.8, ResponseFormat = "json_object"},
-            _ => new OpenAIPromptExecutionSettings { Temperature = 0.8 }
+            "AnthropicAI" => new AmazonClaudeExecutionSettings() { MaxTokensToSample = 8192, Temperature = 0.9f },
+            "OpenAI" or "AzureOpenAI" => new OpenAIPromptExecutionSettings { Store = true, ChatSystemPrompt = "Provide feedback as a novel editor. Locate the flaws and provide notes for a re-write, if necessary. Use json format in response", Temperature = 0.8, ResponseFormat = "json_object"},
+            _ => new OpenAIPromptExecutionSettings { Store = true, Temperature = 0.8 }
         };
     }
     public async Task<string> TextToImage(string novelOutline, string imageStyle = "photo-realistic")
@@ -444,52 +536,59 @@ public class NovelWriterService(IConfiguration configuration, AppState appState)
         return imageContent;
 
     }
-    public async IAsyncEnumerable<ReadOnlyMemory<byte>?> TextToAudioAsync(string text, string voice = "onyx",
+    public async IAsyncEnumerable<ReadOnlyMemory<byte>?> TextToAudioAsync(string text, string voice = "ash",
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        var kernelBuilder = Kernel.CreateBuilder();
-        kernelBuilder.Services.AddLogging(builder =>
+        
+        AudioClient client = new("gpt-4o-mini-tts", configuration["OpenAI:ApiKey"]!);
+        var splitText = text.SplitText(4096);
+        foreach (var segment in splitText)
         {
-            builder.AddConsole();
-        });
-        kernelBuilder.Services.AddSingleton(configuration);
-        kernelBuilder.Services.AddSingleton(appState);
-        kernelBuilder.Services.ConfigureHttpClientDefaults(c =>
-        {
-            c.AddStandardResilienceHandler().Configure(o =>
+            //var audioContent = await textToAudioService.GetAudioContentAsync(segment, executionSettings, kernel, cancellationToken: cancellationToken);
+            //var audioData = audioContent.Data;
+            var instructions = """
+                               **Instructions for a Professional Audio Book Narrator**
+                               
+                               - **Delivery**:
+                                 - Maintain a steady, measured pace that is neither rushed nor overly slow; allow the listener time to absorb the content, particularly during important passages.
+                                 - Speak with consistent volume and clarity throughout; ensure every word is easy to understand without straining or mumbling.
+                                 - Utilize natural pauses at punctuation marks and chapter breaks to maintain rhythm and clarity.
+                                 - Employ subtle emphasis on key words, names, or turning points to guide the listener’s attention.
+                                 - Vary pacing slightly during dialogue versus narration — slightly quicker for lively conversations, slightly slower for vivid descriptions or emotional moments, to enhance engagement.
+                               
+                               - **Voice**:
+                                 - Use a clear, neutral adult voice (male or female, as specified by the publisher), displaying versatility for different characters if the text includes dialogue.
+                                 - Strive for an expressive delivery; adopt distinctions for different characters through pitch, timbre, or accent shifts as necessary.
+                                 - Exhibit vocal qualities of authority and warmth, imbuing the reading with professionalism and approachability.
+                               
+                               - **Tone**:
+                                 - Maintain an overall tone that is polished, respectful, and attentive to the author’s intent—neither overly dramatic nor monotone.
+                                 - Adjust tone subtly based on the narrative: more animated for scenes with action or excitement, and softer or more contemplative for reflective passages.
+                                 - Avoid colloquial or overly casual delivery unless the text specifically calls for it.
+                               
+                               - **Pronunciation**:
+                                 - Adhere to standard American or British English pronunciation as specified by the publisher or appropriate to the content.
+                                 - Prioritize consistency, especially for recurring terms or character names.
+                                 - If required by the text, implement regionally appropriate or culturally specific pronunciations.
+                                 - Articulate clearly, avoiding regional accent drift unless indicated by the text or character dialogue.
+                               """;
+            // Fix for CS1503: Convert the string to ReadOnlyMemory<byte> using Encoding.UTF8.GetBytes
+            BinaryContent requestContent = BinaryContent.Create(BinaryData.FromBytes(new ReadOnlyMemory<byte>(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(new
             {
-                o.Retry.ShouldHandle = args => ValueTask.FromResult(args.Outcome.Result?.StatusCode is HttpStatusCode.TooManyRequests);
-                o.Retry.BackoffType = DelayBackoffType.Exponential;
-                o.AttemptTimeout = new HttpTimeoutStrategyOptions { Timeout = TimeSpan.FromSeconds(90) };
-                o.CircuitBreaker.SamplingDuration = TimeSpan.FromSeconds(180);
-                o.TotalRequestTimeout = new HttpTimeoutStrategyOptions { Timeout = TimeSpan.FromMinutes(5) };
-            });
-        });
-        var kernel = kernelBuilder
-            .AddOpenAITextToAudio(
-                modelId: "tts-1",
-                apiKey: configuration["OpenAI:ApiKey"]!)
-            .Build();
-
-        var textToAudioService = kernel.GetRequiredService<ITextToAudioService>();
-
-        OpenAITextToAudioExecutionSettings executionSettings = new()
-        {
-            Voice = voice, // The voice to use when generating the audio.
-            ResponseFormat = "mp3", // The format to audio in.
-            Speed = 1.0f // The speed of the generated audio.
-        };
-        foreach (var segment in text.SplitText(4096))
-        {
-            var audioContent = await textToAudioService.GetAudioContentAsync(segment, executionSettings, kernel, cancellationToken: cancellationToken);
-            var audioData = audioContent.Data;
+                model = "gpt-4o-mini-tts",
+                input = segment,
+                voice = voice,
+                instructions = instructions,
+                speed = 1.25f
+            })))));
+            Console.WriteLine($"Starting TTS for part {splitText.IndexOf(segment) + 1} of {splitText.Count}");
+            var speech = await client.GenerateSpeechAsync(requestContent);
+            ReadOnlyMemory<byte> audioData = speech.GetRawResponse().Content; 
             yield return audioData;
+            Console.WriteLine($"Completed TTS for part {splitText.IndexOf(segment) + 1} of {splitText.Count}");
             //SendAudioResponse?.Invoke(this, audioData);
         }
-        // Convert text to audio
 
-        // Save audio content to a file
-        // await File.WriteAllBytesAsync(AudioFilePath, audioContent.Data!.ToArray());
     }
     public static List<string> SplitMarkdownByHeaders(string markdownText)
     {
@@ -527,43 +626,61 @@ public class NovelWriterService(IConfiguration configuration, AppState appState)
 
         return result;
     }
-    public Kernel CreateKernel(AIModel aiModel = AIModel.Gpt4Mini)
+    private readonly FunctionFilter _functionFilter = new();
+    public Kernel CreateKernel(AIModel aiModel = AIModel.Gpt4OMini)
     {
         var kernelBuilder = Kernel.CreateBuilder();
-        kernelBuilder.Services.AddLogging(builder =>
-        {
-            builder.AddConsole();
-        });
+       
         kernelBuilder.Services.AddSingleton(configuration);
         kernelBuilder.Services.AddSingleton(appState);
-        kernelBuilder.Services.ConfigureHttpClientDefaults(c =>
-        {
-            c.AddStandardResilienceHandler().Configure(o =>
-            {
-                o.Retry.ShouldHandle = RetryShouldHandle;
-                o.Retry.BackoffType = DelayBackoffType.Exponential;
-                o.AttemptTimeout = new HttpTimeoutStrategyOptions { Timeout = TimeSpan.FromMinutes(5) };
-                o.CircuitBreaker.SamplingDuration = TimeSpan.FromMinutes(10);
-                o.TotalRequestTimeout = new HttpTimeoutStrategyOptions { Timeout = TimeSpan.FromMinutes(15) };
-                
-            });
-        });
-        var providor = aiModel.GetModelProvidors().FirstOrDefault();
-        Console.WriteLine($"AI: {providor}");
-        if (providor.Contains("OpenAI"))
-            kernelBuilder.AddOpenAIChatCompletion(aiModel.GetOpenAIModelName(), configuration["OpenAI:ApiKey"]!);
-        if (providor == "GoogleAI")
-            kernelBuilder.AddGoogleAIGeminiChatCompletion(aiModel.GetOpenAIModelName(), configuration["GoogleAI:ApiKey"]!);
-        if (providor == "MistralAI")
-            kernelBuilder.AddMistralChatCompletion(aiModel.GetOpenAIModelName(), configuration["MistralAI:ApiKey"]!);
-        if (aiModel == AIModel.LocalModel)
-            kernelBuilder.AddOpenAIChatCompletion(aiModel.GetOpenAIModelName(), apiKey: "", endpoint: new Uri("http://localhost:1234/v1"));
-        return kernelBuilder
+        AddDefaultKernelServices(aiModel, kernelBuilder);
+        var kernel = kernelBuilder
             .Build();
+        kernel.FunctionInvocationFilters.Add(_functionFilter);
+        return kernel;
 
     }
 
-    private ValueTask<bool> RetryShouldHandle(RetryPredicateArguments<HttpResponseMessage> args)
+    public static void AddDefaultKernelServices(AIModel aiModel, IKernelBuilder kernelBuilder)
+    {
+	    kernelBuilder.Services.AddLogging(builder =>
+	    {
+		    builder.AddConsole();
+	    });
+	    kernelBuilder.Services.ConfigureHttpClientDefaults(c =>
+	    {
+		    c.AddStandardResilienceHandler().Configure(o =>
+		    {
+			    o.Retry.ShouldHandle = RetryShouldHandle;
+			    o.Retry.BackoffType = DelayBackoffType.Exponential;
+			    o.AttemptTimeout = new HttpTimeoutStrategyOptions { Timeout = TimeSpan.FromMinutes(5) };
+			    o.CircuitBreaker.SamplingDuration = TimeSpan.FromMinutes(10);
+			    o.TotalRequestTimeout = new HttpTimeoutStrategyOptions { Timeout = TimeSpan.FromMinutes(15) };
+                
+		    });
+	    });
+	    var providor = aiModel.GetModelProvidors().FirstOrDefault();
+	    Console.WriteLine($"AI: {providor}, {aiModel.GetAIModelName()}");
+        var client = DelegateHandlerFactory.GetHttpClientWithHandler<SystemToDeveloperRoleHandler>(_loggerFactory);
+        var logClient = DelegateHandlerFactory.GetHttpClientWithHandler<LoggingHandler>(_loggerFactory);
+        if (providor == "OpenAI" && (aiModel is AIModel.O3Mini))
+            kernelBuilder.AddOpenAIChatCompletion(aiModel.GetAIModelName(), ConfigurationSettings.OpenAI!.ApiKey!, httpClient: client);
+        else if (providor == "OpenAI")
+		    kernelBuilder.AddOpenAIChatCompletion(aiModel.GetAIModelName(), ConfigurationSettings.OpenAI!.ApiKey!);
+	    if (providor == "GoogleAI")
+		    kernelBuilder.AddGoogleAIGeminiChatCompletion(aiModel.GetAIModelName(), ConfigurationSettings.GoogleAI!.ApiKey!, httpClient:logClient);
+        if (providor == "GrokAI")
+            kernelBuilder.AddOpenAIChatCompletion(aiModel.GetAIModelName(),
+                apiKey: ConfigurationSettings.GrokAI!.ApiKey!, endpoint: new Uri("https://api.x.ai/v1"));
+	    if (providor == "MistralAI")
+		    kernelBuilder.AddMistralChatCompletion(aiModel.GetAIModelName(), ConfigurationSettings.MistralAI!.ApiKey!);
+        if (providor == "AnthropicAI")
+            kernelBuilder.AddBedrockChatCompletionService(aiModel.GetAIModelName());
+        if (aiModel == AIModel.LocalModel)
+		    kernelBuilder.AddOpenAIChatCompletion(aiModel.GetAIModelName(), apiKey: "", endpoint: new Uri("http://localhost:1234/v1"));
+    }
+
+    private static ValueTask<bool> RetryShouldHandle(RetryPredicateArguments<HttpResponseMessage> args)
     {
         switch (args.Outcome.Result?.StatusCode)
         {
@@ -597,12 +714,31 @@ public class NovelWriterService(IConfiguration configuration, AppState appState)
     private PromptExecutionSettings GetPromptExecutionSettingsFromModel(AIModel model, double tempurature, int maxTokens = 1024, bool isJson = true)
     {
         var providor = model.GetModelProvidors().FirstOrDefault();
+        
         return providor switch
         {
-            "GoogleAI" => new GeminiPromptExecutionSettings { ExtensionData = new Dictionary<string, object> { ["responseMimeType"] = "application/json" }, MaxTokens = maxTokens, Temperature = tempurature },
+            "GoogleAI" => new GeminiPromptExecutionSettings { ResponseMimeType = "application/json", ResponseSchema = typeof(NovelConceptOutput), /*MaxTokens = maxTokens,*/ Temperature = tempurature },
             "MistralAI" => new MistralAIPromptExecutionSettings { MaxTokens = maxTokens, Temperature = tempurature, ExtensionData = new Dictionary<string, object> { ["response_format"] = new { type = "json_object" } }, },
-            "OpenAI" or "AzureOpenAI" => new OpenAIPromptExecutionSettings { MaxTokens = maxTokens, Temperature = tempurature, ResponseFormat = "json_object" },
-            _ => new OpenAIPromptExecutionSettings { MaxTokens = maxTokens, Temperature = tempurature }
+            "OpenAI" or "AzureOpenAI" => new OpenAIPromptExecutionSettings { Store = true, MaxTokens = maxTokens, Temperature = tempurature, ResponseFormat = typeof(NovelConceptOutput) },
+            "AnthropicAI" => new AmazonClaudeExecutionSettings { MaxTokensToSample = 8192 },
+            _ => new OpenAIPromptExecutionSettings { Store = true, MaxTokens = maxTokens, Temperature = tempurature }
+        };
+    }
+    private PromptExecutionSettings GetOutlinePromptExecutionSettingsFromModel(AIModel model)
+    {
+        var providor = model.GetModelProvidors().FirstOrDefault();
+        if (model is AIModel.O3Mini)
+        {
+            
+            return new OpenAIPromptExecutionSettings { Store = true, MaxTokens = 34000, ReasoningEffort = "low" };
+        }
+        return providor switch
+        {
+            "GoogleAI" => new GeminiPromptExecutionSettings { },
+            "MistralAI" => new MistralAIPromptExecutionSettings { },
+            "OpenAI" or "AzureOpenAI" => new OpenAIPromptExecutionSettings { Store = true, MaxTokens = 14000},
+            "AnthropicAI" => new AmazonClaudeExecutionSettings { MaxTokensToSample = 8192 },
+            _ => new OpenAIPromptExecutionSettings { Store = true,  }
         };
     }
     private PromptExecutionSettings GetToolCallPromptExecutionSettings(AIModel model)
@@ -613,8 +749,8 @@ public class NovelWriterService(IConfiguration configuration, AppState appState)
         //{
         //    "GoogleAI" => new GeminiPromptExecutionSettings { FunctionChoiceBehavior = FunctionChoiceBehavior.Auto(), ToolCallBehavior = GeminiToolCallBehavior.AutoInvokeKernelFunctions},
         //    "MistralAI" => new MistralAIPromptExecutionSettings { FunctionChoiceBehavior = FunctionChoiceBehavior.Auto(), ToolCallBehavior = MistralAIToolCallBehavior.AutoInvokeKernelFunctions},
-        //    "OpenAI" or "AzureOpenAI" => new OpenAIPromptExecutionSettings { FunctionChoiceBehavior = FunctionChoiceBehavior.Auto(), ToolCallBehavior = ToolCallBehavior.AutoInvokeKernelFunctions},
-        //    _ => new OpenAIPromptExecutionSettings { FunctionChoiceBehavior = FunctionChoiceBehavior.Auto(), ToolCallBehavior = ToolCallBehavior.AutoInvokeKernelFunctions }
+        //    "OpenAI" or "AzureOpenAI" => new OpenAIPromptExecutionSettings { Store = true, FunctionChoiceBehavior = FunctionChoiceBehavior.Auto(), ToolCallBehavior = ToolCallBehavior.AutoInvokeKernelFunctions},
+        //    _ => new OpenAIPromptExecutionSettings { Store = true, FunctionChoiceBehavior = FunctionChoiceBehavior.Auto(), ToolCallBehavior = ToolCallBehavior.AutoInvokeKernelFunctions }
         //};
     }
 }
