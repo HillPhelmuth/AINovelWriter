@@ -17,27 +17,29 @@ public class CosmosService(CosmosClient cosmosClient)
 	private const string SharedContainerName = "SharedNovels";
 	private readonly Container _novelContainer = cosmosClient.GetContainer(DbName, NovelContainerName);
 	private readonly Container _userContainer = cosmosClient.GetContainer(DbName, UserContainerName);
-	public async Task<UserData?> GetUserProfile(string username)
-	{
-		try
-		{
+    public async Task<UserData?> GetUserProfile(string username)
+    {
+        try
+        {
+            Console.WriteLine($"\u001b[32mGetting user profile for {username}\u001b[0m");
             UserData item = await _userContainer.ReadItemAsync<UserData>(username, new PartitionKey(username));
             var query = _novelContainer.GetItemLinqQueryable<NovelInfo>().Where(x => x.User == username);
             var feed = query.ToFeedIterator();
-			item.SavedNovels.Clear();
+            item.SavedNovels.Clear();
             while (feed.HasMoreResults)
             {
                 var results = await feed.ReadNextAsync();
-				item.SavedNovels.AddRange(results.Select(x => new UserNovelData(x.id,x.Title, x.CreatedOn)));
+                if (results.Count == 0) Console.WriteLine($"\u001b[31mNovels not found for {username}\u001b[0m");
+                item.SavedNovels.AddRange(results.Select(x => new UserNovelData(x.id, x.Title, x.CreatedOn)));
             }
             return item;
-		}
-		catch
-		{
-			return null;
-		}
-		
-	}
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"\u001b[31mUser not found. Creating new user profile for {username}\n\nError:{ex}\u001b[0m");
+            return null;
+        }
+    }
 	public async Task<NovelInfo> GetUserNovel(string username, string novelId)
 	{
         try

@@ -22,8 +22,10 @@ public partial class UserProfile
 	private ImageGenService ImageGenService { get; set; } = default!;
 	[Inject]
 	private NotificationService NotificationService { get; set; } = default!;
-		
-	private bool _changeImage;
+
+    protected override List<string> InterestingProperties => [nameof(AppState.UserData)];
+
+    private bool _changeImage;
 	private async Task SelectNovel(UserNovelData userNovelData)
 	{
 		var novel = await CosmosService.GetUserNovel(AppState.UserData.UserName, userNovelData.NovelId);

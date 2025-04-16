@@ -47,7 +47,7 @@ public partial class BookPage
 		{
 			if (AppState.NovelInfo.TextPages.Count <= 1)
 			{
-				var is200K = AppState.WriterModel is AINovelWriter.Shared.Models.AIModel.Gpt4O or AINovelWriter.Shared.Models.AIModel.Gpt4Mini;
+				var is200K = AppState.WriterModel is AINovelWriter.Shared.Models.AIModel.Gpt41 or AINovelWriter.Shared.Models.AIModel.Gpt4OMini;
 				AppState.NovelInfo.SplitIntoPagesByTokenLines(is4o: is200K);
 			}
 			_pages = AppState.NovelInfo.TextPages.Select(AsHtml).ToList();

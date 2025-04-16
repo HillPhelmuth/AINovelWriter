@@ -29,7 +29,7 @@ public static class EnumHelpers
         }
         return [];
     }
-    public static string GetOpenAIModelName(this Enum value, bool isAzure = false)
+    public static string GetAIModelName(this Enum value, bool isAzure = false)
     {
         var fi = value.GetType().GetField(value.ToString());
         if (isAzure)

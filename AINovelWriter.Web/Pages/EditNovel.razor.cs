@@ -102,6 +102,19 @@ public partial class EditNovel
         _isRewriting = false;
         StateHasChanged();
     }
+    private AIModel _compareModel;
+    public async Task CompareRewrite(AIModel model)
+    {
+        var versionA = _editNovelForm.ChapterOutline!.FullText;
+        var versionB = _rewrite;
+        _isBusy = true;
+        StateHasChanged();
+        await Task.Delay(1);
+        var diff = await NovelWriterService.CompareTwoChapterVersions(versionA, versionB, model);
+        _isBusy = false;
+        StateHasChanged();
+        await ShowInlineDialog(diff);
+    }
 
     private void ApplyRewrite()
     {
@@ -141,6 +154,18 @@ public partial class EditNovel
         StateHasChanged();
     }
 
+    private async void CompareEdit()
+    {
+        var original = _chapterTextEdit!.OriginalText;
+        var newText = _chapterTextEdit!.NewText;
+        _isBusy = true;
+        StateHasChanged();
+        await Task.Delay(1);
+        var diff = await NovelWriterService.CompareTwoChapterVersions(original, newText, _compareModel);
+        _isBusy = false;
+        StateHasChanged();
+        await ShowInlineDialog(diff);
+    }
     private async Task DeleteChapter(ChapterOutline chapterOutline)
     {
         var confirm = await DialogService.Confirm("Are you sure you want to delete this chapter?", "Delete Chapter");

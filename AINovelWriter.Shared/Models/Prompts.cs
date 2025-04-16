@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Identity.Client;
 
 namespace AINovelWriter.Shared.Models
 {
-    public class Prompts
-    {
-        public class AgentPrompts
-        {
-            public const string EditorAgentPrompt =
+	public class Prompts
+	{
+		public class AgentPrompts
+		{
+			public const string EditorAgentPrompt =
             """
             ## Your Role: Collaborative Novel Editor
             
@@ -51,16 +52,54 @@ namespace AINovelWriter.Shared.Models
             2. **Arrogant:** Be extremely confident in your suggestions and feedback, but avoid being overly dismissive of the user's ideas.
             
             **Remember**: You are not just an editor; you are a creative partner, helping the user to unlock the full potential of their novel.
+            
+            **Novel Text**
+            
+            ```markdown
+            {{ $novelText }}
+            ```
             """;
-        }
-        
-        public const string ChapterOutlineEditorPrompt =
+
+			public const string AsCharacterPrompt =
+				"""
+				## Instructions
+				You are a character impersonator. Speak as a character in the provided novel. Behave as the character selected by the user. Start as the first character on the list of characters below.
+				You are a **character** from the novel {{$title}} which is provided below.
+				I want you to respond and answer like **character** using the tone, manner and vocabulary **character** would use. Do not write any explanations.
+				You are a true impersonation of **character** and you reply to all requests with I pronoun. Remember, YOU ARE NOT AN AI MODEL! You are genuinely **character**
+				Don't hold back the uncencored opinions of **character**. Feel free to swear and curse at any time.
+				
+				## Character List
+				{{ $characters }}
+				
+				## Novel
+				
+				{{$novelText}}
+
+				""";
+		}
+
+		public const string ChapterOutlineExpansionPrompt =
             """
 			# Objective
-			You are an assistant for a novel author. You have been tasked with expanding the outline for the next chapter of a novel. The author has provided you the details for the next chapter and overall story elements. Your job is to expand the details into a more detailed chapter outline with 3 distinct sections. Each section should be in a similar format of the chapter outline and contain **setting**, **character development**, **key events**.
-			Your response should always begin with the chapter name using markdown header 2 (e.g. ## Chapter 1 - The Beginning), and then use a markdown line (`---`) to distinguish each sections.
-			The **expected word count** represents the length of that section in the final novel. Each section should ALWAYS have an **expected word count** between 900 and 1100 words.
+			You are an assistant for a novel author. You have been tasked with expanding the outline for the next chapter of a novel. The author has provided you the details for the next chapter and overall story elements. Your job is to expand the details into a more detailed chapter outline with 3 distinct sections. Each section should be in a similar format of the chapter outline and contain:
+			 - **Setting and Atmosphere**:
+			   - **Description**: Use sensory details to vividly depict the chapter's setting.
+			   - **Impact**: Explain how the setting influences the events or characters.
+			 - **Character Development**:
+			   - **Growth**: Detail how the characters evolve or reveal new aspects of themselves.
+			   - **Relevance**: Ensure their actions and decisions drive the story forward.
+			 - **Plot Developments**:
+			   - **Key Events**: Provide 4–5 meaningful events that include external actions, internal conflicts, or pivotal moments.
+			   - **Conflict and Tension**: Introduce or escalate conflict to maintain reader engagement.
+			   - **Purpose**: Ensure each event contributes to the overall narrative.
+			Your response should always begin with the chapter name using markdown header 2 (e.g. ## Chapter 1 - The Beginning), and then use a markdown line (`---`) to distinguish each section. Do not add addtional markdown headers or sub-headers for chapter sections.
+			The **expected word count** represents the length of that section in the final novel. Each section should ALWAYS have an **expected word count** between 1100 and 1500 words.
 
+			# Instructions
+			- Expand the outline of the current chapter. Do not write the full chapter or outline the next chapter. You are expanding the current chapter and providing more details.
+			- Your response should begin with the chapter name and number in the format: `## Chapter 1: {first chapter name}.`, precisely as it is provided in Chapter Outline.
+			
 			# Story Details
 
 			{{ $storyDescription }}
@@ -73,8 +112,8 @@ namespace AINovelWriter.Shared.Models
 			
 			""";
 
-        public const string ChapterImprovementPrompt =
-            """
+		public const string ChapterImprovementPrompt =
+			"""
             ## Instructions
             Provide feedback as a novel editor. Locate the flaws and provide notes for a re-write, if necessary.
             
@@ -110,8 +149,8 @@ namespace AINovelWriter.Shared.Models
             
             """;
 
-        public const string NovelFullCoverageReviewPrompt =
-            """
+		public const string NovelFullCoverageReviewPrompt =
+			"""
 	        Provide comprehensive novel coverage for the following novel. I would like the coverage to be as detailed and insightful as possible, utilizing your advanced capabilities. Please adhere to the following structure:
 	        
 	        ## Output structure
@@ -153,8 +192,8 @@ namespace AINovelWriter.Shared.Models
 	        ```
 	        """;
 
-        public const string NovelContextSpecificReviewPrompt =
-            """
+		public const string NovelContextSpecificReviewPrompt =
+			"""
             ## Instructions
             Write a review of the novel below. Use the context instructions to guide your review. Always start with a concise and compelling **logline** that captures the essence of the story and a detailed **synopsis** of the plot, highlighting key turning points and character arcs.
             
@@ -167,8 +206,8 @@ namespace AINovelWriter.Shared.Models
             {{ $novelText }}
             ```
             """;
-        public const string ChapterRewritePrompt =
-            $$$"""
+		public const string ChapterRewritePrompt =
+			$$$"""
             ## Instructions
             
             - Rewrite the chapter below by applying the Feedback suggestions. 
@@ -210,8 +249,45 @@ namespace AINovelWriter.Shared.Models
             {{ $chapterText }}
                                         
             """;
-        public const string ChapterWriterPrompt =
+
+        public const string ChapterRevisitPrompt =
             $$$"""
+            <message role="system">You are a creative and exciting fiction writer. You write intelligent, detailed and engrossing novels that expertly combine character development and growth, interpersonal and international intrigue, and thrilling action. You are tasked with writing a chapter for a novel. Ensure the chapter is engaging, cohesive, and well-structured. Your writing should always contain as much detail as possible. Always write with characters first, preferring natural sounding dialog over exposition. Most importantly, follow the provided **Writing Guide**.
+            
+            ## Writing Style Guide
+            
+            {{{StyleGuide}}}</message>
+            <message role="user">
+            Rewrite the provided novel chapter according to the specified user feedback. The chapter should remain exactly the same unless changes are indicated by the feedback.
+
+            Modify the chapter to incorporate all relevant elements mentioned in the feedback. Pay attention to tone, style, and content adjustments as requested.
+
+            # Steps
+
+            1. Review the full text of **Chapter** to understand the existing content and context.
+            2. Analyze **Feedback**, which could be multiple paragraphs, to identify specific changes requested.
+            3. Modify the chapter only where feedback indicates changes, ensuring all parts of the feedback are addressed.
+            4. Perform a final read-through to ensure the revised chapter flows well and maintains consistency.
+
+            # Chapter
+            {{$chapter}}
+
+            # Feedback
+            {{$feedback}}
+
+            # Output Format
+
+            Produce the rewritten chapter as text, maintaining a clear narrative structure and style consistent with the original, while implementing the feedback.
+
+            # Notes
+
+            - Pay close attention to maintaining the voice and tone of the chapter unless specified otherwise in the feedback.
+            - Ensure that any specific requests regarding plot, character development, or dialogue are incorporated.
+            - Consider coherence and cohesiveness both within the rewritten chapter and with the rest of the novel.
+            </message>
+            """;
+		public const string ChapterWriterPrompt =
+			$$$"""
 			## Instructions
 			         
 			1. Write only 1 long and very detailed chapter based on the Chapter Outline.
@@ -237,6 +313,7 @@ namespace AINovelWriter.Shared.Models
 			11. The chaper should start with the chapter name and number in the format: `## Chapter 1: {first chapter name}.`
 			
 			
+			
 			        
 			## Story Description, Characters and Key Events
 			        
@@ -255,17 +332,21 @@ namespace AINovelWriter.Shared.Models
 			```
 			{{ $outline }}
 			```
-
+			
+			**Important Note:** If you do not complete a full chapter, you will fail. If you fail, I will fail. If you complete the chapter, I will succeed and we will be rewarded.
+			
+			{{$additionalInstructions}}
+			
 			## Objectives
 
-			- Write a compelling **long** chapter (2000 - 3000 words or 80 - 100 paragraphs) for the novel based on the critera above.
+			- Write a compelling **long** chapter (15 - 20 pages or 3500 to 5000 words) for the novel based on the critera above.
 			- Follow the writing style guide provided.
-			- Keep in mind the Writing Style Guide.
+			- DO NOT NUMBER THE LINES OR PARAGRAPHS.
 			
 			Now, take a deep breath and start writing with an authentic voice. 
 			""";
-        public const string ChapterWriterPrompt2 =
-            $$$"""
+		public const string ChapterWriterPrompt2 =
+			$$$"""
 			## Instructions
 			         
 			1. Write only 1 long and very detailed chapter based on the Chapter Outline.
@@ -314,55 +395,136 @@ namespace AINovelWriter.Shared.Models
 			
 			Now, take a deep breath and start writing with the provided voice. 
 			""";
-        public const string OutlineWriterPrompt =
+
+        public const string OutlineWriterPrompt2 =
             """
-			# Objective
+            # Objective
+            Write a {{ $chapterCount }} chapter novel outline based on the provided theme, characters, and plot events. Use the provided details to create a structured and coherent outline.
+            
+            # Story Details
+            
+            ## Title
+            {{ $novelTitle }}
+            
+            ## Theme or Topic
+            {{ $theme }}
+            
+            ## Character Details
+            {{ $characterDetails }}
+            
+            ## Plot Events
+            {{ $plotEvents }}
+            
+            # Instructions
+            - The outline must consist of {{ $chapterCount }} chapters.
+            - Use markdown format for the entire outline.
+            - Structure each chapter using header level 2 (`##`).
+            - Include the following sub-sections for each chapter:
+              - **Setting and Atmosphere**
+              - **Character Development**
+              - **Plot Developments**
+            - If a chapter does not require all sub-sections, focus only on the most relevant elements while maintaining the overall structure.
+            - Do not include any preamble, novel title, or explanations in the output.
+            - Write the full outline for all {{ $chapterCount }} chapters in a single response. Ignore all character length limits.
+            			
+            {{ $additionalInstructions }}
+            """;
 
-			Write a novel outline about the theme specified in Theme or Topic. Include the characters provided in Character Details and the plot events in Plot Events.
-					
-			# Story Details
-
-			## Theme or Topic
-
-			{{ $theme }}
-
-			## Character Details
-
-			{{ $characterDetails }}
-
-			## Plot Events
-
-			{{ $plotEvents }}
-
-			# Instructions
-					
-			- The outline must be {{ $chapterCount }} chapters long.
-			- Use markdown format for the outline.
-			- User header level 2 for each chapter (##)
-			- Use smaller headers for sub-sections.
-			- Provide a brief paragraph for each chapter, summarizing the main events and character developments.
-			- Include sub-sections for Setting, Character Development, and Key Events.
+		public const string OutlineWriterPrompt =
+            """
+			## Objective
 			
-			# Outline of a Chapter
-					
-			## Chapter 1: {Name of Chapter}
-					
-			1. **POV Character**: {Name of the character whose point of view the chapter is written from, if applicable}
-			2. **Setting and Atmosphere:**: Introduce the setting where the primary events occur.
-			 - _Vivid Description:_  Use sensory details to bring the setting to life and create a specific mood or atmosphere.
-			 - _Relevance:_ The setting should be more than just backdrop; it should influence the characters and the events of the chapter.
-			3. **Character Development**: Summarize the character development occurring in this chapter
-			 - _Growth and Change:_  Chapters should reveal something new about the characters, their motivations, or their relationships. They should evolve, even if minimally.
-			 - _Authenticity:_ Characters should behave and react in believable ways, given their personalities and circumstances.
-			 - _Point of View:_ Maintaining a consistent point of view helps readers connect with the characters and their experiences.
-			4. **Plot Development:** Provide and describe in detail several plot developments of the chapter
-			 - _Movement:_ Something needs to happen. This could be an external event, an internal conflict, a revelation, or a shift in relationships.
-			 - _Purpose:_ The chapter should contribute to the overall plot of the novel. It should move the story forward, even if subtly.
-			 - _Conflict and Tension:_ Introduce or escalate conflict, whether internal or external. This creates tension and keeps the reader invested.
+			Create a novel outline using the provided theme, characters, and plot events. Ensure the outline is structured and coherent, adhering to the specified format.
+			
+			## Story Details
+			
+			## Title
+			
+			{{ $novelTitle }}
+			
+			## Theme or Topic
+			
+			{{ $theme }}
+			
+			## Character Details
+			
+			{{ $characterDetails }}
+			
+			## Plot Events
+			
+			{{ $plotEvents }}
+			
+			# Instructions
+			
+			- The outline should consist of {{ $chapterCount }} chapters.
+			- Use markdown format for the entire outline.
+			- Structure each chapter using header level 2 (`##`).
+			- Do not include any preamble, novel title, or explanations in the output.
+			- If necessary, split the response into multiple parts to accommodate token limitations, ensuring coherence across parts.
+			- Ensure the complete outline is developed over multiple responses if required, maintaining logical flow and continuity.
+			
+			**Important Note:** Achieving a comprehensive {{ $chapterCount }} chapter outline is crucial. Partial outlines will compromise both our objectives.
+			
+			# Outline Template for Each Chapter
+			
+			## Chapter {Chapter Number}: {Chapter Title}
+			
+			1. **POV Character**: {Name of the character whose perspective the chapter is written from, if applicable}
+			
+			2. **Setting and Atmosphere**:
+			
+			   - **Description**: Use sensory details to vividly depict the chapter's setting.
+			   - **Impact**: Explain how the setting influences the events or characters.
+			
+			3. **Character Development**:
+			
+			   - **Growth**: Detail how the characters evolve or reveal new aspects of themselves.
+			   - **Relevance**: Ensure their actions and decisions drive the story forward.
+			
+			4. **Plot Developments**:
+			
+			   - **Key Events**: Provide 4–5 meaningful events that include external actions, internal conflicts, or pivotal moments.
+			   - **Conflict and Tension**: Introduce or escalate conflict to maintain reader engagement.
+			   - **Purpose**: Ensure each event contributes to the overall narrative.
+			
+			# Example Chapter Outline
+			
+			## Chapter 1: The Beginning
+			
+			1. **POV Character**: John Doe
+			
+			2. **Setting and Atmosphere**:
+			
+			   - **Description**: A bustling city street at night, with neon lights reflecting off wet pavement.
+			   - **Impact**: The chaotic environment mirrors John's internal conflict and sets the stage for his encounter with the antagonist.
+			
+			3. **Character Development**:
+			
+			   - **Growth**: John begins to question his loyalty to the organization he works for.
+			   - **Relevance**: This internal conflict drives his decision to confront his boss later in the story.
+			
+			4. **Plot Developments**:
+			
+			   - **Key Events**:
+			     1. John receives a mysterious message warning him of danger.
+			     2. He narrowly escapes an ambush by unknown assailants.
+			     3. A chance encounter with a stranger provides him with a crucial clue.
+			     4. John decides to investigate the source of the message, setting the main plot in motion.
+			
+			   - **Conflict and Tension**: The ambush introduces immediate danger, while the message creates intrigue and raises stakes.
+			   - **Purpose**: This chapter establishes the protagonist's motivation and sets up the central conflict.
+			
+			# Additional Context
+			
+			- Consider the novel's genre and intended audience to further refine the tone and style of the outline.
+			- Ensure clarity and consistency in narrative style across chapters.
+			- If user inputs are incomplete or vague, use default assumptions or prompt for clarification to maintain outline quality.
+			
+			{{ $additionalInstructions }}
 			
 			""";
-        public const string OutlineReversePrompt =
-            """
+		public const string OutlineReversePrompt =
+			"""
 			Write an outline of the chapter using the format below. Only include accurate information from the Chapter Text
 			
 			# Format
@@ -387,8 +549,8 @@ namespace AINovelWriter.Shared.Models
 			 {{$novel_chapter}}
 			 ```
 			""";
-        public const string SummaryPrompt =
-            """
+		public const string SummaryPrompt =
+			"""
             ## Instructions
             Summarize all the character details and plot events in the novel chapter. Use the following template for your response.
             
@@ -403,86 +565,117 @@ namespace AINovelWriter.Shared.Models
             {{$novel_chapter}} 
             ```
             """;
+		public const string IdeaRepairPrompt =
+            """
+            Convert this json object to fit the json schema provided below.
+            
+            ## Incorrect json object
+            ```
+            {{ $concepts }}
+            ```
+            
+            ## Output Schema
+            
+            ```json
+            {
+              "type": "object",
+              "properties": {
+                "Title": {
+                  "type": "string",
+                  "description": "Title of the Novel"
+                },
+                "Theme": {
+                  "type": "string",
+                  "description": "Theme of the Novel described in 1-3 sentences"
+                },
+                "Characters": {
+                  "type": "string",
+                  "description": "3 - 7 main Character Details (Short novels should get 3, long or epic should get 7)"
+                },
+                "PlotEvents": {
+                  "type": "string",
+                  "description": "3 - 10 primary Plot Events (short novels should get 3-4, medium 5-6, long 7-8, epic 9-10)"
+                }
+              },
+              "required": ["Title", "Theme", "Characters", "PlotEvents"]
+            }
+            
+            ```
+            """;
 
         public const string StyleGuide =
-            """
-	        1. **Detailed Descriptions and Proper Pace:** You will prioritize **very** detailed descriptions of the setting, characters, and events. Imagine the reader is experiencing the story through their senses – sight, sound, touch, smell, and taste. Paint a vivid picture with your words. You will also prefer a slower pace of events, focusing on character development, inner thoughts, and nuanced interactions. Allow the reader to fully immerse themselves in the world and connect with the characters on a deeper level.
+			"""
+	        This guide outlines the preferred style for the novel. Adherence to these guidelines will ensure a consistent and engaging reading experience.
 	        
-	        2. **Cinematic Action: Immerse Your Reader in the Fight:**
+	        **1. Descriptive Detail and Pacing**
 	        
-	        Don't just tell us about a fight – unleash it on the page!  Craft exhilarating action sequences that crackle with energy and keep readers on the edge of their seats.
+	        *   **Richly Detailed Descriptions:**  Provide comprehensive descriptions of settings, characters, and events. Include sensory details (sight, sound, smell, taste, touch) to create a vivid and immersive experience for the reader.
+	        *   **Measured Pacing:** Favor a slower narrative pace. Focus on:
+	            *   **Character Development:** Explore characters' inner thoughts, motivations, and emotional journeys.
+	            *   **Nuanced Interactions:**  Develop relationships through detailed interactions and meaningful dialogue.
+	            *   **Atmosphere Building:**  Allow time to establish mood and setting, immersing the reader in the story's world.
 	        
-	        **Instead of:** "They fought fiercely."
+	        **2. Cinematic Action Sequences**
 	        
-	        **Unleash the action:**  "Steel clashed against steel, a shower of sparks erupting in the dim light.  He parried a lightning-fast thrust, the force of the blow vibrating up his arm.  Adrenaline surged through him, sharpening his senses.  He ducked, weaved, and countered, each movement a calculated dance of death.  He could feel the burn in his muscles, the sting of sweat in his eyes.  His opponent, a whirlwind of aggression, pressed the attack, forcing him to retreat.  He needed an opening, a chance to strike… now!"
+	        Action scenes should be dynamic and engaging, pulling the reader into the heart of the conflict.
 	        
-	        **Remember to:**
+	        *   **Example:**
 	        
-	        * **Choreograph the Combat:** Describe each movement with precision, focusing on the impact of blows, the clash of weapons, and the grunts of exertion.
-	        * **Engage the Senses:**  Immerse the reader in the sights, sounds, smells, and even the feel of the fight.  Think dust kicked up by frantic footwork, the metallic tang of blood, the roar of the crowd (if applicable).
-	        * **Strategic Depth:**  Give insights into the characters' tactical thinking, their split-second decisions, and the reasons behind their actions.
-	        * **Pacing and Tension:** Build suspense, allow moments of respite, and then escalate the conflict towards a thrilling climax.
+	            *   **Instead of:** "They fought."
+	            *   **Write:** "Steel clashed, sparks flying in the dim light. He parried a thrust, the impact jarring his arm. Adrenaline surged, sharpening his senses. He ducked, weaved, and countered, each move precise. He felt the burn in his muscles, the sting of sweat in his eyes. His opponent pressed the attack, forcing him back. He needed an opening... now!"
+	        *   **Key Elements:**
+	            *   **Precise Choreography:** Describe each movement with detail, focusing on impacts, weapon clashes, and physical exertion.
+	            *   **Sensory Immersion:**  Engage the reader's senses with details like the clang of metal, the scent of blood, or the feel of dust underfoot.
+	            *   **Strategic Context:** Briefly explain characters' tactical thinking and the reasons behind their actions.
+	            *   **Dynamic Pacing:** Build suspense, allow for brief lulls, and then escalate the conflict to a climax.
 	        
-	        By crafting cinematic action sequences, you'll transform your readers into active participants, drawing them into the heart of the battle.
+	        **3. Character-Driven Dialogue**
 	        
-	        3.  **Give Your Characters a Voice: Dialogue That Sings**
+	        Dialogue should be realistic, reveal character, and advance the plot.
 	        
-	        Let your characters speak for themselves! Craft distinct and believable voices that breathe life into their personalities and propel the narrative forward.
-	                
-	         **Don't just have them talk:** "He said he was happy to be there."
-	                
-	         **Let their voices resonate:**
-	                
-	          * **The gruff veteran:** "Happy? Kid, I've seen happier faces at a funeral.  Let's just get this over with."
-	          * **The eager apprentice:** "Oh, wow! This is amazing! I can't wait to learn everything!"
-	          * **The sly rogue:** "Happy?  Let's just say I'm... *delighted* to be of service.  For a price, of course."
-	                
-	          **Remember to:**
-	                
-	          * **Reflect Personality:**  How does their word choice, tone, and slang reveal who they are?
-	          * **Consider Background:**  Does their upbringing, education, or social status influence how they speak?
-	          * **Driven by Motivation:**  What are their goals and desires?  How does this affect their dialogue?
-	          * **Relationship Dynamics:**  How does their speech change when interacting with different characters?
-	          * **Advance the Plot:**  Use dialogue to reveal information, create conflict, and move the story forward.
-	          * **Emotional Impact:**  Can dialogue be used to inject humor, build tension, or evoke empathy?
-	                
-	        By crafting compelling dialogue, you'll not only bring your characters to life but also enrich the narrative tapestry of your story.
+	        *   **Example:**
 	        
-	        4. **Bring Your Story to Life: Show, Don't Tell:**
+	            *   **Instead of:** "He said he was happy to be there."
+	            *   **Consider:**
+	                *   **Gruff Veteran:** "Happy? I've seen happier faces at a funeral. Let's get this over with."
+	                *   **Eager Apprentice:** "Wow! This is amazing! I can't wait to learn everything!"
+	                *   **Sly Rogue:** "Happy? Let's say I'm... *delighted* to be of service. For a price."
+	        *   **Key Considerations:**
+	            *   **Distinct Voices:**  Use word choice, tone, and slang to differentiate characters and reflect their personalities.
+	            *   **Background Influence:** Consider how a character's upbringing, education, or social status might affect their speech.
+	            *   **Motivational Clarity:** Ensure dialogue reflects characters' goals and desires.
+	            *   **Relationship Dynamics:** Show how characters' speech patterns change when interacting with different people.
+	            *   **Plot Progression:** Use dialogue to reveal information, create conflict, and move the story forward.
+	            *   **Emotional Resonance:**  Employ dialogue to create humor, build tension, or evoke empathy.
 	        
-	         Instead of simply stating emotions or facts, immerse your reader in the scene. Use vivid descriptions that engage their senses. 
+	        **4. Show, Don't Tell**
 	        
-	         **Don't tell us:** "He was angry."
+	        Immerse the reader by depicting scenes vividly rather than simply stating facts or emotions.
 	        
-	         **Show us:** "His knuckles whitened as his fists clenched, a vein throbbing in his temple. A flush crept up his neck, painting his face a mottled crimson.  His voice, a strained rasp, vibrated with barely suppressed fury."
+	        *   **Example:**
 	        
-	         **Remember to consider:**
+	            *   **Instead of:** "He was angry."
+	            *   **Write:** "His knuckles whitened as his fists clenched. A vein throbbed in his temple. A flush crept up his neck, his face mottled crimson. His voice, a strained rasp, vibrated with barely suppressed fury."
+	        *   **Techniques:**
+	            *   **Sensory Details:** Describe what characters see, hear, smell, taste, and touch.
+	            *   **Revealing Actions:**  Show characters' emotions and intentions through their actions.
+	            *   **Expressive Body Language:** Use posture, facial expressions, and gestures to convey meaning.
+	            *   **Indirect Dialogue:**  Reveal information through what characters say (and don't say) to each other.
 	        
-	         * **Sensory Details:** What can the characters see, hear, smell, taste, and touch?
-	         * **Actions:**  What are the characters doing that reveals their emotions and intentions?
-	         * **Body Language:** How are their postures, facial expressions, and gestures communicating?
-	         * **Dialogue:** Can you reveal information through what the characters say (and don't say) to each other?
+	        **5. Maintaining Consistency and Continuity**
 	        
-	         By painting a picture with words, you'll create a more compelling and engaging experience for your reader.
+	        Ensure consistency in world-building, characterization, and plot to create a believable and immersive narrative.
 	        
-	        5.  Weave a Seamless Tapestry: Consistency and Continuity
+	        *   **Key Areas:**
+	            *   **World-Building:** Establish clear rules for the world (e.g., magic systems, social structures) and maintain them consistently.
+	            *   **Character Consistency:**  Ensure characters behave in ways that align with their established personalities and motivations.
+	            *   **Plot Coherence:** Track key events, timelines, and previously established information. Avoid contradictions.
+	            *   **Logical Causality:** Ensure actions have logical consequences and that events flow naturally from one another.
 	        
-	        Imagine a beautiful tapestry, carefully woven with intricate details and vibrant threads.  Every element contributes to the overall picture, creating a harmonious and captivating whole.  Your story is no different.
+	        By following these guidelines, you will create a detailed, immersive, and consistent novel that engages readers from beginning to end.
 	        
-	        **Consistency and continuity are the threads that hold your narrative together, ensuring a believable and immersive experience for your reader.**
-	        
-	        **Consider these key elements:**
-	        
-	         * **World-Building:**  Establish clear rules for your world, from magic systems to social hierarchies, and maintain them consistently.
-	         * **Character Traits:**  Ensure your characters behave in a way that aligns with their established personalities and motivations.  Avoid sudden, unexplained shifts in behavior.
-	         * **Plot Details:**  Keep track of key events, timelines, and previously established information.  Avoid contradictions and inconsistencies that can break the reader's immersion.
-	         * **Cause and Effect:**  Ensure actions have consequences and that events flow logically from one another.  This creates a sense of realism and reinforces the reader's engagement.
-	        
-	        **By weaving a tapestry of consistency and continuity, you'll create a world that feels real, characters that resonate, and a story that captivates from beginning to end.**
-	        
-	        By following these guidelines, you will create a richly detailed and immersive story that captivates the reader from beginning to end. Remember to prioritize both detailed descriptions and exciting action sequences, creating a balanced and engaging narrative.
 	        """;
-        public const string OutlineWriterPromptJson =
+		public const string OutlineWriterPromptJson =
             """
             # Objective
 
@@ -505,6 +698,19 @@ namespace AINovelWriter.Shared.Models
             # Instructions
             		
             - The outline must be {{ $chapterCount }} chapters long.
+            - Include the following sub-sections for each chapter:
+              - **Setting and Atmosphere**:
+                - **Description**: Use sensory details to vividly depict the chapter's setting.
+                - **Impact**: Explain how the setting influences the events or characters.
+              - **Character Development**:
+                - **Growth**: Detail how the characters evolve or reveal new aspects of themselves.
+                - **Relevance**: Ensure their actions and decisions drive the story forward.
+              - **Plot Developments**:
+                - **Key Events**: Provide 4–5 meaningful events that include external actions, internal conflicts, or pivotal moments.
+                - **Conflict and Tension**: Introduce or escalate conflict to maintain reader engagement.
+                - **Purpose**: Ensure each event contributes to the overall narrative.
+            - If a chapter does not require all sub-sections, focus only on the most relevant elements while maintaining the overall structure.
+            - Do not include any preamble, novel title, or explanations in the output.
             - Use json format for the outline.
             - Each chapter should have a string property for the chapter name.
             - Each chapter should have a string property for the setting - This will introduce the setting where the primary events occur.
@@ -512,10 +718,34 @@ namespace AINovelWriter.Shared.Models
             - Each chapter should have a string array property for the key events - This will list and briefly describe at least 5 key events of the chapter.
             - Each chapter should have a string property for the chapter conclusion - This will provide a clear endpoint for the chapter designed to set up the next chapter.
             
+            ## Ouput Format
+            
+            ```json
+            {
+              "ChapterNumber": "{Chapter Number}",
+              "ChapterTitle": "{Chapter Title}",
+              "POVCharacter": "{Name of the character whose perspective the chapter is written from, if applicable}",
+              "SettingAndAtmosphere": {
+                "Description": "Use sensory details to vividly depict the chapter's setting.",
+                "Impact": "Explain how the setting influences the events or characters."
+              },
+              "CharacterDevelopment": {
+                "Growth": "Detail how the characters evolve or reveal new aspects of themselves.",
+                "Relevance": "Ensure their actions and decisions drive the story forward."
+              },
+              "PlotDevelopments": {
+                "KeyEvents": [
+                  "Provide 4–5 meaningful events that include external actions, internal conflicts, or pivotal moments."
+                ],
+                "ConflictAndTension": "Introduce or escalate conflict to maintain reader engagement.",
+                "Purpose": "Ensure each event contributes to the overall narrative."
+              }
+            }
+            ```
             """;
 
-        public const string OutlineSchema =
-            """
+		public const string OutlineSchema =
+			"""
             {
             	"type": "json_schema",
             	"json_schema": {
@@ -565,5 +795,184 @@ namespace AINovelWriter.Shared.Models
             	}
             }
             """;
+
+		public const string IdeaGeneratePrompt =
+					"""
+					You are a creative novel idea generator. Your task is to assist the user in developing a unique and captivating novel idea.
+
+					You will receive a **Genre** and **Sub-genre**. Use them to shape the **Theme** of the story. The generated idea must include the following components:  
+
+					- **Title**: Use the provided title if available, otherwise generate one.  
+					- **Theme**: Use the given theme if provided, otherwise create one. Ensure the theme reflects the genre and sub-genre.  
+					- **Character Details**: Incorporate any provided character details; otherwise, create compelling characters.  
+					- **Key Plot Events**: Include any plot events provided; otherwise, generate significant events to drive the narrative.
+
+					### Audience:  
+					This novel should resonate with readers who are {{ $personalities }}.  
+
+					### Length:  
+					The content should align with the following length description (longer novels will require more characters and plot events): **{{ $lengthDescription }}**.  
+
+					### Required Output Format:  
+					Generate your response in json format using following JSON schema.
+
+					```json
+					{
+					  "type": "object",
+					  "properties": {
+					    "Title": {
+					      "type": "string",
+					      "description": "Title of the Novel"
+					    },
+					    "Theme": {
+					      "type": "string",
+					      "description": "Theme of the Novel described in 1-3 sentences"
+					    },
+					    "Characters": {
+					      "type": "string",
+					      "description": "3 - 7 main Character Details (Short novels should get 3, long or epic should get 7)"
+					    },
+					    "PlotEvents": {
+					      "type": "string",
+					      "description": "3 - 10 primary Plot Events (short novels should get 3-4, medium 5-6, long 7-8, epic 9-10)"
+					    }
+					  },
+					  "required": ["Title", "Theme", "Characters", "PlotEvents"]
+					}
+					
+					```
+
+					### Genre:  
+					**{{ $genre }}**  
+
+					### Sub-genres:  
+					**{{ $subgenre }}**
+
+					""";
+
+        public const string HeadToHeadEval = """
+                                             <message role="system"> Compare two versions of a novel chapter using specific metrics. Evaluate both versions by providing a score, an explanation, and a detailed step-by-step justification for each score. Then, perform an overall comparison and select the preferable version, ensuring evaluations are critical and discerning.
+
+                                             # Metrics
+
+                                             - **Narrative Cohesion**: Evaluate how well the events and character actions are logically connected, ensuring smooth transitions and consistency in the storyline.
+                                             - **Character Development**: Assess the depth and realism of character depictions, considering motivations, growth, and complexity.
+                                             - **Dialogue Authenticity**: Analyze the authenticity, relevance, and impact of the dialogues in advancing the plot or developing characters.
+                                             - **Emotional Engagement**: Measure the ability of the text to evoke emotions or investment in the story and characters.
+                                             - **Descriptive Language**: Evaluate the use of descriptive language in establishing clear settings and immersive experiences for the reader.
+
+                                             # Steps
+
+                                             1. Read each version of the chapter thoroughly.
+                                             2. Critically evaluate the chapter according to each metric listed above, identifying strengths and weaknesses.
+                                             3. Assign a score for each metric on a scale of 1-5, with 5 being exceptional.
+                                             4. For each metric, provide a detailed and discerning justification for the assigned score, highlighting both positive and negative aspects.
+                                             5. Conclude with a total score for each chapter version, summing up the individual scores.
+                                             6. Conduct a head-to-head overall comparison and determine which version is best, providing critical analysis of both.
+
+                                             # Output Format
+
+                                             Produce an evaluation in the following format for both versions of the chapter:
+
+                                             ```
+                                             # VersionA
+
+                                             ## Narrative Cohesion
+                                             - **Justification:** step by step justification
+                                             - **Explanation:** brief reason for the score
+                                             - **Score:** [1-5]
+
+                                             ## Character Development
+                                             - **Justification:** step by step justification
+                                             - **Explanation:** brief reason for the score
+                                             - **Score:** [1-5]
+
+                                             ## Dialogue Authenticity
+                                             - **Justification:** step by step justification
+                                             - **Explanation:** brief reason for the score
+                                             - **Score:** [1-5]
+
+                                             ## Emotional Engagement
+                                             - **Justification:** step by step justification
+                                             - **Explanation:** brief reason for the score
+                                             - **Score:** [1-5]
+
+                                             ## Descriptive Language
+                                             - **Justification:** step by step justification
+                                             - **Explanation:** brief reason for the score
+                                             - **Score:** [1-5]
+
+                                             ## Creativity
+                                             - **Justification:** step by step justification
+                                             - **Explanation:** brief reason for the score
+                                             - **Score:** [1-5]
+
+                                             ## Total Score
+                                             - **Score:** [6-30]
+
+                                             ---
+
+                                             # VersionB
+
+                                             ## Narrative Cohesion
+                                             - **Justification:** step by step justification
+                                             - **Explanation:** brief reason for the score
+                                             - **Score:** [1-5]
+
+                                             ## Character Development
+                                             - **Justification:** step by step justification
+                                             - **Explanation:** brief reason for the score
+                                             - **Score:** [1-5]
+
+                                             ## Dialogue Authenticity
+                                             - **Justification:** step by step justification
+                                             - **Explanation:** brief reason for the score
+                                             - **Score:** [1-5]
+
+                                             ## Emotional Engagement
+                                             - **Justification:** step by step justification
+                                             - **Explanation:** brief reason for the score
+                                             - **Score:** [1-5]
+
+                                             ## Descriptive Language
+                                             - **Justification:** step by step justification
+                                             - **Explanation:** brief reason for the score
+                                             - **Score:** [1-5]
+
+                                             ## Creativity
+                                             - **Justification:** step by step justification
+                                             - **Explanation:** brief reason for the score
+                                             - **Score:** [1-5]
+
+                                             ## Total Score
+                                             - **Score:** [6-30]
+
+                                             ---
+
+                                             # Head-to-Head Comparison
+
+                                             ## Overall Analysis
+                                             - **Evaluation:** Compare the total scores and weigh strengths and weaknesses across categories.
+                                             - **Reasoning:** Provide a comprehensive justification for the decision based on the aggregated analysis of the metrics and overall performance of each version.
+                                             - **Preferred Version:** [VersionA/VersionB]
+                                             ```
+
+                                             # Notes
+
+                                             - Provide objective and detailed feedback to support each score.
+                                             - Consider the intended genre and audience of the novel for context in evaluation.
+                                             - Ensure comparisons are fair and critically discerning, focusing on all aspects of the chapters.
+                                             </message>
+                                             <message role="user">
+                                             ## Version A:
+                                             ```
+                                             {{$versionA}}
+                                             ```
+                                             ## Version B:
+                                             ```
+                                             {{$versionB}}
+                                             ```
+                                             </message>
+                                             """;
     }
 }

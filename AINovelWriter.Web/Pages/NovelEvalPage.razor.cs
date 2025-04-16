@@ -34,6 +34,7 @@ public partial class NovelEvalPage
             if (AppState.NovelInfo.NovelEval?.ChapterEvals.Count > 0)
             {
                 _chapterEvals = AppState.NovelInfo.NovelEval.ChapterEvals;
+                Console.WriteLine($"Chapter Evals already exist:\n{string.Join("\n", AppState.NovelInfo.NovelEval.ChapterEvals.Select(x => x.ToString()))}");
             }
             else if (AppState.NovelInfo.ChapterEvals.Count > 0)
             {

@@ -124,7 +124,16 @@
                     <RadzenText TextStyle="TextStyle.Caption" Text="Provide plot events that you want included in the novel"></RadzenText>
                 </Helper>
             </RadzenFormField>
-            <br /><br />
+            <br />
+            <RadzenFormField Style="width:100%" Text="Additional Instructions (optional)">
+                <ChildContent>
+                    <RadzenTextArea Style="width:100%; height:3rem" @bind-Value="@AppState.NovelConcepts.AdditionalInstructions"></RadzenTextArea>
+                </ChildContent>
+                <Helper>
+                    <RadzenText TextStyle="TextStyle.Caption" Text="Provide anthing else that you want included in the novel"></RadzenText>
+                </Helper>
+            </RadzenFormField>
+            <br />
             <RadzenFormField Text="Chapter Count">
                 <ChildContent>
                     <RadzenNumeric @bind-Value="AppState.NovelConcepts.ChapterCount" Step="1" Min="2" Max="20"></RadzenNumeric>
@@ -171,6 +180,7 @@
                 </RadzenFormField>
                 <RadzenButton Style="margin-top:.5rem" ButtonType="ButtonType.Submit" Text="Write Novel" BusyText="Writing..." IsBusy="_isBusy"></RadzenButton>
             </RadzenTemplateForm>
+            <RadzenText TextStyle="TextStyle.Caption">Token Count: @StringHelpers.GetTokens200K(AppState.NovelOutline.Outline ?? "") </RadzenText>
         </div>
     </RadzenColumn>
 </RadzenRow>

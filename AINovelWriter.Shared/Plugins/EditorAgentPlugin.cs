@@ -11,7 +11,7 @@ using Microsoft.CognitiveServices.Speech.Diagnostics.Logging;
 
 namespace AINovelWriter.Shared.Plugins;
 
-public class EditorAgentPlugin(AppState appState, AIModel aIModel = AIModel.Gpt4O)
+public class EditorAgentPlugin(AppState appState, AIModel aIModel = AIModel.Gpt41)
 {
     [KernelFunction, Description("Get the text of a chapter of the active novel")]
     public Task<string> GetChapterText(Kernel kernel, [Description("Chapter number")] int chapterNumber)
@@ -24,10 +24,12 @@ public class EditorAgentPlugin(AppState appState, AIModel aIModel = AIModel.Gpt4
         var chatper = outlines[chapterNumber - 1];
         return Task.FromResult(chatper.Text);
     }
-    [KernelFunction, Description("Get the summary of the full active novel")]
+    [KernelFunction, Description("Get the summary and review of the full active novel")]
     public async Task<string> GetFullNovelSummary(Kernel kernel,[Description("The type or context of the summary request")] ReviewContext summaryType = ReviewContext.FullCoverage)
     {
-        var tempKernel = kernel.Clone();
+        var builder = Kernel.CreateBuilder();
+        NovelWriterService.AddDefaultKernelServices(AIModel.Gpt41Nano, builder);
+		var tempKernel = builder.Build();
         var novel = appState.NovelInfo;
         var promptTemplate =  Prompts.NovelContextSpecificReviewPrompt;
         var reviewNovelFunc = KernelFunctionFactory.CreateFromPrompt(promptTemplate);
@@ -78,7 +80,7 @@ public class EditorAgentPlugin(AppState appState, AIModel aIModel = AIModel.Gpt4
         }
         var summary = outlines[chapterNumber - 1];
         var text = summary.FullText;
-        var response = await kernel.InvokePromptAsync<string>(Prompts.ChapterOutlineEditorPrompt, new KernelArguments(GetPromptExecutionSettingsKernel(kernel)) { ["storyDescription"] = feedback, ["outline"]= summary.Text });
+        var response = await kernel.InvokePromptAsync<string>(Prompts.ChapterOutlineExpansionPrompt, new KernelArguments(GetPromptExecutionSettingsKernel(kernel)) { ["storyDescription"] = feedback, ["outline"] = summary.Text });
         return response;
     }
     [KernelFunction, Description("Replace a chapter with a re-written chapter. Be sure to always confirm with user before invoking.")]
@@ -103,16 +105,16 @@ public class EditorAgentPlugin(AppState appState, AIModel aIModel = AIModel.Gpt4
         var chatType = kernel.Services.GetRequiredService<IChatCompletionService>();
         return chatType switch
         {
-            OpenAIChatCompletionService => new OpenAIPromptExecutionSettings { ResponseFormat = "json_object" },
+            OpenAIChatCompletionService => new OpenAIPromptExecutionSettings { Store = true, ResponseFormat = "json_object" },
             GoogleAIGeminiChatCompletionService => new GeminiPromptExecutionSettings
             {
-                ExtensionData = new Dictionary<string, object> { ["responseMimeType"] = "application/json" }
+                ResponseMimeType = "application/json"
             },
             MistralAIChatCompletionService => new MistralAIPromptExecutionSettings
             {
-                ExtensionData = new Dictionary<string, object> { ["response_format"] = new { type = "json_object" } },
+               ResponseFormat = new { type = "json_object" }
             },
-            _ => new OpenAIPromptExecutionSettings { ResponseFormat = "json_object" }
+            _ => new OpenAIPromptExecutionSettings { Store = true, ResponseFormat = "json_object" }
         };
     }
 }

@@ -16,11 +16,10 @@
 			<RadzenSlider Value="_progress" TValue="double" Change="@(args => ChangeProgress(args))"></RadzenSlider>
 			@* <br /> *@
 			<div>
-				<RadzenText TextAlign="TextAlign.Center" Text="@_elapsed" TextStyle="TextStyle.Caption"></RadzenText> <span>/</span>
-				<RadzenText TextAlign="TextAlign.Center" Text="@_duration" TextStyle="TextStyle.Caption"></RadzenText>
+				<RadzenText TextAlign="TextAlign.Right" Text="@_elapsed" TextStyle="TextStyle.Caption"></RadzenText> <span>/</span>
+				<RadzenText TextAlign="TextAlign.Left" Text="@_duration" TextStyle="TextStyle.Caption"></RadzenText>
 			</div>
 		</RadzenCard>
-
 	}
 
 </RadzenCard>

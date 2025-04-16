@@ -1,0 +1,12 @@
+﻿@inherits AppComponentBase
+
+<RadzenRow>
+    <RadzenColumn Style="height:100%; display:grid; grid-template-rows:85% 15%">
+        <RadzenCard Style="padding:0" Variant="Variant.Text">
+            <ChatView @ref="_chatView" ViewId="novelChat" Height="73vh"></ChatView>
+        </RadzenCard>
+        <RadzenCard Style="position:relative" Variant="Variant.Text">
+            <UserInput UserInputSubmit="HandleChatInput" IsBusy="_isBusy"></UserInput>
+        </RadzenCard>
+    </RadzenColumn>
+</RadzenRow>

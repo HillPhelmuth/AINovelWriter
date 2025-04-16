@@ -58,8 +58,19 @@ public class NovelEvalService
         
         return evalFunctions;
     }
-
-    public List<IInputModel> CreateInputModels(string text, string details)
+    internal static T ExtractFromAssembly<T>(string fileName)
+    {
+	    var assembly = Assembly.GetExecutingAssembly();
+	    var jsonName = assembly.GetManifestResourceNames()
+		    .SingleOrDefault(s => s.EndsWith(fileName, StringComparison.OrdinalIgnoreCase)) ?? "";
+	    using var stream = assembly.GetManifestResourceStream(jsonName);
+	    using var reader = new StreamReader(stream);
+	    object result = reader.ReadToEnd();
+	    if (typeof(T) == typeof(string))
+		    return (T)result;
+	    return JsonSerializer.Deserialize<T>(result.ToString());
+    }
+	public List<IInputModel> CreateInputModels(string text, string details)
     {
         return
         [
@@ -67,16 +78,5 @@ public class NovelEvalService
                 new NovelInputModel(eval, new KernelArguments { ["details"] = details, ["chapter"] = text }))
         ];
     }
-    internal static T ExtractFromAssembly<T>(string fileName)
-    {
-        var assembly = Assembly.GetExecutingAssembly();
-        var jsonName = assembly.GetManifestResourceNames()
-            .SingleOrDefault(s => s.EndsWith(fileName, StringComparison.OrdinalIgnoreCase)) ?? "";
-        using var stream = assembly.GetManifestResourceStream(jsonName);
-        using var reader = new StreamReader(stream);
-        object result = reader.ReadToEnd();
-        if (typeof(T) == typeof(string))
-            return (T)result;
-        return JsonSerializer.Deserialize<T>(result.ToString());
-    }
+    
 }

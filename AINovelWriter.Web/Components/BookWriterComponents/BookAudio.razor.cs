@@ -30,7 +30,7 @@ public partial class BookAudio : ComponentBase
 	private string _duration = "00:00:00";
 	[Parameter]
 	public string? BookAudioId { get; set; }
-	private string? AudioElementId => $"audioplayer-{BookAudioId}";
+	private string AudioElementId => $"audioplayer-{BookAudioId}";
 	private Stopwatch _stopWatch = new();
 
 	protected override async Task OnParametersSetAsync()
@@ -119,10 +119,12 @@ public partial class BookAudio : ComponentBase
 			//	StateHasChanged();
 			//}
 			Console.WriteLine($"Audio out provided, {audioChunk.GetValueOrDefault().Length} bytes from IAsyc result");
-			//var chuckData = audioChunk.GetValueOrDefault().ToArray();
-			//var chuckDataBase64 = Convert.ToBase64String(chuckData);
+			var chuckData = audioChunk.GetValueOrDefault().ToArray();
+			var chuckDataBase64 = Convert.ToBase64String(chuckData);
+            await AudioService.PlayFromBase64String(chuckDataBase64, AudioElementId);
 			//_base64AudioData += chuckDataBase64;
-			
+			_hasStarted = true;
+			StateHasChanged();
 			//try
 			//{
 			//	//await AudioService.AppendBuffer(chuckDataBase64);
@@ -133,16 +135,16 @@ public partial class BookAudio : ComponentBase
 			//	throw;
 			//}
 		}
-		
-		//string audioUrl = $"data:audio/mpeg;base64,{_base64AudioData}";
-		//await AudioService.Init(AudioElementId, audioUrl);
-		//await Task.Delay(1000);
-		//_hasStarted = true;
-		////await AudioService.EndOfStream();
-		//_isStreamingComplete = true;
-		//StateHasChanged();
 
-	}
+        //string audioUrl = $"data:audio/mpeg;base64,{_base64AudioData}";
+        //await AudioService.Init(AudioElementId, audioUrl);
+        //await Task.Delay(1000);
+        //_hasStarted = true;
+        ////await AudioService.EndOfStream();
+        //_isStreamingComplete = true;
+        //StateHasChanged();
+
+    }
 	private async Task Download()
 	{
 		if (!_isStreamingComplete || string.IsNullOrEmpty(_base64AudioData)) return;

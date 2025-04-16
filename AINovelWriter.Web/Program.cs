@@ -12,6 +12,7 @@ using Microsoft.Extensions.Azure;
 
 var builder = WebApplication.CreateBuilder(args);
 IConfiguration config = builder.Configuration;
+ConfigurationSettings.Initialize(config);
 var services = builder.Services;
 services
     .AddAuth0WebAppAuthentication(options =>

@@ -109,9 +109,9 @@
                                 <ChildContent>
                                     <RadzenTextArea @bind-Value="@_applySuggestionForm.AdditionalNotes" Style="width:100%;height:5rem"></RadzenTextArea>
                                 </ChildContent>
-                            <Helper>
-                                <RadzenText TextStyle="TextStyle.Caption" Text="Additional instructions for re-write"></RadzenText>
-                            </Helper>
+                                <Helper>
+                                    <RadzenText TextStyle="TextStyle.Caption" Text="Additional instructions for re-write"></RadzenText>
+                                </Helper>
                             </RadzenFormField><br />
                             <RadzenButton ButtonType="ButtonType.Submit" Text="Apply Suggestions" IsBusy="_isRewriting" BusyText="Applying Suggestions"></RadzenButton>
                         </RadzenTemplateForm>
@@ -120,6 +120,8 @@
                         @if (!string.IsNullOrEmpty(_rewrite))
                         {
                             <RadzenButton Click="ApplyRewrite" Text="Apply Rewrite"></RadzenButton>
+                            <RadzenDropDown Name="AIModel" Data="AIModelDescriptions" ValueProperty="Key" TextProperty="Value" @bind-Value="@_compareModel"></RadzenDropDown>
+                            <RadzenButton Click="@(() => CompareRewrite(_compareModel))" Text="Compare"></RadzenButton>
                             <RadzenCard Style="max-height:25rem; overflow:auto;overflow-wrap:break-word; white-space:pre-wrap">
                                 @((MarkupString)AsHtml(_rewrite))
                             </RadzenCard>
@@ -156,12 +158,14 @@
                             </RadzenDataGridColumn>
                         </Columns>
                     </RadzenDataGrid>
-                   </RadzenColumn>
+                </RadzenColumn>
                 <RadzenColumn>
                     @if (_chapterTextEdit is not null)
                     {
                         <RadzenTemplateForm Data="_chapterTextEdit" TItem="ChapterTextEdit" Submit="SubmitEdit">
                             <RadzenButton ButtonType="ButtonType.Submit" Text="Submit" Size="ButtonSize.ExtraSmall"></RadzenButton>
+                            <RadzenDropDown Name="AIModel" Data="AIModelDescriptions" ValueProperty="Key" TextProperty="Value" @bind-Value="@_compareModel"></RadzenDropDown>
+                            <RadzenButton Text="AI Compare" Size="ButtonSize.ExtraSmall" Click="CompareEdit"></RadzenButton>
                             <RadzenFormField Text="Chapter Title" Style="width:100%">
                                 <RadzenTextBox @bind-Value="@_chapterTextEdit.NewTitle" Style="width:100%"></RadzenTextBox>
                             </RadzenFormField>
@@ -175,3 +179,15 @@
         </RadzenTabsItem>
     </Tabs>
 </RadzenTabs>
+@code{
+
+    async Task ShowInlineDialog(string resultItem)
+    {
+        DialogService.Open("Simple Dialog", ds =>
+        @<RadzenCard Style="max-height:25rem; overflow:auto;overflow-wrap:break-word; white-space:pre-wrap">
+        @((MarkupString)AsHtml(resultItem))
+               
+            </RadzenCard>);
+    }
+
+}

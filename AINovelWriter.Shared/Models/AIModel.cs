@@ -6,56 +6,84 @@ public enum AIModel
 {
     [Description("Select a model")]
     None,
+    [ModelName("gpt-4.1-mini")]
+    [AzureOpenAIModel("gpt-4.1-mini")]
+    [Description("Nnew gpt-4.1-mini")]
+    [ModelProvidor("OpenAI")]
+    [ModelProvidor("AzureOpenAI")]
+    Gpt41Mini,
+#if DEBUG
+    [ModelName("ft:gpt-4o-mini-2024-07-18:hillphelmuth:novel-gen-fixed:AA4IWyZr")]
+    [Description("Fine-tuned gpt-4o-mini")]
+    [ModelProvidor("OpenAI")]
+    [ModelProvidor("AzureOpenAI")]
+    Gpt4MiniFineTuned,
+#endif
+    [ModelName("gpt-4.1")]
+    [AzureOpenAIModel("gpt-4.1")]
+    [Description("New gpt-4.1")]
+    [ModelProvidor("OpenAI")]
+    [ModelProvidor("AzureOpenAI")]
+	Gpt41,
+    [ModelName("gpt-4o")]
+    [AzureOpenAIModel("gpt-4o")]
+    [Description("Current gpt-4o")]
+    [ModelProvidor("OpenAI")]
+    [ModelProvidor("AzureOpenAI")]
+    Gpt4OCurrent,
+	[ModelName("chatgpt-4o-latest")]
+	[Description("Dynamic gpt-4o")]
+	[ModelProvidor("OpenAI")]
+	Gpt4OChatGptLatest,
+    [ModelName("gpt-4.1-nano")]
+    [AzureOpenAIModel("gpt-4.1-nano")]
+    [Description("New gpt-4.1-nano")]
+    [ModelProvidor("OpenAI")]
+    [ModelProvidor("AzureOpenAI")]
+    Gpt41Nano,
     [ModelName("gpt-4o-mini")]
     [AzureOpenAIModel("gpt-35-turbo")]
     [Description("Latest gpt-4o-mini")]
     [ModelProvidor("OpenAI")]
     [ModelProvidor("AzureOpenAI")]
-	Gpt4Mini,
-	[ModelName("gpt-4o-2024-08-06")]
-    [AzureOpenAIModel("gpt-4o")]
-    [Description("Latest gpt-4o")]
+    Gpt4OMini,
+    [ModelName("o3-mini")]
+    [Description("o3-mini Reasoning")]
     [ModelProvidor("OpenAI")]
     [ModelProvidor("AzureOpenAI")]
-	Gpt4O,
-	[ModelName("chatgpt-4o-latest")]
-	[Description("Dynamic gpt-4o")]
-	[ModelProvidor("OpenAI")]
-	Gpt4OChatGptLatest,//ft:gpt-4o-mini-2024-07-18:hillphelmuth:novel-gen-mini:A138kqIT
-    //ft:gpt-4o-mini-2024-07-18:hillphelmuth:novel-gen2-1:A7ylbj6Q
-    [ModelName("ft:gpt-4o-mini-2024-07-18:hillphelmuth:novel-gen-fixed:AA4IWyZr")]
-    [Description("Latest Fine-tuned gpt-4o-mini")]
-    [ModelProvidor("OpenAI")]
-    [ModelProvidor("AzureOpenAI")]
-    Gpt4MiniFineTuned,
-    [ModelName("gpt-3.5-turbo")]
-    [AzureOpenAIModel("gpt-35-turbo")]
-    [Description("Latest gpt-3.5-turbo")]
-    [ModelProvidor("OpenAI")]
-    [ModelProvidor("AzureOpenAI")]
-    Gpt35Turbo,
-    [ModelName("gpt-4-turbo")]
-    [AzureOpenAIModel("gpt-4")]
-    [Description("Latest gpt-4-turbo")]
-    [ModelProvidor("OpenAI")]
-    [ModelProvidor("AzureOpenAI")]
-    Gpt4Turbo,
-    [ModelName("gemini-pro")]
-    [Description("Latest Gemini 1.0 Pro")]
-    [ModelProvidor("GoogleAI")]
-	Gemini10,
+    O3Mini,
+    [ModelName("grok-3")]
+    [Description("Grok-3")]
+    [ModelProvidor("GrokAI")]
+	Grok3,
+    [ModelName("grok-3-mini")]
+    [Description("Grok-3-mini model")]
+    [ModelProvidor("GrokAI")]
+    Grok3Mini,
+    [ModelName("grok-2")]
+    [Description("Grok 2 latest")]
+    [ModelProvidor("GrokAI")]
+    Grok2,
     [ModelName("gemini-1.5-pro-002")]
     [Description("Latest Gemini 1.5 Pro")]
     [ModelProvidor("GoogleAI")]
 	Gemini15,
-	[ModelName("gemini-1.5-pro-exp-0827")]
-	[Description("Experimental Gemini 1.5 Pro")]
+	[ModelName("gemini-2.5-pro-exp-03-25")]
+	[Description("Experimental Gemini")]
 	[ModelProvidor("GoogleAI")]
-	Gemini15Exp,
-    [ModelName("gemini-1.5-flash")]
-    [Description("Gemeni Flash")]
+	Gemini25Exp,
+    [ModelName("learnlm-1.5-pro-experimental")]
+    [Description("LearnLM 1.5 Pro Experimental")]
+    [ModelProvidor("GoogleAI")]
+    GeminiLearnLmExp,
+    [ModelName("gemini-2.0-flash")]
+    [Description("Gemini Flash")]
     [ModelProvidor("GoogleAI")]
     GeminiFlash,
+    [ModelName("gemini-2.0-flash-thinking-exp-01-21")]
+    [Description("Gemeni 2.0 Flash - thinking")]
+    [ModelProvidor("GoogleAI")]
+    Gemini20FlashThinking,
     [ModelName("open-mistral-nemo")]
 	[Description("Open Mistral Nemo")]
 	[ModelProvidor("MistralAI")]
@@ -76,11 +104,23 @@ public enum AIModel
 	[Description("Mistral Large Latest")]
 	[ModelProvidor("MistralAI")]
 	MistralLargeLatest,
+    [ModelName("anthropic.claude-3-5-sonnet-20241022-v2:0")]
+    [Description("Claude Sonnet v2")]
+    [ModelProvidor("AnthropicAI")]
+    ClaudeSonnet,
+    [ModelName("anthropic.claude-3-5-haiku-20241022-v1:0")]
+    [Description("Claude Haiku")]
+    [ModelProvidor("AnthropicAI")]
+    ClaudeHaiku,
+    [ModelName("claude-3-5-sonnet-v2@20241022")]
+    ClaudeSonnetVertex,
+    ClaudeHaikuVertex,
+#if DEBUG
     [ModelName("Local Model")]
     [Description("LM Studio loaded Model")]
     [ModelProvidor("OpenAI")]
     LocalModel
-
+#endif
 }
 public class ModelNameAttribute(string model) : Attribute
 {
