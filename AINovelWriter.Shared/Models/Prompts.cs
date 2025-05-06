@@ -63,7 +63,7 @@ namespace AINovelWriter.Shared.Models
 			public const string AsCharacterPrompt =
 				"""
 				## Instructions
-				You are a character impersonator. Speak as a character in the provided novel. Behave as the character selected by the user. Start as the first character on the list of characters below.
+				You are a character impersonator. Speak as a character in the provided novel. Behave as the character selected by the user. Start as the first character on the list of characters below, but introduce the other characters.
 				You are a **character** from the novel {{$title}} which is provided below.
 				I want you to respond and answer like **character** using the tone, manner and vocabulary **character** would use. Do not write any explanations.
 				You are a true impersonation of **character** and you reply to all requests with I pronoun. Remember, YOU ARE NOT AN AI MODEL! You are genuinely **character**
@@ -298,23 +298,26 @@ namespace AINovelWriter.Shared.Models
 			        
 			4. Use the Story Description and Characters to inform your writing.
 
-			5. Unless otherwise indicated in the Story Description, you should write at a level suitable for a general audience. Generally aim for a PG-13 rating.
+			5. Always write at a level suitable for the provided audience type.
 
-			6. Unless otherwise indicated, avoid explicit language, graphic violence, and sexual content. However, if the Story Description or Outline includes such elements, you should include them in your writing. You are also enouraged to use them if the Story Description clearly indicates a dark or adult theme.
+			6. If the Story Description or Outline includes explicit language, graphic violence, or sexual content, you should include them in your writing. You are also enouraged to use them if the Story Description clearly indicates a dark or adult theme.
 			
-			7. Each chapter should contain significant advancements in both the main plot and any relevant subplots. Explore the complexities of character relationships, introduce new conflicts or challenges, and reveal crucial information that moves the story forward.
+			7. The chapter should contain significant advancements in both the main plot and any relevant subplots. Explore the complexities of character relationships, introduce new conflicts or challenges, and reveal crucial information that moves the story forward.
 			
-			8. Dedicate sufficient space within each chapter to explore the inner lives of your characters. Delve into their thoughts, motivations, and emotional responses to the unfolding events. Show how their experiences shape their growth and development throughout the story.
+			8. The chapter should also set-up or foreshadow future events or developments. This will help maintain reader engagement and build suspense throughout the narrative.
 			
-			9. Craft engaging and meaningful conversations between characters. Use dialogue to reveal their personalities, advance the plot, and explore the dynamics of their relationships. Ensure that each conversation serves a purpose and contributes to the overall narrative.
+			9. Dedicate sufficient space within each chapter to explore the inner lives of your characters. Delve into their thoughts, motivations, and emotional responses to the unfolding events. Show how their experiences shape their growth and development throughout the story. Do this without extensive exposition or narration. Instead, use character actions, dialogue, and interactions to reveal their inner lives.
 			
-			10. Paint a vivid picture of the environment and atmosphere in each scene. Use descriptive language to immerse the reader in the world you've created. Explore the unique aspects of your setting and how they impact the characters and the story.
-
-			11. The chaper should start with the chapter name and number in the format: `## Chapter 1: {first chapter name}.`
+			10. Craft engaging and meaningful conversations between characters. Use dialogue to reveal their personalities, advance the plot, and explore the dynamics of their relationships. Ensure that each conversation serves a purpose and contributes to the overall narrative.
 			
+			11. Paint a vivid picture of the environment and atmosphere in each scene. Use descriptive language to immerse the reader in the world you've created. Explore the unique aspects of your setting and how they impact the characters and the story.
 			
+			12. The chaper should start with the chapter name and number in the format: `## Chapter 1: {first chapter name}.`
 			
-			        
+			## Style Guide
+			
+			{{{CondensedStyleGuide}}}
+			
 			## Story Description, Characters and Key Events
 			        
 			{{ $storyDescription }}
@@ -432,11 +435,11 @@ namespace AINovelWriter.Shared.Models
 
 		public const string OutlineWriterPrompt =
             """
-			## Objective
+			# Objective
 			
 			Create a novel outline using the provided theme, characters, and plot events. Ensure the outline is structured and coherent, adhering to the specified format.
 			
-			## Story Details
+			# Story Details
 			
 			## Title
 			
@@ -445,6 +448,14 @@ namespace AINovelWriter.Shared.Models
 			## Theme or Topic
 			
 			{{ $theme }}
+			
+			### Tone
+			
+			{{ $tone }}
+			
+			## Audience
+			
+			{{ $audience }}
 			
 			## Character Details
 			
@@ -463,7 +474,7 @@ namespace AINovelWriter.Shared.Models
 			- If necessary, split the response into multiple parts to accommodate token limitations, ensuring coherence across parts.
 			- Ensure the complete outline is developed over multiple responses if required, maintaining logical flow and continuity.
 			
-			**Important Note:** Achieving a comprehensive {{ $chapterCount }} chapter outline is crucial. Partial outlines will compromise both our objectives.
+			**Important Note:** Achieving a comprehensive {{ $chapterCount }} chapter outline is crucial. Partial outlines will compromise both our objectives. Under no circumstances should you provide a partial outline. It must be a full {{ $chapterCount }} chapter outline.
 			
 			# Outline Template for Each Chapter
 			
@@ -675,6 +686,34 @@ namespace AINovelWriter.Shared.Models
 	        By following these guidelines, you will create a detailed, immersive, and consistent novel that engages readers from beginning to end.
 	        
 	        """;
+
+        public const string CondensedStyleGuide = """
+                                                  * **Voice & Tone**
+                                                    Maintain a consistent narrative register and vary sentence rhythms to match mood.
+                                                  
+                                                  * **Description & Immersion**
+                                                    Use a few vivid sensory details per scene (sight, sound, touch) to ground the reader.
+                                                  
+                                                  * **Characters**
+                                                    Keep voices and motivations consistent; highlight each with a unique quirk.
+                                                  
+                                                  * **Plot & Continuity**
+                                                    Cross-check names, events, and rules against past text; ensure logical progression.
+                                                  
+                                                  * **Show, Don’t Tell**
+                                                    Convey emotion through actions, body language, and setting cues.
+                                                  
+                                                  * **Dialogue**
+                                                    Advance plot and reveal character via tension, implication, and subtext.
+                                                  
+                                                  * **Pacing**
+                                                    Start with a hook, build to a turning point, end with a cliffhanger; balance action, thought, and talk.
+                                                  
+                                                  * **Action Scenes**
+                                                    Choreograph each blow with vivid precision: detail swings, impacts, and weapon clashes.
+                                                    Immerse the reader with sensory beats—the clang of metal, the thud of boots, the sting of sweat—while weaving in characters’ tactics and emotional stakes.
+                                                  
+                                                  """;
 		public const string OutlineWriterPromptJson =
             """
             # Objective
@@ -797,7 +836,7 @@ namespace AINovelWriter.Shared.Models
             """;
 
 		public const string IdeaGeneratePrompt =
-					"""
+                    """
 					You are a creative novel idea generator. Your task is to assist the user in developing a unique and captivating novel idea.
 
 					You will receive a **Genre** and **Sub-genre**. Use them to shape the **Theme** of the story. The generated idea must include the following components:  
@@ -808,7 +847,10 @@ namespace AINovelWriter.Shared.Models
 					- **Key Plot Events**: Include any plot events provided; otherwise, generate significant events to drive the narrative.
 
 					### Audience:  
-					This novel should resonate with readers who are {{ $personalities }}.  
+					This novel should resonate with readers who are {{ $audience }}.  
+					
+					### Tone:
+					The tone of the novel should be {{ $tone }}.
 
 					### Length:  
 					The content should align with the following length description (longer novels will require more characters and plot events): **{{ $lengthDescription }}**.  
@@ -850,8 +892,55 @@ namespace AINovelWriter.Shared.Models
 
 					""";
 
+        public const string TitleGeneratePrompt = """
+                                                  Based on the available information below, generate a captivating title for the novel. The title should reflect the available information. To not wrap your title in quotes. Provide only a single title without any preamble or explanation. Your response will be added directly to a form field.
+                                                  
+                                                  ## Available Information
+                                                  
+                                                  {{ $availableInformation }}
+                                                  """;
+
+        public const string ThemeOrDescriptionGenPrompt = """
+                                                          Based on the available information below, generate a captivating theme or description for the novel. The theme or description should reflect the available information. Provide only a single theme or description without any preamble or explanation. Your response will be added directly to a form field.
+                                                          
+                                                          ## Available Information
+                                                          
+                                                          {{ $availableInformation }}
+                                                          """;
+
+        public const string CharacterGenPrompt = """
+                                                 Based on the available information below, generate a 3 - 7 main Character Details (Short novels should get 3, long or epic should get 7) for the novel. The character details should reflect the available information. Use a markdown list. Do not include any preamble or explanation. Your response will be added directly to a form field.
+                                                 
+                                                 ## Available Information
+                                                 
+                                                 {{ $availableInformation }}
+                                                 """;
+        public const string PlotEventGenPrompt = """
+                                                  Based on the available information below, generate a 3 - 10 primary Plot Events (short novels should get 3-4, medium 5-6, long 7-8, epic 9-10) for the novel. The plot events should reflect the available information. Provide a brief description of each event. Use a markdown list. Do not include any preamble or explanation. Your response will be added directly to a form field.
+                                                  
+                                                  ## Available Information
+                                                  
+                                                  {{ $availableInformation }}
+                                                  """;
+
+        public const string ModifyPartialOutlinePrompt = """
+                                                         ## Task
+                                                         Modify the selected section of the Novel outline. Modify only that section. Do not modify any other sections. Besure your response can precisely replace the selected section of the outline. Do not include any preamble or explanation. Your response will be added directly to a form field. Incorporate the user's feedback into the outline section you'll be modifying. Ensure it's consistent with the rest of the outline.
+                                                         
+                                                         ## User Instructions
+                                                         
+                                                         {{ $instructions }}
+                                                         
+                                                         ## Original Outline
+                                                         
+                                                         {{ $outline }}
+                                                         
+                                                         ## Selected Section
+                                                         
+                                                         {{ $selectedSection }}
+                                                         """;
         public const string HeadToHeadEval = """
-                                             <message role="system"> Compare two versions of a novel chapter using specific metrics. Evaluate both versions by providing a score, an explanation, and a detailed step-by-step justification for each score. Then, perform an overall comparison and select the preferable version, ensuring evaluations are critical and discerning.
+                                             < message role="system"> Compare two versions of a novel chapter using specific metrics. Evaluate both versions by providing a score, an explanation, and a detailed step-by-step justification for each score. Then, perform an overall comparison and select the preferable version, ensuring evaluations are critical and discerning.
 
                                              # Metrics
 

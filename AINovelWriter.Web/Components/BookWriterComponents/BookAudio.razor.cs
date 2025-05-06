@@ -3,6 +3,7 @@ using AINovelWriter.Shared.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using System.Diagnostics;
+using AINovelWriter.Shared.Services;
 
 namespace AINovelWriter.Web.Components.BookWriterComponents;
 

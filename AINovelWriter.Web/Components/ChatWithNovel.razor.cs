@@ -7,7 +7,7 @@ namespace AINovelWriter.Web.Components;
 public partial class ChatWithNovel
 {
 	private ChatView _chatView;
-	private bool _isBusy;
+	
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		if (firstRender)
@@ -23,7 +23,7 @@ public partial class ChatWithNovel
 
 	private async void HandleChatInput(UserInputRequest userInputRequest)
 	{
-		_isBusy = true;
+		IsBusy = true;
 		StateHasChanged();
 		await Task.Delay(1);
 		if (!string.IsNullOrWhiteSpace(userInputRequest.ImageUrlInput) || !string.IsNullOrWhiteSpace(userInputRequest.FileUpload?.FileBase64))
@@ -38,7 +38,7 @@ public partial class ChatWithNovel
 		}
 		var response = NovelWriterService.ExecuteCharacterAgentChat(_chatView.GetChatHistory());
 		await HandleStreaming(response);
-		_isBusy = false;
+		IsBusy = false;
 		StateHasChanged();
 	}
 

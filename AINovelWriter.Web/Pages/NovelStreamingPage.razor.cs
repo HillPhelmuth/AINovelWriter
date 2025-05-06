@@ -10,6 +10,7 @@ using System.Linq;
 using System.Linq.Dynamic.Core.Tokenizer;
 using System.Text.Json;
 using System.Threading;
+using Radzen;
 using Radzen.Blazor;
 using Radzen.Blazor.Rendering;
 using static AINovelWriter.Shared.Models.FileHelper;
@@ -36,7 +37,7 @@ public partial class NovelStreamingPage
 	
 	private bool _isCheat;
 	private List<string> _pages = [];
-	private bool _isBusy;
+	
     private string _buttonClass = "";
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
@@ -51,20 +52,31 @@ public partial class NovelStreamingPage
 	{
 		if (string.IsNullOrEmpty(AppState.NovelOutline.Outline)) return;
 		AppState.NovelInfo.Text = "";
-		_isBusy = true;
+		IsBusy = true;
 		StateHasChanged();
 		var ctoken = _cancellationTokenSource.Token;
-		await foreach (var token in NovelWriterService.WriteFullNovel(AppState.NovelOutline.Outline!,AppState.NovelInfo.AuthorStyle ?? "", AppState.NovelOutline.WriterAIModel, ctoken))
-		{
-			AppState.NovelInfo.Text += token;
-			await InvokeAsync(StateHasChanged);
-		}
-		AppState.NovelInfo.IsComplete = true;
-		_isBusy = false;
-        _buttonClass = "blink_me";
-		StateHasChanged();
+        try
+        {
+            await foreach (var token in NovelWriterService.WriteFullNovel(AppState.NovelOutline.Outline!, AppState.NovelOutline.WriterAIModel, ctoken))
+            {
+                AppState.NovelInfo.Text += token;
+                await InvokeAsync(StateHasChanged);
+            }
+        }
+        catch
+        {
+            NotificationService.Notify(NotificationSeverity.Error, "Novel Generation Failed",
+                "Novel generation was cancelled or failed.");
+        }
+        finally
+        {
+            AppState.NovelInfo.IsComplete = true;
+            IsBusy = false;
+            _buttonClass = "blink_me";
+            StateHasChanged();
+        }
 
-	}
+    }
 
 	private async void Cheat()
 	{
@@ -94,7 +106,7 @@ public partial class NovelStreamingPage
 		_cancellationTokenSource.Cancel();
 		_cancellationTokenSource = new CancellationTokenSource();
         AppState.NovelInfo.IsComplete = true;
-        _isBusy = false;
+        IsBusy = false;
         _buttonClass = "blink_me";
         StateHasChanged();
     }

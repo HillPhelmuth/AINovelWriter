@@ -1,0 +1,9 @@
+﻿<div class="busy-overlay">
+    <div class="busy-overlay-content">
+        @if (!string.IsNullOrEmpty(Message))
+        {
+            <div class="busy-overlay-message">@Message</div>
+        }
+        <div class="busy-overlay-spinner"></div>
+    </div>
+</div>

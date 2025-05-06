@@ -1,0 +1,47 @@
+﻿@inherits AppComponentBase
+@page "/outline"
+<RadzenRow>
+    <RadzenColumn SizeLG="8" Size="12" Style="overflow:auto">
+        <div>
+            @* <RadzenText Text="Write a book" TextAlign="TextAlign.Center" TextStyle="TextStyle.H6"></RadzenText> *@
+            <RadzenText Style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;" Text="Use the approved outline to generate the full novel" TextAlign="TextAlign.Center" TextStyle="TextStyle.H6"></RadzenText>
+            <RadzenText></RadzenText>
+            <RadzenTemplateForm TItem="NovelOutline" Data="AppState.NovelOutline" Submit="GenerateNovel">
+                <RadzenFormField Style="width:100%" Text="Outline">
+                    <ChildContent>
+                        <RadzenTextArea @ref="_textArea" @onselect="OnSelect" Style="width:100%; font-size:.9rem; height:24rem" @bind-Value="@AppState.NovelOutline.Outline"></RadzenTextArea>
+                    </ChildContent>
+                    <Helper>
+                        <RadzenText TextStyle="TextStyle.Caption" Text="Modify the outline as desired - just be sure each chapter starts with a markdown header (ex. ## Chapter 1). If you want the AI to modify the outline, select the section and use the form to modify."></RadzenText>
+                    </Helper>
+                </RadzenFormField>
+                <br /><br />
+                      <div style="display:flex;justify-content:space-around; width:60%">
+                          <ModelSelector @bind-SelectedModel="AppState.NovelOutline.WriterAIModel"></ModelSelector>
+                          <RadzenButton Style="margin-top:.5rem; align-self:center" ButtonType="ButtonType.Submit" Text="Write Novel" BusyText="Writing..." IsBusy="IsBusy"></RadzenButton>
+                      </div>
+            </RadzenTemplateForm>
+            <RadzenText TextStyle="TextStyle.Caption">Token Count: @StringHelpers.GetTokens200K(AppState.NovelOutline.Outline ?? "") </RadzenText>
+        </div>
+    </RadzenColumn>
+    <RadzenColumn>
+        <RadzenText Style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;" Text="Modify Outline" TextAlign="TextAlign.Center" TextStyle="TextStyle.H6"></RadzenText>
+        <RadzenText Style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;" Text="Select/highlight section for the AI to modify" TextAlign="TextAlign.Center" TextStyle="TextStyle.Subtitle1"></RadzenText>
+        <RadzenTemplateForm Data="_modifyOutlineSectionForm" TItem="ModifyOutlineSectionForm" Submit="ModifyOutlineSection">
+            <RadzenFormField Text="Modification Instructions" Style="width:100%">
+                <ChildContent>
+                    <RadzenTextArea @bind-Value="_modifyOutlineSectionForm.Instructions" Style="width:100%; font-size:.9rem; height:5rem"></RadzenTextArea>
+                </ChildContent>
+                <Helper>
+                    <RadzenText TextStyle="TextStyle.Caption" Text="Instruct the AI how to modify the selected text"></RadzenText>
+                </Helper>
+            </RadzenFormField>
+            <RadzenFormField Text="Selected Text" Style="width:100%">
+                <RadzenTextArea ReadOnly="true" @bind-Value="_modifyOutlineSectionForm.SelectedText" Style="width:100%;height:10rem"></RadzenTextArea>
+            </RadzenFormField>
+            <br/>
+            <ModelSelector @bind-SelectedModel="@_modifyOutlineSectionForm.AIModel"></ModelSelector>
+            <RadzenButton Size="ButtonSize.Small" IsBusy="IsBusy" ButtonType="ButtonType.Submit" Text="Modify"></RadzenButton>
+        </RadzenTemplateForm>
+    </RadzenColumn>
+</RadzenRow>

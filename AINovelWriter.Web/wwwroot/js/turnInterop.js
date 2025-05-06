@@ -9,7 +9,7 @@
 		// Elevation
 
 		elevation: 50,
-
+		height: 500,
 		// Enable gradients
 
 		gradients: true,

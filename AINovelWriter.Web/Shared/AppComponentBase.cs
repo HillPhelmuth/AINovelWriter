@@ -7,6 +7,7 @@ using Microsoft.JSInterop;
 using System.ComponentModel;
 using System.Text.Json;
 using Radzen;
+using static AINovelWriter.Shared.Models.EnumHelpers;
 
 namespace AINovelWriter.Web.Shared;
 
@@ -24,8 +25,17 @@ public abstract class AppComponentBase : ComponentBase, IDisposable
     protected CosmosService CosmosService { get; set; } = default!;
     [Inject]
     protected DialogService DialogService { get; set; } = default!;
+    [Inject]
+    protected ContextMenuService ContextMenuService { get; set; } = default!;
+    [Inject]
+    protected NotificationService NotificationService { get; set; } = default!;
+
+    protected bool ChangeFromSuggestedModel;
+    protected bool IsBusy;
     [CascadingParameter]
-    protected Task<AuthenticationState>? AuthenticationState { get; set; }
+    protected Task<AuthenticationState>? AuthenticationStateTask { get; set; }
+    protected static AuthenticationState? AuthenticationState { get; set; }
+    protected static Dictionary<AIModel, string> AIModelDescriptions => GetEnumsWithDescriptions<AIModel>().ToDictionary(x => x.Key, y => y.Value);
     protected bool IsNovelComplete { get; set; }
     protected override async Task OnInitializedAsync()
     {
@@ -61,12 +71,12 @@ public abstract class AppComponentBase : ComponentBase, IDisposable
     {
         if (firstRender)
         {
-            if (AuthenticationState is not null && !string.IsNullOrEmpty(AppState.UserData.UserName))
+            if (AuthenticationStateTask is not null)
             {
-                var state = await AuthenticationState;
+                AuthenticationState ??= await AuthenticationStateTask;
 
-                var userDataUserName = state?.User?.Identity?.Name;
-                var picture = state?.User?.Claims
+                var userDataUserName = AuthenticationState?.User?.Identity?.Name;
+                var picture = AuthenticationState?.User?.Claims
                     .Where(c => c.Type.Equals("picture"))
                     .Select(c => c.Value)
                     .FirstOrDefault() ?? string.Empty;
@@ -126,8 +136,8 @@ public abstract class AppComponentBase : ComponentBase, IDisposable
         //AppState.NovelInfo.TextPages = StringHelpers.SplitStringIntoPagesByLines(AppState.NovelInfo.Text, 20);
 
     }
-    private readonly MarkdownPipeline _markdownPipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
-    protected string AsHtml(string? text)
+    private static readonly MarkdownPipeline _markdownPipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
+    protected static string AsHtml(string? text)
     {
         if (text == null) return "";
         var pipeline = _markdownPipeline;

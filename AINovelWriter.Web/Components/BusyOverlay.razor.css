@@ -1,0 +1,46 @@
+/* BusyOverlay.razor.css */
+.busy-overlay {
+    position: fixed;
+    top: 1vh;
+    left: 1vw;
+    width: 95vw;
+    height: 94vh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.busy-overlay-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.9);
+    padding: 2rem 3rem;
+    border-radius: 16px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.2);
+}
+
+.busy-overlay-message {
+    font-size: 1.25rem;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+    color: #222;
+    text-align: center;
+}
+
+.busy-overlay-spinner {
+    width: 48px;
+    height: 48px;
+    border: 6px solid #ccc;
+    border-top: 6px solid #0078d4;
+    border-radius: 50%;
+    animation: busy-overlay-spin 1s linear infinite;
+}
+
+@keyframes busy-overlay-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

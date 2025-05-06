@@ -1,8 +1,8 @@
 ﻿@page "/eval"
 @inherits AppComponentBase
-<RadzenButton Size="ButtonSize.Small" Click="EvaluateNovel" Text="Evaluate" IsBusy="_isBusy" BusyText="Evaluating..."></RadzenButton>
+<RadzenButton Size="ButtonSize.Small" Click="EvaluateNovel" Text="Evaluate" IsBusy="IsBusy" BusyText="Evaluating..."></RadzenButton>
 <RadzenRow>
-    <RadzenColumn SizeLG="8" OffsetLG="2">
+    <RadzenColumn SizeLG="12" OffsetLG="0">
         <RadzenCard Style="padding-left:0;padding-right:0">
             <div style="display:flex;flex-direction:row;justify-content:space-evenly; align-items:center">
                 <RadzenCard>
@@ -30,8 +30,8 @@
                     <RadzenText TextAlign="TextAlign.Center">@AppState.NovelInfo.NovelEval?.WritingDetail.ToString("N3")</RadzenText>
                 </RadzenCard>
                 <RadzenCard>
-                    <RadzenText TextStyle="TextStyle.Subtitle2">Relevance</RadzenText>
-                    <RadzenText TextAlign="TextAlign.Center">@AppState.NovelInfo.NovelEval?.Relevance.ToString("N3")</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Subtitle2">Style</RadzenText>
+                    <RadzenText TextAlign="TextAlign.Center">@AppState.NovelInfo.NovelEval?.Style.ToString("N3")</RadzenText>
                 </RadzenCard>
                 <RadzenCard>
                     <RadzenText TextStyle="TextStyle.Subtitle2">Overall</RadzenText>
@@ -39,7 +39,7 @@
                 </RadzenCard>
             </div>
             <RadzenText TextStyle="TextStyle.Subtitle1" TextAlign="TextAlign.Center">Chapter Evaluations</RadzenText>
-            <RadzenDataGrid @ref="_grid" Data="_chapterEvals" TItem="FlatChapterEval" Density="Density.Compact" AllowPaging="true" PageSize="20" AllowSorting="true" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" ShowPagingSummary="true">
+            <RadzenDataGrid @ref="_grid" Data="@(AppState.NovelInfo.NovelEval?.ChapterEvals ?? [])" TItem="FlatChapterEval" Density="Density.Compact" AllowPaging="true" PageSize="20" AllowSorting="true" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" ShowPagingSummary="true">
                 <Template Context="eval">
                     <RadzenCard Style="overflow-wrap:break-word; white-space:pre-wrap">
                         @((MarkupString)AsHtml(GetChapterText(eval)))
@@ -56,7 +56,7 @@
                             @eval.CharacterDevelopment.ToString("N3")
                         </Template>
                         <FooterTemplate>
-                            @(_chapterEvals.Count > 0 ? _chapterEvals.Average(e => e.CharacterDevelopment).ToString("N3") : "0.000")
+                            @(AppState.NovelInfo.NovelEval?.ChapterEvals.Count > 0 ? AppState.NovelInfo.NovelEval?.ChapterEvals.Average(e => e.CharacterDevelopment).ToString("N3") : "0.000")
                         </FooterTemplate>
                     </RadzenDataGridColumn>
                     <RadzenDataGridColumn TItem="FlatChapterEval" Title="@(nameof(FlatChapterEval.Clarity))" Property="@(nameof(FlatChapterEval.Clarity))" Width="12%">
@@ -64,7 +64,7 @@
                             @eval.Clarity.ToString("N3")
                         </Template>
                         <FooterTemplate>
-                            @(_chapterEvals.Count > 0 ? _chapterEvals.Average(e => e.Clarity).ToString("N3") : "0.000")
+                            @(AppState.NovelInfo.NovelEval?.ChapterEvals.Count > 0 ? AppState.NovelInfo.NovelEval?.ChapterEvals.Average(e => e.Clarity).ToString("N3") : "0.000")
                         </FooterTemplate>
                     </RadzenDataGridColumn>
                     <RadzenDataGridColumn TItem="FlatChapterEval" Title="@(nameof(FlatChapterEval.Creativity))" Property="@(nameof(FlatChapterEval.Creativity))" Width="13%">
@@ -72,7 +72,7 @@
                             @eval.Creativity.ToString("N3")
                         </Template>
                         <FooterTemplate>
-                            @(_chapterEvals.Count > 0 ? _chapterEvals.Average(e => e.Creativity).ToString("N3") : "0.000")
+                            @(AppState.NovelInfo.NovelEval?.ChapterEvals.Count > 0 ? AppState.NovelInfo.NovelEval?.ChapterEvals.Average(e => e.Creativity).ToString("N3") : "0.000")
                         </FooterTemplate>
                     </RadzenDataGridColumn>
                     <RadzenDataGridColumn TItem="FlatChapterEval" Title="@(nameof(FlatChapterEval.Engagement))" Property="@(nameof(FlatChapterEval.Engagement))" Width="13%">
@@ -80,7 +80,7 @@
                             @eval.Engagement.ToString("N3")
                         </Template>
                         <FooterTemplate>
-                            @(_chapterEvals.Count > 0 ? _chapterEvals.Average(e => e.Engagement).ToString("N3") : "0.000")
+                            @(AppState.NovelInfo.NovelEval?.ChapterEvals.Count > 0 ? AppState.NovelInfo.NovelEval?.ChapterEvals.Average(e => e.Engagement).ToString("N3") : "0.000")
                         </FooterTemplate>
                     </RadzenDataGridColumn>
                     <RadzenDataGridColumn TItem="FlatChapterEval" Title="@(nameof(FlatChapterEval.WritingDetail))" Property="@(nameof(FlatChapterEval.WritingDetail))" Width="15%">
@@ -88,15 +88,15 @@
                             @eval.WritingDetail.ToString("N3")
                         </Template>
                         <FooterTemplate>
-                            @(_chapterEvals.Count > 0 ? _chapterEvals.Average(e => e.WritingDetail).ToString("N3") : "0.000")
+                            @(AppState.NovelInfo.NovelEval?.ChapterEvals.Count > 0 ? AppState.NovelInfo.NovelEval?.ChapterEvals.Average(e => e.WritingDetail).ToString("N3") : "0.000")
                         </FooterTemplate>
                     </RadzenDataGridColumn>
-                    <RadzenDataGridColumn TItem="FlatChapterEval" Title="@(nameof(FlatChapterEval.Relevance))" Property="@(nameof(FlatChapterEval.Relevance))" Width="12%">
+                    <RadzenDataGridColumn TItem="FlatChapterEval" Title="@(nameof(FlatChapterEval.Style))" Property="@(nameof(FlatChapterEval.Style))" Width="12%">
                         <Template Context="eval">
-                            @eval.Relevance.ToString("N3")
+                            @eval.Style.ToString("N3")
                         </Template>
                         <FooterTemplate>
-                            @(_chapterEvals.Count > 0 ? _chapterEvals.Average(e => e.Relevance).ToString("N3") : "0.000")
+                            @(AppState.NovelInfo.NovelEval?.ChapterEvals.Count > 0 ? AppState.NovelInfo.NovelEval?.ChapterEvals.Average(e => e.Style).ToString("N3") : "0.000")
                         </FooterTemplate>
                     </RadzenDataGridColumn>
                     <RadzenDataGridColumn TItem="FlatChapterEval" Title="@(nameof(FlatChapterEval.Overall))" Property="@(nameof(FlatChapterEval.Overall))" Width="10%">
@@ -104,7 +104,7 @@
                             @eval.Overall.ToString("N3")
                         </Template>
                         <FooterTemplate>
-                            @(_chapterEvals.Count > 0 ? _chapterEvals.Average(e => e.Overall).ToString("N3") : "0.000")
+                            @(AppState.NovelInfo.NovelEval?.ChapterEvals.Count > 0 ? AppState.NovelInfo.NovelEval?.ChapterEvals.Average(e => e.Overall).ToString("N3") : "0.000")
                         </FooterTemplate>
                     </RadzenDataGridColumn>
                 </Columns>

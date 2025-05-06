@@ -19,7 +19,7 @@ template: |
  
  ## Evaluate Chapter Adherence To Style and Details (1-10 Stars) - Critical Assessment
  
- **Task:** Evaluate the relevance and stylistic coherence of a provided fiction chapter against a set of details and themes) and a **Writing Style Guide**. Assign a single integer score between 1 and 10 (inclusive) that reflects the overall quality of the chapter's alignment with these elements.
+ **Task:** Evaluate the relevance and stylistic coherence of a provided fiction chapter against a set of details and themes and a **Writing Style Guide**. Assign a single integer score between 1 and 10 (inclusive) that reflects the overall quality of the chapter's alignment with these elements.
 
  **Scoring Scale:**
 
@@ -28,7 +28,7 @@ template: |
  *   **7-9:** Strong relevance; minor inconsistencies with details, themes, or style.
  *   **10:** Exceptional relevance; perfect alignment with details, themes, and style.
 
- **Important:** Avoid bias towards higher scores. Actively look for instances where the chapter deviates from the provided details, themes, or style guide. Be honest and critical in your assessment, imagining yourself as a discerning editor.
+ **Important:** Avoid bias towards higher scores. Actively look for instances where the chapter deviates from the provided details, themes, or style guide and downgrade appropriately. Be honest and critical in your assessment, imagining yourself as a discerning editor.
 
  **Output:**
 

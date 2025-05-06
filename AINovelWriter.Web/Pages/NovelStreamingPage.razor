@@ -6,7 +6,7 @@
 	
     <RadzenColumn SizeLG="8" Size="12" Style="overflow:auto">
         <RadzenText TextAlign="TextAlign.Center" TextStyle="TextStyle.Subtitle1" Text="Book"></RadzenText>
-        <RadzenButton Text="Re-write" Size="ButtonSize.ExtraSmall" BusyText="Writing" IsBusy="_isBusy" Click="@(async() =>await GenerateNovelAsync())" ></RadzenButton>
+        <RadzenButton Text="Re-write" Size="ButtonSize.ExtraSmall" BusyText="Writing" IsBusy="IsBusy" Click="@(async() =>await GenerateNovelAsync())" ></RadzenButton>
         @if (AppState.NovelInfo.IsComplete)
         {
             <RadzenButton class="@_buttonClass" Style="margin-left:35%" Icon="palette" Text="Choose your cover" Click="@(() => NavigationManager.NavigateTo("cover"))"></RadzenButton>
@@ -17,8 +17,8 @@
             <BookReader Text="@AppState.NovelInfo.Text"></BookReader>
 
         </RadzenCard>
-
-        <RadzenButton Disabled="@(_isBusy || string.IsNullOrWhiteSpace(AppState.NovelInfo.Text))" Text="Download" Size="ButtonSize.ExtraSmall" Click="DownloadNovelToFile"></RadzenButton>
+        <RadzenText TextStyle="TextStyle.Caption">Token Count: @StringHelpers.GetTokens200K(AppState.NovelInfo.Text ?? "") </RadzenText>
+        <RadzenButton Disabled="@(IsBusy || string.IsNullOrWhiteSpace(AppState.NovelInfo.Text))" Text="Download" Size="ButtonSize.ExtraSmall" Click="DownloadNovelToFile"></RadzenButton>
 
         <RadzenButton Text="Cancel" Size="ButtonSize.ExtraSmall" Click="Cancel"></RadzenButton>
         <hr />

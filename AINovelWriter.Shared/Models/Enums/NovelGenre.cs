@@ -1,8 +1,7 @@
 ﻿using System.ComponentModel;
-using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace AINovelWriter.Shared.Models;
+namespace AINovelWriter.Shared.Models.Enums;
 
 public enum NovelGenre
 {
@@ -55,7 +54,7 @@ public enum NovelGenre
 }
 public enum GenreCategory
 {
-   
+    None,
     [Description("Fiction exploring diverse themes and settings, focusing on imaginative narratives.")]
     [GenreType(typeof(ThemeFiction))]
     [Display("Themes Fiction")]

@@ -3,8 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using AINovelWriter.Shared.Services;
+using AINovelWriter.Shared.Models;
 using Microsoft.JSInterop;
 using Markdig;
+using Radzen;
 
 namespace AINovelWriter.Web.Pages;
 
@@ -27,7 +29,7 @@ public partial class BookPage
 
 	private List<string> _pages = [];
 	private bool _isSmall;
-	private string _cardStyle = "height:36.375rem; position:relative; width:1100px; margin:auto";
+	private string _cardStyle = "height:36.375rem; position:relative; width:1100px; margin:auto; margin-top:0";
 	protected override Task OnInitializedAsync()
 	{
 		if (string.IsNullOrEmpty(AppState.NovelInfo.ImageUrl)) NavigationManager.NavigateTo("");
@@ -47,7 +49,7 @@ public partial class BookPage
 		{
 			if (AppState.NovelInfo.TextPages.Count <= 1)
 			{
-				var is200K = AppState.WriterModel is AINovelWriter.Shared.Models.AIModel.Gpt41 or AINovelWriter.Shared.Models.AIModel.Gpt4OMini;
+				var is200K = AppState.WriterModel is AIModel.Gpt41 or AIModel.Gpt4OMini or AIModel.Gpt41Mini or AIModel.Gpt41Nano or AIModel.Gpt4OChatGptLatest or AIModel.Gpt4OCurrent or AIModel.Grok3;
 				AppState.NovelInfo.SplitIntoPagesByTokenLines(is4o: is200K);
 			}
 			_pages = AppState.NovelInfo.TextPages.Select(AsHtml).ToList();
@@ -78,6 +80,18 @@ public partial class BookPage
 		var page = _pageInput;
 		await JsRuntime.InvokeVoidAsync("turnToPage", page);
 	}
+
+    private void ShowEvals()
+    {
+        DialogService.Open<NovelEvalPage>("Novel Evaluations",
+            options: new DialogOptions() { Width = "85vw", Resizable = true, Draggable = true, CloseDialogOnOverlayClick = true});
+    }
+
+    private void ShowChatWithCharacter()
+    {
+        DialogService.Open<ChatWithNovelPage>("Chat with Character",
+            options: new DialogOptions() { Width = "85vw", Resizable = true, Draggable = true, CloseDialogOnOverlayClick = true});
+    }
 	private async void HandleMediaChange(bool matches)
 	{
 		if (matches && !_isSmall)

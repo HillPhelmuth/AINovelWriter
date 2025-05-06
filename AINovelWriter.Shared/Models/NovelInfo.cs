@@ -38,11 +38,11 @@ public class NovelInfo
 	public void SplitIntoPagesByTokenLines(int tokensPerLine = 40, bool is4o = false)
 	{
 		TextChunker.TokenCounter delegateTokenCounter = is4o ? StringHelpers.GetTokens200K : StringHelpers.GetTokens;
-		var lines = TextChunker.SplitPlainTextLines(Text, tokensPerLine, delegateTokenCounter);
+		var lines = TextChunker.SplitMarkDownLines(Text, tokensPerLine, delegateTokenCounter);
 		var lines2 = Text.Split("\n\n");
 		Console.WriteLine("Lines:");
 		//lines.ForEach(Console.WriteLine);
-		var chunks = TextChunker.SplitPlainTextParagraphs(lines, 320, tokenCounter:delegateTokenCounter);
+		var chunks = TextChunker.SplitMarkdownParagraphs(lines, 340, tokenCounter:delegateTokenCounter);
 		var chunkSizes = chunks.Select(x => delegateTokenCounter(x)).ToList();
 		for (var index = 0; index < chunkSizes.Count; index++)
 		{
@@ -62,9 +62,11 @@ public class NovelInfo
 	public bool IsComplete { get; set; }
  
 }
+
 public record ChapterOutline(string Title, string Text, int ChapterNumber)
 {
     public int ChapterNumber { get; set; } = ChapterNumber;
+	public string Title { get; set; } = Title;
     public string? FullText { get; set; }
 	public bool ShowAudio { get; set; }
 	public string? Summary { get; set; }

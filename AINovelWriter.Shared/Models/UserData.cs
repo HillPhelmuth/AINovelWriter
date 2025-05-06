@@ -23,4 +23,5 @@ public class UserData
 public record UserNovelData(string NovelId, string Title, DateOnly CreatedOn)
 {
 	public string NovelId { get; set; } = NovelId;
+	public bool IsShared { get; set; } = false;
 }

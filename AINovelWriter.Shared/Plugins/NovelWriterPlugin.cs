@@ -68,7 +68,7 @@ public class NovelWriterPlugin(AIModel aIModel = AIModel.Gpt41)
 		return response;
 	}
 	[KernelFunction, Description("Create an outline for a novel")]
-	public async Task<string> CreateNovelOutline(Kernel kernel, [Description("The central topic or theme of the story")] string theme, [Description("A list of character details that must be included in the outline")] string characterDetails = "", [Description("Plot events that must occurr in the outline")] string plotEvents = "", [Description("The title of the novel")] string novelTitle = "", [Description("Number of chapters to include")] int chapters = 15, string additionalInstructions = "")
+	public async Task<string> CreateNovelOutline(Kernel kernel, [Description("The central topic or theme of the story")] string theme, [Description("A list of character details that must be included in the outline")] string characterDetails = "", [Description("Plot events that must occurr in the outline")] string plotEvents = "", [Description("The title of the novel")] string novelTitle = "", [Description("Number of chapters to include")] int chapters = 15, string additionalInstructions = "", [Description("The intended audience of the novel")] NovelAudience audience = NovelAudience.None, [Description("The tone of the novel")]NovelTone tone = NovelTone.None, [Description("Genre info")] string genre = "")
 	{
 		var promptFilter = new PromptFilter();
 		var kernelClone = kernel.Clone();
@@ -80,8 +80,11 @@ public class NovelWriterPlugin(AIModel aIModel = AIModel.Gpt41)
 			["characterDetails"] = characterDetails,
 			["plotEvents"] = plotEvents,
 			["novelTitle"] = novelTitle,
-			["chapterCount"] = chapters
-		};
+			["chapterCount"] = chapters,
+            ["audience"] = audience,
+            ["tone"] = tone,
+            ["genre"] = genre
+        };
         var instructions = string.IsNullOrEmpty(additionalInstructions) ? "" : $"## Additional User Instructions\n\n{additionalInstructions}\n";
         args["additionalInstructions"] = instructions;
         

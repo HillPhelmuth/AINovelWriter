@@ -8,21 +8,13 @@
                 <RadzenColumn SizeLG="4">
                     <RadzenText TextStyle="TextStyle.Subtitle1" TextAlign="TextAlign.Center">Get a Context-specific Review</RadzenText>
                     <RadzenTemplateForm Data="_reviewNovelForm" TItem="ReviewNovelForm" Submit="FullReview">
-                        <RadzenFormField Text="AI Model">
-                            <ChildContent>
-                                <RadzenDropDown Name="AIModel" Data="AIModelDescriptions" ValueProperty="Key" TextProperty="Value" @bind-Value="@_reviewNovelForm.AIModel"></RadzenDropDown>
-                            </ChildContent>
-                            <Helper>
-                                <RadzenText TextStyle="TextStyle.Caption" Text="Select an AI model review"></RadzenText>
-                                <RadzenCompareValidator Operator="CompareOperator.NotEqual" Value="@AIModel.None" Component="AIModel" Text="Please select a model" Popup="true" Style="position:absolute"></RadzenCompareValidator>
-                            </Helper>
-                        </RadzenFormField><br />
+                        <ModelSelector @bind-SelectedModel="_reviewNovelForm.AIModel"></ModelSelector><br />
                         <RadzenFormField Text="Review Context" Style="width:90%">
                             <ChildContent>
                                 <RadzenDropDown Style="width:90%" Data="ReviewContextDescriptions" ValueProperty="Key" TextProperty="Value" @bind-Value="_reviewNovelForm.ReviewContext"></RadzenDropDown>
                             </ChildContent>
                         </RadzenFormField><br />
-                        <RadzenButton ButtonType="ButtonType.Submit" Text="Get Review" IsBusy="_isBusy" BusyText="Reviewing..."></RadzenButton>
+                        <RadzenButton ButtonType="ButtonType.Submit" Text="Get Review" IsBusy="IsBusy" BusyText="Reviewing..."></RadzenButton>
                     </RadzenTemplateForm>
 
                 </RadzenColumn>
@@ -46,15 +38,7 @@
                                 <RadzenRequiredValidator Component="Chapter" Popup="true" Style="position:absolute"></RadzenRequiredValidator>
                             </Helper>
                         </RadzenFormField>
-                        <RadzenFormField Text="AI Model">
-                            <ChildContent>
-                                <RadzenDropDown Name="AIModel" Data="AIModelDescriptions" ValueProperty="Key" TextProperty="Value" @bind-Value="@_editNovelForm.AIModel"></RadzenDropDown>
-                            </ChildContent>
-                            <Helper>
-                                <RadzenText TextStyle="TextStyle.Caption" Text="Select the AI model used to generate Outline"></RadzenText>
-                                <RadzenCompareValidator Operator="CompareOperator.NotEqual" Value="@AIModel.None" Component="AIModel" Text="Please select a model" Popup="true" Style="position:absolute"></RadzenCompareValidator>
-                            </Helper>
-                        </RadzenFormField><br />
+                        <ModelSelector @bind-SelectedModel="@_editNovelForm.AIModel"></ModelSelector><br />
                         <RadzenFormField Style="width:100%" Text="Additional Notes (optional)">
                             <ChildContent>
                                 <RadzenTextArea @bind-Value="@_editNovelForm.Notes" Style="width:100%;height:5rem"></RadzenTextArea>
@@ -63,7 +47,7 @@
                                 <RadzenText TextStyle="TextStyle.Caption" Text="Additional instructions for re-write"></RadzenText>
                             </Helper>
                         </RadzenFormField><br />
-                        <RadzenButton ButtonType="ButtonType.Submit" Text="Get Feedback" IsBusy="_isBusy" BusyText="Evaluating..."></RadzenButton>
+                        <RadzenButton ButtonType="ButtonType.Submit" Text="Get Feedback" IsBusy="IsBusy" BusyText="Evaluating..."></RadzenButton>
                     </RadzenTemplateForm>
                 </RadzenColumn>
                 <RadzenColumn Size="6">
@@ -98,7 +82,8 @@
                             </RadzenCard>
                             <RadzenFormField Text="AI Model">
                                 <ChildContent>
-                                    <RadzenDropDown Name="AIModel" Data="AIModelDescriptions" ValueProperty="Key" TextProperty="Value" @bind-Value="@_applySuggestionForm.AIModel"></RadzenDropDown>
+                                    <ModelSelector @bind-SelectedModel="_applySuggestionForm.AIModel"></ModelSelector>
+                                    
                                 </ChildContent>
                                 <Helper>
                                     <RadzenText TextStyle="TextStyle.Caption" Text="Select the AI model used to generate Outline"></RadzenText>
@@ -120,7 +105,7 @@
                         @if (!string.IsNullOrEmpty(_rewrite))
                         {
                             <RadzenButton Click="ApplyRewrite" Text="Apply Rewrite"></RadzenButton>
-                            <RadzenDropDown Name="AIModel" Data="AIModelDescriptions" ValueProperty="Key" TextProperty="Value" @bind-Value="@_compareModel"></RadzenDropDown>
+                            <ModelSelector @bind-SelectedModel="@_compareModel"></ModelSelector>
                             <RadzenButton Click="@(() => CompareRewrite(_compareModel))" Text="Compare"></RadzenButton>
                             <RadzenCard Style="max-height:25rem; overflow:auto;overflow-wrap:break-word; white-space:pre-wrap">
                                 @((MarkupString)AsHtml(_rewrite))
@@ -164,7 +149,7 @@
                     {
                         <RadzenTemplateForm Data="_chapterTextEdit" TItem="ChapterTextEdit" Submit="SubmitEdit">
                             <RadzenButton ButtonType="ButtonType.Submit" Text="Submit" Size="ButtonSize.ExtraSmall"></RadzenButton>
-                            <RadzenDropDown Name="AIModel" Data="AIModelDescriptions" ValueProperty="Key" TextProperty="Value" @bind-Value="@_compareModel"></RadzenDropDown>
+                            <ModelSelector  @bind-SelectedModel="@_compareModel"></ModelSelector>
                             <RadzenButton Text="AI Compare" Size="ButtonSize.ExtraSmall" Click="CompareEdit"></RadzenButton>
                             <RadzenFormField Text="Chapter Title" Style="width:100%">
                                 <RadzenTextBox @bind-Value="@_chapterTextEdit.NewTitle" Style="width:100%"></RadzenTextBox>

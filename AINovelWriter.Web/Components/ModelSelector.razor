@@ -1,0 +1,22 @@
+ @inherits AppComponentBase
+ <div>
+@if (ChangeFromSuggestedModel)
+{
+    <RadzenFormField Text="AI Model">
+        <ChildContent>
+            <RadzenDropDown Name="AIModel" Data="AIModelDescriptions" TValue="AIModel" ValueProperty="Key" TextProperty="Value" Value="_model" ValueChanged="HandleChange" ></RadzenDropDown>
+        </ChildContent>
+        <Helper>
+            <RadzenText TextStyle="TextStyle.Caption" Text="Select the AI model used to generate Outline"></RadzenText>
+            <RadzenCompareValidator Operator="CompareOperator.NotEqual" Value="@AIModel.None" Component="AIModel" Text="Please select a model" Popup="true" Style="position:absolute"></RadzenCompareValidator>
+        </Helper>
+    </RadzenFormField>
+}
+else
+{
+    <RadzenText TextStyle="TextStyle.Body2" Style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">Suggested AI Model: <strong>@SelectedModel.GetDescription()</strong></RadzenText>
+    <RadzenLabel Style="font-size:90%;margin-top:-4px;">
+        <RadzenCheckBox @bind-Value="ChangeFromSuggestedModel"></RadzenCheckBox> Change AI Model
+    </RadzenLabel>
+}
+ </div>

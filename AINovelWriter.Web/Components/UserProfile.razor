@@ -1,50 +1,60 @@
 ﻿@inherits AppComponentBase
 <RadzenRow>
-	<RadzenColumn Size="12">
-		<RadzenDataGrid IsLoading="@(AppState.UserData.SavedNovels.Count == 0)" Data="@AppState.UserData.SavedNovels" TItem="UserNovelData" AllowPaging="true" AllowSorting="true" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Density="Density.Compact" PageSize="10">
-			<Columns>
-				<RadzenDataGridColumn TItem="UserNovelData" Title="Created" Property="CreatedOn" Width="20%"></RadzenDataGridColumn>
-				<RadzenDataGridColumn TItem="UserNovelData" Title="Title" Property="Title" Width="50%"></RadzenDataGridColumn>
-				<RadzenDataGridColumn TItem="UserNovelData" Width="10%" Sortable="false" Filterable="false">
-					<Template Context="novel">
-						<RadzenButton Size="ButtonSize.ExtraSmall" Text="Select" Click="@(() => SelectNovel(novel))"></RadzenButton>
-					</Template>
-				</RadzenDataGridColumn>
-				<RadzenDataGridColumn TItem="UserNovelData" Width="10%" Sortable="false" Filterable="false">
-					<Template Context="novel">
-						<RadzenButton Size="ButtonSize.ExtraSmall" Icon="delete" Click="@(() => DeleteNovel(novel))" title="Delete Novel"></RadzenButton>
-					</Template>
-				</RadzenDataGridColumn>
-				<RadzenDataGridColumn TItem="UserNovelData" Width="10%" Sortable="false" Filterable="false">
-					<Template Context="novel">
-						<RadzenButton Size="ButtonSize.ExtraSmall" Icon="download" Click="@(() => DownloadNovelToFile(novel))" title="Download Pdf"></RadzenButton>
-					</Template>
-				</RadzenDataGridColumn>
-			</Columns>
-		</RadzenDataGrid>
-	</RadzenColumn>
-	<RadzenColumn SizeLG="6" OffsetLG="3">
-		<div>
-			@if (!_changeImage)
-			{
-				<RadzenCard Style="display:flex;flex-direction:column;justify-content:center">
-					<RadzenImage Style="max-height:256px;max-width:256px" Path="@AppState.UserData.ImagePath"></RadzenImage>
-					<RadzenButton Size="ButtonSize.ExtraSmall" Variant="Variant.Text" Text="Change Image" Click="@(() => _changeImage = true)"></RadzenButton>
-				</RadzenCard>
-			}
-			else
-			{
-				<RadzenTemplateForm Data="_imageUpdateForm" TItem="ImageUpdateForm" Submit="UpdateImage">
-					<RadzenFileInput ChooseText="Choose Image" @bind-Value=_imageUpdateForm.FileData.ImageBase64Data @bind-FileName=_imageUpdateForm.FileData.FileName></RadzenFileInput>
-					<RadzenText TextAlign="TextAlign.Center" TextStyle="TextStyle.DisplayH6" Text="OR"></RadzenText>
-					<RadzenFormField Text="Add Image Url">
-						<RadzenTextBox @bind-Value=@_imageUpdateForm.Url></RadzenTextBox>
-					</RadzenFormField>
-					<br />
-					<RadzenButton ButtonType="ButtonType.Submit" Text="Submit Image"></RadzenButton>
-				</RadzenTemplateForm>
-			}
-		</div>
-	</RadzenColumn>
+    <RadzenColumn Size="12">
+        <RadzenDataGrid IsLoading="@(AppState.UserData.SavedNovels.Count == 0)" Data="@AppState.UserData.SavedNovels" TItem="UserNovelData" AllowPaging="true" AllowSorting="true" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Density="Density.Compact" PageSize="10">
+            <Columns>
+                <RadzenDataGridColumn TItem="UserNovelData" Title="Created" Property="CreatedOn" Width="15%"></RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="UserNovelData" Title="Title" Property="Title" Width="45%"></RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="UserNovelData" Width="8%" Sortable="false" Filterable="false">
+                    <Template Context="novel">
+                        <RadzenButton Size="ButtonSize.ExtraSmall" Text="Select" Click="@(() => SelectNovel(novel))"></RadzenButton>
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="UserNovelData" Width="8%" Sortable="false" Filterable="false">
+                    <Template Context="novel">
+                        <RadzenButton Size="ButtonSize.ExtraSmall" Icon="share" Variant="Variant.Text" Text="@(novel.IsShared ? "Unshare" : "Share")" IconColor="@(novel.IsShared ? "red" : "green")" title="@(novel.IsShared ? "Remove from shared list" : "Share novel")" Click="@(() => ShareNovel(novel))"></RadzenButton>
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="UserNovelData" Width="8%" Sortable="false" Filterable="false">
+                    <Template Context="novel">
+                        <RadzenButton Size="ButtonSize.ExtraSmall" Icon="delete" Click="@(() => DeleteNovel(novel))" title="Delete Novel"></RadzenButton>
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="UserNovelData" Title="Pdf" Width="8%" Sortable="false" Filterable="false">
+                    <Template Context="novel">
+                        <RadzenButton Size="ButtonSize.ExtraSmall" Icon="picture_as_pdf" Click="@(() => DownloadNovelToFile(novel))" title="Download Pdf"></RadzenButton>
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="UserNovelData" Title="Epub" Width="8%" Sortable="false" Filterable="false">
+                    <Template Context="novel">
+                        <RadzenButton Size="ButtonSize.ExtraSmall" Icon="download" Click="@(() => DownloadNovelToEpub(novel))" title="Download Epub"></RadzenButton>
+                    </Template>
+                </RadzenDataGridColumn>
+            </Columns>
+        </RadzenDataGrid>
+    </RadzenColumn>
+    <RadzenColumn SizeLG="6" OffsetLG="3">
+        <div>
+            @if (!_changeImage)
+            {
+                <RadzenCard Style="display:flex;flex-direction:column;justify-content:center;width:100%">
+                    <RadzenImage Style="max-height:256px;max-width:256px; justify-self:center;margin-left:auto;margin-right:auto" Path="@AppState.UserData.ImagePath"></RadzenImage>
+                    <RadzenButton Size="ButtonSize.ExtraSmall" Variant="Variant.Text" Text="Change Image" Click="@(() => _changeImage = true)"></RadzenButton>
+                </RadzenCard>
+            }
+            else
+            {
+                <RadzenTemplateForm Data="_imageUpdateForm" TItem="ImageUpdateForm" Submit="UpdateImage">
+                    <RadzenFileInput ChooseText="Choose Image" @bind-Value=_imageUpdateForm.FileData.ImageBase64Data @bind-FileName=_imageUpdateForm.FileData.FileName></RadzenFileInput>
+                    <RadzenText TextAlign="TextAlign.Center" TextStyle="TextStyle.DisplayH6" Text="OR"></RadzenText>
+                    <RadzenFormField Text="Add Image Url">
+                        <RadzenTextBox @bind-Value=@_imageUpdateForm.Url></RadzenTextBox>
+                    </RadzenFormField>
+                    <br />
+                    <RadzenButton ButtonType="ButtonType.Submit" Text="Submit Image"></RadzenButton>
+                </RadzenTemplateForm>
+            }
+        </div>
+    </RadzenColumn>
 </RadzenRow>
 <Login />

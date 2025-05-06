@@ -21,7 +21,7 @@ public partial class NovelEvalPage
     private IConfiguration Configuration { get; set; } = default!;
     [Inject]
     private TooltipService TooltipService { get; set; } = default!;
-    private bool _isBusy;
+    
 
     private void ShowToolTip(ElementReference elementReference, string text)
     {
@@ -35,11 +35,13 @@ public partial class NovelEvalPage
             {
                 _chapterEvals = AppState.NovelInfo.NovelEval.ChapterEvals;
                 Console.WriteLine($"Chapter Evals already exist:\n{string.Join("\n", AppState.NovelInfo.NovelEval.ChapterEvals.Select(x => x.ToString()))}");
+                await _grid.Reload();
             }
             else if (AppState.NovelInfo.ChapterEvals.Count > 0)
             {
                 _chapterEvals = AppState.NovelInfo.ChapterEvals;
-			}
+                await _grid.Reload();
+            }
             else if (AppState.NovelInfo.ChapterOutlines.Count > 0)
             {
                 await EvaluateNovel();
@@ -59,7 +61,7 @@ public partial class NovelEvalPage
     private async Task EvaluateNovel()
     {
         _chapterEvals.Clear();
-		_isBusy = true;
+		IsBusy = true;
 		StateHasChanged();
         await Task.Delay(1);
 		var kernel = Kernel.CreateBuilder()
@@ -74,7 +76,7 @@ public partial class NovelEvalPage
 			Clarity = novelResults.First(x => x.EvalName == "GptClarity").ProbScore,
 			Creativity = novelResults.First(x => x.EvalName == "GptCreativity").ProbScore,
 			Engagement = novelResults.First(x => x.EvalName == "GptEngagement").ProbScore,
-			Relevance = novelResults.First(x => x.EvalName == "GptRelevance").ProbScore,
+			Style = novelResults.First(x => x.EvalName == "GptRelevance").ProbScore,
 			WritingDetail = novelResults.First(x => x.EvalName == "GptWritingDetail").ProbScore,
 			
 		};
@@ -97,18 +99,18 @@ public partial class NovelEvalPage
                 Clarity = clarity,
                 Creativity = creativity,
                 Engagement = engagement,
-                Relevance = relevance,
+                Style = relevance,
                 WritingDetail = writingDetail,
                 CharacterDevelopment = characterDevelopment,
                 ChapterText = text
             };
-            _chapterEvals.Add(flatChapterEval);
+            AppState.NovelInfo.NovelEval.ChapterEvals.Add(flatChapterEval);
             StateHasChanged();
             await _grid.Reload();
         }
         //AppState.NovelInfo.ChapterEvals = _chapterEvals;
-        AppState.NovelInfo.NovelEval.ChapterEvals = _chapterEvals;
-		_isBusy = false;
+        //AppState.NovelInfo.NovelEval.ChapterEvals = _chapterEvals;
+		IsBusy = false;
 		StateHasChanged();
     }
 }

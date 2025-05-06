@@ -4,14 +4,14 @@
 <PageTitle>Home</PageTitle>
 
 <RadzenRow>
-	<RadzenColumn Offset="0" SizeLG="8" OffsetLG="2" Size="12" Style="overflow:auto">
+	<RadzenColumn Offset="0" SizeLG="6" OffsetLG="3" Size="12" Style="overflow:auto">
 		<RadzenCard Style="display:flex; flex-direction:column; justify-content:center">
-			<RadzenText Text="Novel Writer" TextAlign="TextAlign.Center" TextStyle="TextStyle.H6"></RadzenText>
-			<RadzenText Text="Use an AI to generate a short novel" TextAlign="TextAlign.Center" TextStyle="TextStyle.Subtitle1"></RadzenText>
-			<RadzenCard Style="width:100%;display:flex; flex-direction:column; justify-content:center">
-				<RadzenText TextStyle="TextStyle.Body1">Always dreamed of being a novelist but can’t be bothered with the actual writing? You’re in luck! With our AI Novel Writer, you can sit back, relax, and watch as 'you' write a novel. No need to waste time on plot development, character arcs, or even basic grammar—our AI handles all the heavy lifting while you take all the credit.</RadzenText><br />
-				<RadzenText TextStyle="TextStyle.Body1">Just enter a few details about your story, such as the topic, title, and any characters or plot points you might vaguely care about (actually, we'll even do this part for you too...). Then, our AI will generate a comprehensive outline and even write the entire novel for you. It’s never been easier to call yourself a writer without actually writing a word!</RadzenText><br />
-				<RadzenText TextStyle="TextStyle.Body1">If your laziness is not limited to writing, but extends to reading as well, we've got you covered! Let an AI read the story to you, just as a parent would a child!</RadzenText>
+			<RadzenText Style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;" Text="Novel Writer" TextAlign="TextAlign.Center" TextStyle="TextStyle.H5"></RadzenText>
+			<RadzenText Style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;" Text="Use an AI to generate a short novel" TextAlign="TextAlign.Center" TextStyle="TextStyle.Subtitle1"></RadzenText>
+			<RadzenCard Style="width:100%;display:flex; flex-direction:column; justify-content:center;font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+				<RadzenText TextStyle="TextStyle.Body1" Style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">Always dreamed of being a novelist but can’t be bothered with the actual writing? You’re in luck! With our AI Novel Writer, you can sit back, relax, and watch as 'you' write a novel. No need to waste time on plot development, character arcs, or even basic grammar—our AI handles all the heavy lifting while you take all the credit.</RadzenText><br />
+				<RadzenText Style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;" TextStyle="TextStyle.Body1">Just enter a few details about your story, such as the topic, title, and any characters or plot points you might vaguely care about (actually, we'll even do this part for you too...). Then, our AI will generate a comprehensive outline and even write the entire novel for you. It’s never been easier to call yourself a writer without actually writing a word!</RadzenText><br />
+				<RadzenText Style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;" TextStyle="TextStyle.Body1">If your laziness is not limited to writing, but extends to reading as well, we've got you covered! Let an AI read the story to you, just as a parent would a child!</RadzenText>
 				<br />
 				<RadzenButton Style="margin-left:auto; margin-right:auto" Click="@(() => NavigationManager.NavigateTo("concept"))" Text="Get Started!"></RadzenButton>
                 <RadzenLabel Style="margin-left:auto; margin-right:auto">
@@ -23,7 +23,7 @@
 				<RadzenTemplateForm Style="margin-left:auto; margin-right:auto" Data="_fileUploadForm" TItem="FileUploadForm" Submit="UploadEpub">
                     <RadzenFileInput ChooseText="Upload Epub" Accept="*" Name="File" @bind-Value="@_fileUploadForm.FileContent" @bind-FileName="@_fileUploadForm.FileName" @bind-FileSize="_fileUploadForm.FileSize"></RadzenFileInput>
                         @*  <RadzenCustomValidator Component="File" Validator="@(() => _fileUploadForm.FileName.Contains(".epub"))" Text="Upload epub file"></RadzenCustomValidator> *@
-                        <RadzenButton Visible="@(_fileUploadForm.FileName?.Contains(".epub") == true)" ButtonType="ButtonType.Submit" Text="Upload and Submit" IsBusy="_isBusy" BusyText="Reverse Engineering..."></RadzenButton>
+                        <RadzenButton Visible="@(_fileUploadForm.FileName?.Contains(".epub") == true)" ButtonType="ButtonType.Submit" Text="Upload and Submit" IsBusy="IsBusy" BusyText="Reverse Engineering..."></RadzenButton>
                 </RadzenTemplateForm>
             }
 		</RadzenCard>

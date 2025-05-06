@@ -14,7 +14,7 @@
   <ItemGroup>
     <PackageReference Include="Markdig" Version="0.38.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.0" />
-    <PackageReference Include="Microsoft.SemanticKernel" Version="1.46.0" />
+    <PackageReference Include="Microsoft.SemanticKernel" Version="1.47.0" />
     <PackageReference Include="Radzen.Blazor" Version="5.6.1" />
   </ItemGroup>
 

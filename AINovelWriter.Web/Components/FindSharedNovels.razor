@@ -1,0 +1,30 @@
+﻿@inherits AppComponentBase
+@if (IsBusy)
+{
+    <BusyOverlay Message="@_busyText"></BusyOverlay>
+}
+<RadzenCard>
+    <RadzenDataGrid @ref="_grid" IsLoading="@(_sharedNovels.Count == 0)" Data="@_sharedNovels" TItem="SharedNovelInfo" AllowPaging="true" AllowSorting="true" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Density="Density.Compact" PageSize="10">
+        <Columns>
+            <RadzenDataGridColumn TItem="SharedNovelInfo" Title="Created" Property="CreatedOn" Width="12%"></RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="SharedNovelInfo" Title="Title" Property="Title" Width="48%"></RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="SharedNovelInfo" Title="Tone" Property="Tone" Width="10%"></RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="SharedNovelInfo" Title="Audience" Property="Audience" Width="12%"></RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="SharedNovelInfo" Width="8%" Sortable="false" Filterable="false">
+                <Template Context="novel">
+                    <RadzenButton Size="ButtonSize.ExtraSmall" Text="Select" Click="@(() => SelectNovel(novel))"></RadzenButton>
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="SharedNovelInfo" Title="Pdf" Width="5%" Sortable="false" Filterable="false">
+                <Template Context="novel">
+                    <RadzenButton Size="ButtonSize.ExtraSmall" Icon="picture_as_pdf" Click="@(() => DownloadNovelToFile(novel))" title="Download Pdf"></RadzenButton>
+                </Template>
+            </RadzenDataGridColumn>
+            @* <RadzenDataGridColumn TItem="SharedNovelInfo" Title="Epub" Width="8%" Sortable="false" Filterable="false">
+                <Template Context="novel">
+                    <RadzenButton Size="ButtonSize.ExtraSmall" Icon="download" Click="@(() => DownloadNovelToEpub(novel))" title="Download Epub"></RadzenButton>
+                </Template>
+            </RadzenDataGridColumn> *@
+        </Columns>
+    </RadzenDataGrid>
+</RadzenCard>

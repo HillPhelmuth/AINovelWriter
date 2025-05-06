@@ -21,7 +21,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using System.Threading;
-using Microsoft.SemanticKernel.TextToImage;
+using AINovelWriter.Shared.Models.Enums;
 using Microsoft.SemanticKernel.Connectors.Amazon;
 using OpenAI.Audio;
 using BinaryContent = System.ClientModel.BinaryContent;
@@ -94,24 +94,25 @@ public class NovelWriterService : INovelWriter
         //var novelInfo = await reverseEngineerFunc.InvokeAsync<NovelInfo>(kernel, args);
         return novelInfo;
     }
-    public async Task<NovelConcepts> GenerateNovelIdea(GenreCategoryItem genre, List<Genre> subgenres, NovelLength length)
+    public async Task<NovelConcepts> GenerateNovelIdea(GenreCategory genre, List<Genre> subgenres, NovelLength length,
+        NovelTone tone, NovelAudience audience)
     {
         var random = new Random();
-        var roll = random.Next(2, 10);
+        var roll = random.Next(1, 9);
         var aIModel = roll switch
         {
             1 => AIModel.Gpt41Mini,
             2 => AIModel.Gpt4OMini,
             3 => AIModel.GeminiFlash,
             4 => AIModel.Gpt41,
-            5 => AIModel.OpenMistralNemo,
-            6 => AIModel.Gemini15,
-            7 => AIModel.Gpt4OCurrent,
-            8 => AIModel.Gpt41Nano,
-            9 => AIModel.Grok3,
+            //5 => AIModel.OpenMistralNemo,
+            5 => AIModel.Gemini15,
+            6 => AIModel.Gpt4OCurrent,
+            7 => AIModel.Gpt41Nano,
+            8 => AIModel.Grok3,
             _ => AIModel.Gpt4OMini
         };
-        aIModel = AIModel.Gpt41;
+       
         var kernel = CreateKernel(aIModel);
         var rng = new Random();
         var personality = Enum.GetValues<Personality>()[rng.Next(Enum.GetValues<Personality>().Length)];
@@ -124,7 +125,10 @@ public class NovelWriterService : INovelWriter
         var settings = GetPromptExecutionSettingsFromModel(aIModel, 0.9);
         var subgenreString = string.Join("\n", subgenres.Select(x => x.ToString()));
         Console.WriteLine($"Subgenres: \n---------------------\n{subgenreString}\n------------------------------------\n");
-        var args = new KernelArguments(settings) { ["genre"] = $"{genre.Name}\n{genre.Description}", ["subgenre"] = subgenreString, ["personalities"] = personalityVar, ["lengthDescription"] = lengthDescription };
+        var args = new KernelArguments(settings)
+        {
+            ["genre"] = $"{genre.GetDisplayName()}\n{genre.GetDescription()}", ["subgenre"] = subgenreString, ["personalities"] = personalityVar, ["lengthDescription"] = lengthDescription, ["tone"] = $"{tone} - {tone.GetDescription()}", ["audience"] = $"{audience} - {audience.GetDescription()}"
+        };
         var json = await kernel.InvokePromptAsync<string>(Prompts.IdeaGeneratePrompt, args);
         Console.WriteLine($"Novel Idea:\n------------------------------------\n {json}\n------------------------------------\n");
         NovelConcepts? concepts;
@@ -143,11 +147,110 @@ public class NovelWriterService : INovelWriter
             concepts = JsonSerializer.Deserialize<NovelConcepts>(repairJson!);
         }
 
-        concepts.Genre = genre.Category;
+        concepts.Genre = genre;
         concepts.SubGenres = subgenres;
         return concepts;
 
     }
+
+    public async Task<string> GenerateNovelTitle(NovelConcepts concepts)
+    {
+        var random = new Random();
+        var roll = random.Next(1, 9);
+        var aIModel = roll switch
+        {
+            1 => AIModel.Gpt41Mini,
+            2 => AIModel.Gpt4OMini,
+            3 => AIModel.GeminiFlash,
+            4 => AIModel.Gpt41,
+            //5 => AIModel.OpenMistralNemo,
+            5 => AIModel.Gemini15,
+            6 => AIModel.Gpt4OCurrent,
+            7 => AIModel.Gpt41Nano,
+            8 => AIModel.Grok3,
+            _ => AIModel.Gpt4OMini
+        };
+
+        var kernel = CreateKernel(aIModel);
+        concepts.Title = "";
+        var args = new KernelArguments() { ["availableInformation"] = concepts.AvailableInformation() };
+        var title = await kernel.InvokePromptAsync<string>(Prompts.TitleGeneratePrompt, args);
+        Console.WriteLine($"Novel Title:\n------------------------------------\n {title}\n------------------------------------\n");
+        return title ?? "Nope! No title for you!";
+    }
+
+    public async Task<string> GenerateNovelDescription(NovelConcepts concepts)
+    {
+        var random = new Random();
+        var roll = random.Next(1, 9);
+        var aIModel = roll switch
+        {
+            1 => AIModel.Gpt41Mini,
+            2 => AIModel.Gpt4OMini,
+            3 => AIModel.GeminiFlash,
+            4 => AIModel.Gpt41,
+            5 => AIModel.Gemini15,
+            6 => AIModel.Gpt4OCurrent,
+            7 => AIModel.Gpt41Nano,
+            8 => AIModel.Grok3,
+            _ => AIModel.Gpt4OMini
+        };
+
+        var kernel = CreateKernel(aIModel);
+        concepts.Theme = "";
+        var args = new KernelArguments() { ["availableInformation"] = concepts.AvailableInformation() };
+        var description = await kernel.InvokePromptAsync<string>(Prompts.ThemeOrDescriptionGenPrompt, args);
+        return description ?? "Nope! No description for you!";
+    }
+
+    public async Task<string> GenerateNovelCharacters(NovelConcepts concepts)
+    {
+        var random = new Random();
+        var roll = random.Next(1, 9);
+        var aIModel = roll switch
+        {
+            1 => AIModel.Gpt41Mini,
+            2 => AIModel.Gpt4OMini,
+            3 => AIModel.GeminiFlash,
+            4 => AIModel.Gpt41,
+            5 => AIModel.Gemini15,
+            6 => AIModel.Gpt4OCurrent,
+            7 => AIModel.Gpt41Nano,
+            8 => AIModel.Grok3,
+            _ => AIModel.Gpt4OMini
+        };
+
+        var kernel = CreateKernel(aIModel);
+        concepts.Characters = "";
+        var args = new KernelArguments() { ["availableInformation"] = concepts.AvailableInformation() };
+        var characterDetails = await kernel.InvokePromptAsync<string>(Prompts.CharacterGenPrompt, args);
+        return characterDetails ?? "Nope! No description for you!";
+    }
+
+    public async Task<string> GenerateNovelPlotEvents(NovelConcepts concepts)
+    {
+        var random = new Random();
+        var roll = random.Next(1, 9);
+        var aIModel = roll switch
+        {
+            1 => AIModel.Gpt41Mini,
+            2 => AIModel.Gpt4OMini,
+            3 => AIModel.GeminiFlash,
+            4 => AIModel.Gpt41,
+            5 => AIModel.Gemini15,
+            6 => AIModel.Gpt4OCurrent,
+            7 => AIModel.Gpt41Nano,
+            8 => AIModel.Grok3,
+            _ => AIModel.Gpt4OMini
+        };
+
+        var kernel = CreateKernel(aIModel);
+        concepts.PlotEvents = "";
+        var args = new KernelArguments() { ["availableInformation"] = concepts.AvailableInformation() };
+        var plotEvents = await kernel.InvokePromptAsync<string>(Prompts.PlotEventGenPrompt, args);
+        return plotEvents ?? "Nope! No description for you!";
+    }
+
     public async Task<string> CreateNovelOutline(NovelConcepts concepts)
     {
         var aIModel = concepts.OutlineAIModel;
@@ -161,7 +264,6 @@ public class NovelWriterService : INovelWriter
         var novelWriter = new NovelWriterPlugin(aIModel);
         var plugin = kernel.ImportPluginFromObject(novelWriter);
         var createOutlineFunc = plugin["CreateNovelOutline"];
-        _title = novelTitle;
         var settings = GetOutlinePromptExecutionSettingsFromModel(aIModel);
         var args = new KernelArguments(settings)
         {
@@ -169,7 +271,9 @@ public class NovelWriterService : INovelWriter
             ["characterDetails"] = characterDetails,
             ["plotEvents"] = plotEvents,
             ["novelTitle"] = novelTitle,
-            ["chapters"] = chapters
+            ["chapters"] = chapters,
+            ["audience"] = concepts.Audience,
+            ["tone"] = concepts.Tone,
         };
         var instructions = string.IsNullOrEmpty(additionalInstructions) ? "" : $"## Additional User Instructions\n\n{additionalInstructions}\n";
         args["additionalInstructions"] = instructions;
@@ -180,50 +284,9 @@ public class NovelWriterService : INovelWriter
         return outline;
     }
 
-    public async Task<string> CreateNovelOutline(string theme, string characterDetails = "", string plotEvents = "",
-        string novelTitle = "", int chapters = 15, AIModel aIModel = AIModel.Gpt41, string additionalInstructions = "")
-    {
-        var kernel = CreateKernel(aIModel);
-        var novelWriter = new NovelWriterPlugin(aIModel);
-        var plugin = kernel.ImportPluginFromObject(novelWriter);
-        var createOutlineFunc = plugin["CreateNovelOutline"];
-        _title = novelTitle;
-        var settings = GetOutlinePromptExecutionSettingsFromModel(aIModel);
-        var args = new KernelArguments(settings)
-        {
-            ["theme"] = theme,
-            ["characterDetails"] = characterDetails,
-            ["plotEvents"] = plotEvents,
-            ["novelTitle"] = novelTitle,
-            ["chapters"] = chapters
-        };
-        var instructions = string.IsNullOrEmpty(additionalInstructions) ? "" : $"## Additional User Instructions\n\n{additionalInstructions}\n";
-        if (!string.IsNullOrEmpty(additionalInstructions))
-        {
-            
-            args["additionalInstructions"] = instructions;
-        }
-        var outline = await createOutlineFunc.InvokeAsync<string>(kernel, args);
-        _description =
-            $"""
-             Theme or topic:
-             {theme}
-
-             Character Details:
-             {characterDetails}
-
-             Plot Events:
-             {plotEvents}
-             
-             {instructions}
-             """;
-        //AdditionalAgentText?.Invoke($"<p>{outline}</p>");
-        return outline;
-    }
     private string _description = "";
-    private string _title = "";
 
-    public async IAsyncEnumerable<string> WriteFullNovel(string outline, string authorStyle = "", AIModel aiModel = AIModel.Gpt41,
+    public async IAsyncEnumerable<string> WriteFullNovel(string outline, AIModel aiModel = AIModel.Gpt41,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         //var chapterOutline = JsonSerializer.Deserialize<ChapterOutline>(outline.Replace("```json","").Replace("```","").Trim('\n'));
@@ -310,6 +373,17 @@ public class NovelWriterService : INovelWriter
         var newChapter = await kernel.InvokePromptAsync<string>(Prompts.ChapterRevisitPrompt, args);
         return newChapter!;
     }
+
+    public Task<string?> ModifyOutlineSection(string? outline, string selectedText, string instructions,
+        AIModel model = AIModel.Gpt41Mini)
+    {
+        var kernel = CreateKernel(model);
+        var settings = GetOutlinePromptExecutionSettingsFromModel(model);
+        var args = new KernelArguments(settings) { ["outline"] = outline, ["selectedSection"] = selectedText, ["instructions"] = instructions };
+        var result = kernel.InvokePromptAsync<string>(Prompts.ModifyPartialOutlinePrompt, args);
+        return result;
+    }
+
     private async IAsyncEnumerable<string> WriteChapterStreaming(Kernel kernel, KernelArguments args, AIModel aiModel,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
@@ -424,9 +498,7 @@ public class NovelWriterService : INovelWriter
 		var characters = conceptDescription.Substring(startIndex, endIndex - startIndex);
         Console.WriteLine($"Characters: {characters}");
         var prompt = await template.RenderAsync(kernel, new KernelArguments() { ["novelText"] = novelText, ["title"] = title });
-		// ---------------------------------------TEMP CHANGE ONLY----------------------------------------------------
 		var history = new ChatHistory(prompt);
-		// ---------------------------------------REMOVE THIS LINE----------------------------------------------------
 		foreach (var message in chatHistory)
         {
             history.Add(message);
@@ -438,7 +510,7 @@ public class NovelWriterService : INovelWriter
         }
     }
 
-    public async IAsyncEnumerable<string> ExecuteCharacterAgentChat(ChatHistory chatHistory, AIModel aiModel = AIModel.Gpt41)
+    public async IAsyncEnumerable<string> ExecuteCharacterAgentChat(ChatHistory chatHistory, AIModel aiModel = AIModel.Grok3)
     {
 		var kernel = CreateKernel(aiModel);
 		kernel.ImportPluginFromType<EditorAgentPlugin>();
@@ -494,48 +566,7 @@ public class NovelWriterService : INovelWriter
             _ => new OpenAIPromptExecutionSettings { Store = true, Temperature = 0.8 }
         };
     }
-    public async Task<string> TextToImage(string novelOutline, string imageStyle = "photo-realistic")
-    {
-        var kernelBuilder = Kernel.CreateBuilder();
-        kernelBuilder.Services.AddLogging(builder =>
-        {
-            builder.AddConsole();
-        });
-        kernelBuilder.Services.AddSingleton(configuration);
-        kernelBuilder.Services.ConfigureHttpClientDefaults(c =>
-        {
-            c.AddStandardResilienceHandler().Configure(o =>
-            {
-                o.Retry.ShouldHandle = args => ValueTask.FromResult(args.Outcome.Result?.StatusCode is HttpStatusCode.TooManyRequests);
-                o.Retry.BackoffType = DelayBackoffType.Exponential;
-                o.AttemptTimeout = new HttpTimeoutStrategyOptions { Timeout = TimeSpan.FromSeconds(90) };
-                o.CircuitBreaker.SamplingDuration = TimeSpan.FromSeconds(180);
-                o.TotalRequestTimeout = new HttpTimeoutStrategyOptions { Timeout = TimeSpan.FromMinutes(5) };
-            });
-        });
-        var kernel = kernelBuilder
-            .AddOpenAITextToImage(configuration["OpenAI:ApiKey"]!, modelId: "dall-e-3")
-            .AddOpenAIChatCompletion("gpt-4o-2024-08-06", configuration["OpenAI:ApiKey"]!)
-            .Build();
-        var imagePromptPrompt =
-                            """
-                            Generate a prompt for an image generating model to create a {{$imageStyle}} image for the cover of this novel. Your response will be passed directly to the image generating model, so do not include any additional text.
-                            Ensure that the art style is {{ $imageStyle}} so emphasize it in your prompt.
-                            ## Novel Outline
-                            {{ $novel }}
 
-                            ## Output
-                            Limit your prompt to 200 words.
-                            """;
-
-        var kernelArguments = new KernelArguments { ["novel"] = novelOutline, ["imageStyle"] = imageStyle };
-        var prompt = await kernel.InvokePromptAsync<string>(imagePromptPrompt, kernelArguments);
-        Console.WriteLine($"ImageStyle: {imageStyle}\n\nPROMPT:\n\n____________{prompt}\n\n________________\n\n");
-        var imageService = kernel.GetRequiredService<OpenAITextToImageService>();
-        var imageContent = await imageService.GenerateImageAsync(prompt + $"\n\n{imageStyle}", 1024, 1024);
-        return imageContent;
-
-    }
     public async IAsyncEnumerable<ReadOnlyMemory<byte>?> TextToAudioAsync(string text, string voice = "ash",
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {

@@ -14,7 +14,6 @@ public partial class EditNovel
     private DialogService DialogService { get; set; } = default!;
     private List<ChapterOutline> ChapterOutlines => AppState.NovelInfo.ChapterOutlines;
     
-    private static Dictionary<AIModel, string> AIModelDescriptions => GetEnumsWithDescriptions<AIModel>().ToDictionary(x => x.Key, y => y.Value);
     private static Dictionary<ReviewContext, string> ReviewContextDescriptions => GetEnumsWithDescriptions<ReviewContext>().ToDictionary(x => x.Key, y => y.Value);
 
     
@@ -23,12 +22,12 @@ public partial class EditNovel
     {
         public ChapterOutline? ChapterOutline { get; set; }
         public string? Notes { get; set; }
-        public AIModel AIModel { get; set; }
+        public AIModel AIModel { get; set; } = AIModel.Gpt41;
     }
 
     public class ReviewNovelForm
     {
-        public AIModel AIModel { get; set; }
+        public AIModel AIModel { get; set; } = AIModel.Gpt41Mini;
         public ReviewContext ReviewContext { get; set; }
     }
    
@@ -38,11 +37,11 @@ public partial class EditNovel
     {
         public Feedback? Feedback { get; set; }
         public ChapterOutline? ChapterOutline { get; set; }
-        public AIModel AIModel { get; set; }
+        public AIModel AIModel { get; set; } = AIModel.Gpt41;
         public string? AdditionalNotes { get; set; }
     }
     private ApplySuggestionForm _applySuggestionForm = new();
-    private bool _isBusy;
+    
     private string _originalText = "";
     private string _fullReviewText = "";
     private ReviewNovelForm _reviewNovelForm = new();
@@ -61,7 +60,7 @@ public partial class EditNovel
 
     private async Task FullReview(ReviewNovelForm form)
     {
-        _isBusy = true;
+        IsBusy = true;
         StateHasChanged();
         await Task.Delay(1);
         var model = form.AIModel;
@@ -71,12 +70,12 @@ public partial class EditNovel
 			_fullReviewText += review;
 			await InvokeAsync(StateHasChanged);
 		}
-        _isBusy = false;
+        IsBusy = false;
         StateHasChanged();
     }
     public async void GetFeedback(EditNovelForm form)
     {
-        _isBusy = true;
+        IsBusy = true;
         StateHasChanged();
         await Task.Delay(1);
         var text = form.ChapterOutline?.FullText;
@@ -84,7 +83,7 @@ public partial class EditNovel
         var feedback = await NovelWriterService.ProvideRewriteFeedback(form.ChapterOutline, form.AIModel, form.Notes);
         _applySuggestionForm.Feedback = feedback;
         _applySuggestionForm.ChapterOutline = form.ChapterOutline;
-        _isBusy = false;
+        IsBusy = false;
         StateHasChanged();
     }
     private string _rewrite = "";
@@ -107,11 +106,11 @@ public partial class EditNovel
     {
         var versionA = _editNovelForm.ChapterOutline!.FullText;
         var versionB = _rewrite;
-        _isBusy = true;
+        IsBusy = true;
         StateHasChanged();
         await Task.Delay(1);
         var diff = await NovelWriterService.CompareTwoChapterVersions(versionA, versionB, model);
-        _isBusy = false;
+        IsBusy = false;
         StateHasChanged();
         await ShowInlineDialog(diff);
     }
@@ -158,11 +157,11 @@ public partial class EditNovel
     {
         var original = _chapterTextEdit!.OriginalText;
         var newText = _chapterTextEdit!.NewText;
-        _isBusy = true;
+        IsBusy = true;
         StateHasChanged();
         await Task.Delay(1);
         var diff = await NovelWriterService.CompareTwoChapterVersions(original, newText, _compareModel);
-        _isBusy = false;
+        IsBusy = false;
         StateHasChanged();
         await ShowInlineDialog(diff);
     }

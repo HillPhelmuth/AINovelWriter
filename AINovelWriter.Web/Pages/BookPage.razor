@@ -1,51 +1,57 @@
 ﻿@page "/book"
 @inherits AppComponentBase
 
-<div style="width:99vw; height:99vh; overflow:hidden">
-	<RadzenCard Style="@_cardStyle" Variant="Variant.Text">
-		<div class="next-back" style="display:flex; justify-content:space-around; align-items:center">
-			<RadzenButton Size="ButtonSize.ExtraSmall" Icon="arrow_back" Click="Back" Text="Back"></RadzenButton>
-			<RadzenNumeric Style="padding:1px 2px; font-size:.9rem; max-width:4rem"  @bind-Value:after="HandleGoTo" @bind-Value="_pageInput" Step="1" Min="1" Max="@AppState.NovelInfo.TextPages.Count"></RadzenNumeric>
-			<RadzenButton Size="ButtonSize.ExtraSmall" Icon="arrow_forward" Click="Next" Text="Next"></RadzenButton>
-		</div>
-		<div class="flipbook-viewport">
-		
-			<div class="container">
-				<div class="flipbook">
-					
-					@foreach (var pageText in AppState.NovelInfo.TextPages)
-					{
-						var isFirst = AppState.NovelInfo.TextPages.IndexOf(pageText) == 0;
-											
-						<div class="@(isFirst ? "page" : "double")">
-							<RadzenCard Variant="Variant.Text" Style="@(isFirst ? "z-index:-1;padding:0" : _isSmall ? "z-index:-1;padding-top:3px": "z-index:-1")">
-								@if (isFirst)
-								{
-									<div style="text-align: center;">
+<div style="width:99vw; height:99vh; overflow:hidden; display:flex; flex-direction:column">
+    
+    <RadzenCard Style="@_cardStyle" Variant="Variant.Text">
+        <div class="next-back" style="display:flex; justify-content:space-around; align-items:center">
+            <RadzenButton Size="ButtonSize.ExtraSmall" Icon="arrow_back" Click="Back" Text="Back"></RadzenButton>
+            <RadzenNumeric Style="padding:1px 2px; font-size:.9rem; max-width:4rem" @bind-Value:after="HandleGoTo" @bind-Value="_pageInput" Step="1" Min="1" Max="@AppState.NovelInfo.TextPages.Count"></RadzenNumeric>
+            <RadzenButton Size="ButtonSize.ExtraSmall" Icon="arrow_forward" Click="Next" Text="Next"></RadzenButton>
+        </div>
+        <div class="flipbook-viewport">
 
-										<div class="bungee-spice-regular" style="font-size:1.8rem; font-weight:bold">@AppState.NovelInfo.Title</div>
-										<div>@((MarkupString)pageText)</div>
-									</div>
-								}
-								else
-								{
-									<pre style="">@((MarkupString)pageText)</pre>
-								}
-								
-								
-							</RadzenCard>
-							<div ignore="1" style="bottom:2px; position:absolute;left:49%">
-								@if (AppState.NovelInfo.TextPages.IndexOf(pageText) != 0)
-								{
-									@AppState.NovelInfo.TextPages.IndexOf(pageText)
-								}
-									
-							</div>
-						</div>
-					}
-				</div>
-			</div>
-		</div>
-	</RadzenCard>
+            <div class="container">
+                <div class="flipbook">
+
+                    @foreach (var pageText in AppState.NovelInfo.TextPages)
+                    {
+                        var isFirst = AppState.NovelInfo.TextPages.IndexOf(pageText) == 0;
+
+                        <div class="@(isFirst ? "page" : "double")">
+                            <RadzenCard Variant="Variant.Text" Style="@(isFirst ? "z-index:-1;padding:0" : _isSmall ? "z-index:-1;padding-top:3px" : "z-index:-1")">
+                                @if (isFirst)
+                                {
+                                    <div style="text-align: center;">
+
+                                        @* <div class="bungee-spice-regular" style="font-size:1.8rem; font-weight:bold">@AppState.NovelInfo.Title</div> *@
+                                        <div>@((MarkupString)pageText)</div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div style="font-size:90%">@((MarkupString)AsHtml(pageText))</div>
+                                }
+
+
+                            </RadzenCard>
+                            <div ignore="1" style="bottom:2px; position:absolute;left:49%">
+                                @if (AppState.NovelInfo.TextPages.IndexOf(pageText) != 0)
+                                {
+                                    @AppState.NovelInfo.TextPages.IndexOf(pageText)
+                                }
+
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+            <div style="position:absolute;bottom:-.8rem; left:35%;margin-top:4rem">
+                <RadzenButton Variant="Variant.Text" Text="Evaluate Novel" Click="ShowEvals" Icon="quiz" Size="ButtonSize.Small"></RadzenButton>
+                <RadzenButton Variant="Variant.Text" Text="Chat With Novel Characters" Click="ShowChatWithCharacter" Icon="psychology_alt" Size="ButtonSize.Small"></RadzenButton>
+            </div>
+        </div>
+    </RadzenCard>
+    
 </div>
 <RadzenMediaQuery Query="(max-width: 640px)" Change="HandleMediaChange"></RadzenMediaQuery>

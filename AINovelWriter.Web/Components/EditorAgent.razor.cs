@@ -6,7 +6,7 @@ namespace AINovelWriter.Web.Components;
 public partial class EditorAgent
 {
     private ChatView _chatView;
-    private bool _isBusy;
+    
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -22,7 +22,7 @@ public partial class EditorAgent
 
     private async void HandleChatInput(UserInputRequest userInputRequest)
     {
-        _isBusy = true;
+        IsBusy = true;
         StateHasChanged();
         await Task.Delay(1);
         if (!string.IsNullOrWhiteSpace(userInputRequest.ImageUrlInput) || !string.IsNullOrWhiteSpace(userInputRequest.FileUpload?.FileBase64))
@@ -37,7 +37,7 @@ public partial class EditorAgent
         }
         var response = NovelWriterService.ExecuteEditorAgentChat(_chatView.GetChatHistory());
         await HandleStreaming(response);
-        _isBusy = false;
+        IsBusy = false;
         StateHasChanged();
     }
 

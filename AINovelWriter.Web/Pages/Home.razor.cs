@@ -20,7 +20,7 @@ public partial class Home
 #endif
 		await base.OnInitializedAsync();
 	}
-	private bool _isBusy;
+	
     private async Task Cheat()
 	{
 		//      _isBusy = true;
@@ -34,7 +34,7 @@ public partial class Home
 		//await File.WriteAllTextAsync("Sword_Magic_3.json", JsonSerializer.Serialize(AppState.NovelInfo));
 		AppState.NovelInfo.IsComplete = true;
 		AppState.NovelOutline.Outline = AppState.NovelInfo.Outline;
-		_isBusy = false;
+		IsBusy = false;
         StateHasChanged();
     }
 
@@ -49,14 +49,14 @@ public partial class Home
 
 	private async void UploadEpub(FileUploadForm fileUploadForm)
 	{
-		_isBusy = true;
+		IsBusy = true;
 		StateHasChanged();
 		await Task.Delay(1);
 		var title = Path.GetFileNameWithoutExtension(fileUploadForm.FileName);
 		AppState.NovelInfo = await NovelWriterService.ReverseEngineerNovel(ExtractBase64String(fileUploadForm.FileContent), title);
         AppState.NovelInfo.IsComplete = true;
         AppState.NovelOutline.Outline = AppState.NovelInfo.Outline;
-        _isBusy = false;
+        IsBusy = false;
        var isNavigate = await DialogService.Confirm("Sometimes and epub file will be extracted with unnecessary chapters and sections. It's often best to modify or remove them.<br/> Do you want to edit to the uploaded novel?", "Edit Novel Upload");
         if (isNavigate == true)
         {

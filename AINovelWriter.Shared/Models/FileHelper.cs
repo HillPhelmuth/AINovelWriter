@@ -9,6 +9,8 @@ using System.Text;
 using System.Threading.Tasks;
 using MigraDoc.DocumentObjectModel;
 using PdfSharp.Pdf.IO;
+using System.Security;
+using Markdig;
 
 namespace AINovelWriter.Shared.Models;
 
@@ -172,5 +174,124 @@ public class FileHelper
 		    File.Delete(zipFilePath);
 		    Console.WriteLine("Files Deleted");
 	    }
+    }
+    private static readonly UTF8Encoding Utf8NoBom = new(encoderShouldEmitUTF8Identifier: false);
+
+    public static byte[] CreateEpubFromNovel(NovelInfo novel, Stream coverImageStream)
+    {
+        using var outputStream = new MemoryStream();
+        using (var zip = new ZipArchive(outputStream, ZipArchiveMode.Create, leaveOpen: true))
+        {
+            // 1. mimetype
+            var mimeEntry = zip.CreateEntry("mimetype", CompressionLevel.NoCompression);
+            using (var mimeStream = mimeEntry.Open())
+            {
+                var bytes = "application/epub+zip"u8.ToArray();
+                mimeStream.Write(bytes, 0, bytes.Length);
+            }
+
+            // 2. META-INF/container.xml
+            AddTextFile(zip, "META-INF/container.xml", Utf8NoBom,
+                """
+                <?xml version="1.0"?>
+                <container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">
+                  <rootfiles>
+                    <rootfile full-path="OEBPS/content.opf" media-type="application/oebps-package+xml"/>
+                  </rootfiles>
+                </container>
+                """);
+
+            // Build manifest + spine for chapters
+            var manifest = new StringBuilder();
+            var spine = new StringBuilder();
+            for (var i = 0; i < novel.ChapterOutlines.Count; i++)
+            {
+                string id = $"chap{i + 1}";
+                manifest.AppendLine($"""    <item id="{id}" href="chapter{i + 1}.xhtml" media-type="application/xhtml+xml"/>""");
+                spine.AppendLine($"""    <itemref idref="{id}"/>""");
+            }
+
+            // 3. OEBPS/content.opf (with cover)
+            AddTextFile(zip, "OEBPS/content.opf", Utf8NoBom,
+                $"""
+                 <?xml version="1.0" encoding="utf-8"?>
+                 <package xmlns="http://www.idpf.org/2007/opf" unique-identifier="BookId" version="3.0">
+                   <metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
+                     <dc:identifier id="BookId">urn:uuid:{Guid.NewGuid()}</dc:identifier>
+                     <dc:title>{SecurityElement.Escape(novel.Title)}</dc:title>
+                     <dc:creator>{SecurityElement.Escape(novel.User)}</dc:creator>
+                     <dc:language>en</dc:language>
+                     <meta name="cover" content="cover-image"/>
+                   </metadata>
+                   <manifest>
+                     <item id="cover-image" href="images/cover.jpg" media-type="image/jpeg" properties="cover-image"/>
+                     <item id="nav" href="nav.xhtml" media-type="application/xhtml+xml" properties="nav"/>
+                 {manifest.ToString().TrimEnd()}
+                   </manifest>
+                   <spine>
+                 {spine.ToString().TrimEnd()}
+                   </spine>
+                 </package>
+                 """);
+
+            // 4. OEBPS/nav.xhtml
+            var navBody = new StringBuilder();
+            navBody.AppendLine("""
+                               <?xml version="1.0" encoding="utf-8"?>
+                               <html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">
+                                 <head><title>Table of Contents</title></head>
+                                 <body>
+                                   <nav epub:type="toc">
+                                     <ol>
+                               """);
+            for (int i = 0; i < novel.ChapterOutlines.Count; i++)
+                navBody.AppendLine($"""        <li><a href="chapter{i + 1}.xhtml">Chapter {i + 1}</a></li>""");
+            navBody.Append(
+                """
+                      </ol>
+                    </nav>
+                  </body>
+                </html>
+                """);
+            AddTextFile(zip, "OEBPS/nav.xhtml", Utf8NoBom, navBody.ToString());
+
+            // 5. chapters
+            for (int i = 0; i < novel.ChapterOutlines.Count; i++)
+            {
+                var fullTextHtml = AsHtml(novel.ChapterOutlines[i].FullText);
+                AddTextFile(zip, $"OEBPS/chapter{i + 1}.xhtml", Utf8NoBom,
+                    $"""
+                     <?xml version="1.0" encoding="utf-8"?>
+                     <html xmlns="http://www.w3.org/1999/xhtml">
+                       <head><title>Chapter {i + 1}</title></head>
+                       <body>{fullTextHtml}</body>
+                     </html>
+                     """);
+            }
+
+            // 6. cover image
+            coverImageStream.Position = 0;
+            var coverEntry = zip.CreateEntry("OEBPS/images/cover.jpg", CompressionLevel.Optimal);
+            using var coverStream = coverEntry.Open();
+            coverImageStream.CopyTo(coverStream);
+        }
+
+        return outputStream.ToArray();
+    }
+
+    // Helper to add UTF‑8 text files without BOM unless requested.
+    private static void AddTextFile(ZipArchive zip, string path, Encoding encoding, string content)
+    {
+        var entry = zip.CreateEntry(path, CompressionLevel.Optimal);
+        using var writer = new StreamWriter(entry.Open(), encoding);
+        writer.Write(content);
+    }
+    private static string AsHtml(string? text)
+    {
+        if (text == null) return "";
+        var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build(); ;
+        var result = Markdown.ToHtml(text, pipeline);
+        return result;
+
     }
 }

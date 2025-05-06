@@ -1,0 +1,71 @@
+/* Basic Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Background Styling */
+.background {
+    height: 100vh;
+    background: linear-gradient(135deg, #ece9e6, #ffffff);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+/* Card Styling */
+.card {
+    background: #ffffff;
+    padding: 40px 30px;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    max-width: 700px;
+    width: 100%;
+    text-align: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+    /* Headings */
+    .card h1 {
+        font-size: 2.5rem;
+        color: #222;
+        margin-bottom: 10px;
+    }
+
+    .card h2 {
+        font-size: 1.25rem;
+        color: #666;
+        margin-bottom: 30px;
+    }
+
+    /* Paragraphs */
+    .card p {
+        font-size: 1.1rem;
+        color: #444;
+        line-height: 1.6;
+        margin-bottom: 20px;
+    }
+
+/* Button Container */
+.button-container {
+    margin-top: 30px;
+}
+
+/* Button Styling */
+.start-button {
+    display: inline-block;
+    background-color: #4F46E5;
+    color: #fff;
+    padding: 14px 28px;
+    font-size: 1.2rem;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+    .start-button:hover {
+        background-color: #4338CA;
+        transform: translateY(-2px);
+    }

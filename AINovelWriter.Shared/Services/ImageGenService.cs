@@ -19,25 +19,24 @@ namespace AINovelWriter.Shared.Services;
 
 public class ImageGenService(IConfiguration configuration, BlobServiceClient blobServiceClient)
 {
-	private readonly ImageClient _imageClient = new("dall-e-3", configuration["OpenAI:ApiKey"]!);
+	private readonly ImageClient _imageClient = new("gpt-image-1", configuration["OpenAI:ApiKey"]!);
 	private const string ImageContainerUrl = "https://novelcoverimages.z21.web.core.windows.net";
 	private const string ImageDataPrefix = "data:image/png;base64,";
 	private readonly BlobContainerClient _blobContainerClient = blobServiceClient.GetBlobContainerClient("$web");
 
-	public async Task<string> GenerateImage(NovelInfo novelInfo, string imageStyle = "photo-realistic", bool isVivid = false)
+	public async Task<string> GenerateImage(NovelInfo novelInfo, string imageStyle = "photo-realistic", bool isVivid = false, string additionalInstructions = "")
 	{
 		try
 		{
 			var novelOutline = novelInfo.Outline;
 			var options = new ImageGenerationOptions()
 			{
-				Quality = GeneratedImageQuality.Standard,
-				Size = GeneratedImageSize.W1024xH1024,
-				Style = isVivid ? GeneratedImageStyle.Vivid : GeneratedImageStyle.Natural,
-				ResponseFormat = GeneratedImageFormat.Bytes
+				Quality = null,
+				Size = new GeneratedImageSize(1024, 1536),
 			};
-			var prompt = await GenerateImagePrompt(novelInfo.ConceptDescription, imageStyle);
-			GeneratedImage image = await _imageClient.GenerateImageAsync(prompt + $"\n\n{imageStyle}", options);
+			var prompt = await GenerateImagePrompt(novelInfo.ConceptDescription, imageStyle, novelInfo.Title, additionalInstructions);
+			Console.WriteLine($"ImageStyle: {imageStyle}\n\nPROMPT:\n\n{prompt}\n\n________________\n\n");
+            GeneratedImage image = await _imageClient.GenerateImageAsync(prompt + $"\n\n{imageStyle}", options);
 			var bytes = image.ImageBytes;
 
 			var imageUrl = $"{ImageDataPrefix}{Convert.ToBase64String(bytes.ToArray())}";
@@ -95,8 +94,25 @@ public class ImageGenService(IConfiguration configuration, BlobServiceClient blo
 		return await SaveAsUrl(blobName, data);
 
 	}
-	private async Task<string> GenerateImagePrompt(string conceptDescription, string imageStyle)
-	{
+	private async Task<string> GenerateImagePrompt(string conceptDescription, string imageStyle, string title,
+        string instructions = "")
+    {
+		var additionalInstructions = string.IsNullOrEmpty(instructions) ? "" : 
+                                                                $"""
+                                                                ## Additional Instructions
+
+                                                                {instructions}
+                                                                """;
+        var newPrompt = $"""
+                         Generate a novel cover image for the novel titled "{title}" in the style of {imageStyle} and based on the novel concepts below.
+                         
+                         ## Novel Concepts
+                         
+                         {conceptDescription}
+                         
+                         {additionalInstructions}
+                         """;
+        return newPrompt;
 		var kernelBuilder = Kernel.CreateBuilder();
 		kernelBuilder.Services.AddLogging(builder =>
 		{

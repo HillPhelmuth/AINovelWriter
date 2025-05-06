@@ -15,7 +15,8 @@ public partial class CreateCoverPage
 	private class ImageForm
 	{
 		public List<CoverArtStyle> CoverArtStyles { get; set; } = [];
-	}
+		public string? ImageDescription { get; set; }
+    }
 	private ImageForm _imageForm = new();
 	private class ArtStyleInfo(CoverArtStyle coverArtStyle, string displayname, string description)
 	{
@@ -25,9 +26,9 @@ public partial class CreateCoverPage
 	}
 
 	private Dictionary<CoverArtStyle, string> CoverArtStyleDescriptions => EnumHelpers.GetEnumsWithDescriptions<CoverArtStyle>();
-	private List<ArtStyleInfo> ArtStyleNamesAndDescriptions => EnumHelpers.GetEnumsWithDisplayAndDescriptions<CoverArtStyle>().Select(x => new ArtStyleInfo(x.Item1, x.Item2, x.Item3)).ToList();
+	private static List<ArtStyleInfo> ArtStyleNamesAndDescriptions => EnumHelpers.GetEnumsWithDisplayAndDescriptions<CoverArtStyle>().Select(x => new ArtStyleInfo(x.Item1, x.Item2, x.Item3)).ToList();
 	private string[] _images = [];
-	private bool _isBusy;
+	
 
 	protected override Task OnInitializedAsync()
 	{
@@ -37,25 +38,25 @@ public partial class CreateCoverPage
 
 	private async void GenerateImage(ImageForm imageForm)
 	{
-		_isBusy = true;
+		IsBusy = true;
 		StateHasChanged();
 		await Task.Delay(1);
 		var tasks = new List<Task<string>>();
 		foreach (var style in imageForm.CoverArtStyles)
 		{
 			var isVivid = style is CoverArtStyle.PhotoRealistic or CoverArtStyle.SciFiArt or CoverArtStyle.FantasyArt;
-			var imageTask = ImageGenService.GenerateImage(AppState.NovelInfo, $"{style.GetDisplayName()} - {style.GetDescription()}", isVivid);
+			var imageTask = ImageGenService.GenerateImage(AppState.NovelInfo, $"{style.GetDisplayName()} - {style.GetDescription()}", isVivid, imageForm.ImageDescription ?? "");
 			tasks.Add(imageTask);
 
 		}
 		var images = await Task.WhenAll(tasks);
 		AppState.GeneratedImages = [.. images];
-		_isBusy = false;
+		IsBusy = false;
 		StateHasChanged();
 	}
 	private async void SelectImage(string image)
 	{
-		if (_isBusy) return;
+		if (IsBusy) return;
 		var imageUrl = await ImageGenService.SelectImage(AppState.UserData.UserName, AppState.NovelInfo.Title, image);
 		AppState.AddCover(imageUrl);
 		NavigationManager.NavigateTo("book");

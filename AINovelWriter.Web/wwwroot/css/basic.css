@@ -11,7 +11,7 @@
 .flipbook-viewport {
 	overflow: hidden;
 	width: 100%;
-	height: 100%;
+	height: 90%;
 	/*perspective: 1500px;*/ /* Add perspective to the viewport */
 }
 
@@ -67,11 +67,17 @@
 	/*margin: 0;*/
 	width: 420px;
 	height: 500px;
-	margin-top: 3px;
+	/*margin-top: 3px;
 	margin-left: 5px;
-	margin-bottom:20px;
+	margin-bottom:20px;*/
 }
-
+.flipbook-viewport .page h2 {
+    font-size: 1.1rem;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
 .flipbook-viewport .shadow {
 	-webkit-transition: -webkit-box-shadow 0.5s;
 	-moz-transition: -moz-box-shadow 0.5s;

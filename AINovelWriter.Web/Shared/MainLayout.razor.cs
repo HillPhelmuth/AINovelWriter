@@ -43,7 +43,7 @@ public partial class MainLayout
 	}
 	private async void Reset()
 	{
-		var confirm = await DialogService.Confirm("Resetting will cause you your work!", "Are you sure you want to reset the novel?");
+		var confirm = await DialogService.Confirm("Resetting will cause you lose your work!", "Are you sure you want to reset the novel?");
 		if (confirm == true)
 		{
 			AppState.NovelInfo = new NovelInfo() { User = AppState.UserData.UserName };
@@ -72,7 +72,7 @@ public partial class MainLayout
 	}
 	private void ShowProfile()
 	{
-		DialogService.Open<UserProfile>($"Hello {AppState.UserData.UserName}!", options: new DialogOptions { CloseDialogOnOverlayClick = true, Draggable = true, Resizable = true });
+		DialogService.Open<UserProfile>($"Hello {AppState.UserData.UserName}!", options: new DialogOptions { CloseDialogOnOverlayClick = true, Draggable = true, Resizable = true, Style = "min-width:65vw"});
 	}
 	private async Task SaveNovel()
 	{
@@ -87,6 +87,11 @@ public partial class MainLayout
 			NotificationService.Notify(NotificationSeverity.Error, $"Error Saving Novel", result.Item2);
 		}
 	}
+
+    private void FindShared()
+    {
+		DialogService.Open<FindSharedNovels>("Find Shared Novels",options: new DialogOptions { CloseDialogOnOverlayClick = true, Draggable = true, Resizable = true, Style = "min-width:75vw" });
+    }
 	private enum PageMedia { Height, Width }
 	private void HandleMediaChange(PageMedia pageMedia, int size, bool isMatch)
 	{

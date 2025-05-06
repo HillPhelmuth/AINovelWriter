@@ -29,9 +29,9 @@
 
   <ItemGroup>
     <PackageReference Include="HillPhelmuth.SemanticKernel.LlmAsJudgeEvals" Version="1.0.4" />
-    <PackageReference Include="Microsoft.SemanticKernel" Version="1.46.0" />
-    <PackageReference Include="Microsoft.SemanticKernel.Plugins.Memory" Version="1.46.0-alpha" />
-    <PackageReference Include="Microsoft.SemanticKernel.Yaml" Version="1.46.0" />
+    <PackageReference Include="Microsoft.SemanticKernel" Version="1.47.0" />
+    <PackageReference Include="Microsoft.SemanticKernel.Plugins.Memory" Version="1.47.0-alpha" />
+    <PackageReference Include="Microsoft.SemanticKernel.Yaml" Version="1.47.0" />
   </ItemGroup>
 
 

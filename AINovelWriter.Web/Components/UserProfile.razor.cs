@@ -5,9 +5,13 @@ using Microsoft.JSInterop;
 using Radzen;
 using System;
 using System.Collections.Generic;
+using System.IO.Compression;
 using System.Linq;
+using System.Text;
+using AINovelWriter.Web.Shared;
 using static AINovelWriter.Shared.Models.FileHelper;
 using static AINovelWriter.Shared.Services.NovelWriterService;
+using System.Security;
 // ReSharper disable FieldCanBeMadeReadOnly.Local
 
 namespace AINovelWriter.Web.Components;
@@ -15,13 +19,8 @@ namespace AINovelWriter.Web.Components;
 public partial class UserProfile
 {
 	[Inject]
-	private CosmosService CosmosService { get; set; } = default!;
-	[Inject]
-	private DialogService Dialog { get; set; } = default!;
-	[Inject]
 	private ImageGenService ImageGenService { get; set; } = default!;
-	[Inject]
-	private NotificationService NotificationService { get; set; } = default!;
+	
 
     protected override List<string> InterestingProperties => [nameof(AppState.UserData)];
 
@@ -32,16 +31,16 @@ public partial class UserProfile
         if (novel.User is null)
         {
 			NotificationService.Notify(NotificationSeverity.Info, "Novel Data updated. Try again.");
-			Dialog.Close();
+			DialogService.Close();
         }
 		AppState.NovelInfo = novel;
         AppState.NovelOutline.Outline = string.Join("\n\n", AppState.NovelInfo.ChapterOutlines.Select(x => x.Text));
 		AppState.NovelInfo.Outline = AppState.NovelOutline.Outline;
-        Dialog.Close();
+        DialogService.Close();
 	}
 	private async Task DeleteNovel(UserNovelData userNovelData)
 	{
-		var result = await Dialog.Confirm("Are you sure you want to delete this novel?", "Delete Novel");
+		var result = await DialogService.Confirm("Are you sure you want to delete this novel?", "Delete Novel");
 		if (result == true)
 		{
 			var userData = AppState.UserData;
@@ -62,6 +61,44 @@ public partial class UserProfile
 		var pdfData = CreatePdf(imageBytes, AppState.NovelInfo.ChapterOutlines.Where(x => !string.IsNullOrEmpty(x.FullText)).Select(x => x.FullText).ToList()!, AppState.NovelInfo.Title);
         await JsRuntime.InvokeVoidAsync("downloadFile", $"{AppState.NovelInfo.Title}.pdf", pdfData);
 	}
+    private async Task DownloadNovelToEpub(UserNovelData userNovelData)
+    {
+        AppState.NovelInfo = await CosmosService.GetUserNovel(AppState.UserData.UserName!, userNovelData.NovelId);
+        if (string.IsNullOrEmpty(AppState.NovelInfo.Text)) return;
+        var imageBytes = await ImageGenService.GetImageBlob(AppState.NovelInfo.ImageUrl);
+        var epubData = CreateEpubFromNovel(AppState.NovelInfo, imageBytes);
+        await JsRuntime.InvokeVoidAsync("downloadFile", $"{AppState.NovelInfo.Title}.epub", epubData);
+    }
+
+    private async Task ShareNovel(UserNovelData userNovelData)
+    {
+        var novel = await CosmosService.GetUserNovel(AppState.UserData.UserName!, userNovelData.NovelId);
+		var shared = SharedNovelInfo.FromNovelInfo(novel);
+		if (!userNovelData.IsShared)
+        {
+            Dictionary<string, object> parameters = new() { [nameof(SharedNovelInfo)] = shared };
+            DialogService.Open<ShareNovel>("", parameters, new DialogOptions { Resizable = true, Draggable = true, ShowTitle = false, ShowClose = true, CloseDialogOnOverlayClick = true});
+           
+        }
+        else
+        {
+			var remove = await DialogService.Confirm($"Are you sure you want to unshare <strong>{userNovelData.Title}</strong>?", "Unshare Novel");
+            if (remove == true)
+            {
+				await CosmosService.RemoveSharedNovel(shared.SharedBy, shared.id);
+                AppState.UserData.SavedNovels.Find(x => x.NovelId == userNovelData.NovelId)!.IsShared = false;
+                await CosmosService.SaveUser(AppState.UserData);
+				NotificationService.Notify(NotificationSeverity.Info, "Novel unshared successfully.", $"Novel <strong>{userNovelData.Title}</strong> is no longer shared.");
+            }
+            else
+            {
+				NotificationService.Notify(NotificationSeverity.Info, "Novel unshared cancelled.", $"Novel <strong>{userNovelData.Title}</strong> is still shared.");
+            }
+        }
+		
+
+
+    }
 	private ImageUpdateForm _imageUpdateForm = new();
 	private async void UpdateImage(ImageUpdateForm imageUpdateForm)
 	{
@@ -93,3 +130,5 @@ public partial class UserProfile
 		public bool UseFileUpload { get; set; }
 	}
 }
+
+

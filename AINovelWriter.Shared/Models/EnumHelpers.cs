@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Text;
+using AINovelWriter.Shared.Models.Enums;
 
 namespace AINovelWriter.Shared.Models;
 

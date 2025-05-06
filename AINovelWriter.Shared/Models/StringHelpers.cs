@@ -124,4 +124,40 @@ public static class StringHelpers
 
 		return updatedText;
 	}
+    public static List<string> SplitMarkdownByHeaders(string markdownText)
+    {
+        var result = new List<string>();
+        var headerPattern = new Regex(@"^(## .+)$", RegexOptions.Multiline);
+
+        var matches = headerPattern.Matches(markdownText);
+
+        var lastIndex = 0;
+        foreach (Match match in matches)
+        {
+            if (lastIndex != match.Index)
+            {
+                if (lastIndex != 0)
+                {
+                    var segment = markdownText.Substring(lastIndex, match.Index - lastIndex).Trim();
+                    result.Add(segment);
+                }
+                else
+                {
+                    // Capture the first header and content if the first header is at the start
+                    var firstSegment = markdownText[..match.Index].Trim();
+                    if (!string.IsNullOrEmpty(firstSegment))
+                    {
+                        result.Add(firstSegment);
+                    }
+                }
+            }
+            lastIndex = match.Index;
+        }
+
+        if (lastIndex == 0) return result;
+        var lastSegment = markdownText[lastIndex..].Trim();
+        result.Add(lastSegment);
+
+        return result;
+    }
 }

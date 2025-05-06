@@ -1,4 +1,5 @@
 ﻿using AINovelWriter.Shared.Models;
+using AINovelWriter.Shared.Models.Enums;
 
 namespace AINovelWriter.Web.Components;
 

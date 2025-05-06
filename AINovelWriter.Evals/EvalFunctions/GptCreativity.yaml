@@ -24,7 +24,7 @@ template: |
  * **7-9 Stars:**  Creative and engaging.  Presents fresh ideas and avoids clichés.  Demonstrates a good level of originality and inventiveness.
  * **10 Stars:**  Exceptionally creative and imaginative.  Offers a truly unique and compelling narrative with surprising twists and memorable concepts.
 
- **Important:** Avoid bias towards higher scores. Actively look for instances of unoriginality, clichés, and predictable plot developments. Be honest and critical in your assessment, imagining yourself as a discerning editor.
+ **Important:** Avoid bias towards higher scores. Actively look for instances of unoriginality, clichés, and predictable plot developments and downgrade appropriately. Be honest and critical in your assessment, imagining yourself as a discerning editor.
 
  **Chapter:** {{$chapter}}
 

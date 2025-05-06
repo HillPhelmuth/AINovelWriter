@@ -1,0 +1,7 @@
+﻿@inherits AppComponentBase
+<RadzenCard Style="display:flex;flex-direction:column;justify-content:center;align-items:center">
+    <RadzenText TextStyle="TextStyle.DisplayH5">Share <strong>@SharedNovelInfo?.Title</strong>?</RadzenText>
+    <img height="400" width="300" src="@SharedNovelInfo?.ImageUrl"/>
+    <RadzenButton Click="Share" Text="Yes, Share it!"></RadzenButton>
+    <RadzenButton ButtonStyle="ButtonStyle.Warning" Click="Cancel" Text="Noooo!!!"></RadzenButton>
+</RadzenCard>

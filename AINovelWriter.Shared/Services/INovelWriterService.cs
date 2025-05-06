@@ -1,14 +1,18 @@
-﻿using Microsoft.SemanticKernel.ChatCompletion;
+﻿using AINovelWriter.Shared.Models;
+using AINovelWriter.Shared.Models.Enums;
+using Microsoft.SemanticKernel.ChatCompletion;
 
-namespace AINovelWriter.Shared.Models;
+namespace AINovelWriter.Shared.Services;
 
 public interface INovelWriterService
 {
     
-    Task<NovelConcepts> GenerateNovelIdea(GenreCategoryItem genre, List<Genre> subgenres, NovelLength length);
-
-    Task<string> CreateNovelOutline(string theme, string characterDetails = "", string plotEvents = "",
-        string novelTitle = "", int chapters = 15, AIModel aIModel = AIModel.Gpt41, string additionalInstructions = "");
+    Task<NovelConcepts> GenerateNovelIdea(GenreCategory genre, List<Genre> subgenres, NovelLength length,
+        NovelTone tone, NovelAudience audience);
+    Task<string> GenerateNovelTitle(NovelConcepts concepts);
+    Task<string> GenerateNovelDescription(NovelConcepts concepts);
+    Task<string> GenerateNovelCharacters(NovelConcepts concepts);
+    Task<string> GenerateNovelPlotEvents(NovelConcepts concepts);
     Task<string> CreateNovelOutline(NovelConcepts concepts);
 
 }
@@ -26,12 +30,11 @@ public interface INovelWriterStreaming : ITextToSpeechService
     event Action<string>? SendOutline;
     event EventHandler<ChapterEventArgs>? SendChapterText;
     event EventHandler<string>? TextToImageUrl;
-	IAsyncEnumerable<string> WriteFullNovel(string outline, string authorStyle = "", AIModel aiModel = AIModel.Gpt41,
-		CancellationToken cancellationToken = default);
+	IAsyncEnumerable<string> WriteFullNovel(string outline, AIModel aiModel = AIModel.Gpt41,
+        CancellationToken cancellationToken = default);
 }
 public interface INovelWriter : INovelWriterService, INovelWriterStreaming
 {
-	Task<string> TextToImage(string novelOutline, string imageStyle = "photo-realistic");
     Task<Feedback> ProvideRewriteFeedback(ChapterOutline chapterOutline, AIModel aiModel = AIModel.GeminiFlash,
         string? additionalInstructions = null);
     Task<string> RewriteChapter(ChapterOutline chapterOutline, Feedback feedback,
@@ -47,4 +50,6 @@ public interface INovelWriter : INovelWriterService, INovelWriterStreaming
         AIModel aiModel = AIModel.Gpt41);
 
     Task<string> RewriteChapter(string original, string feedback, AIModel model = AIModel.Gpt41);
+    Task<string?> ModifyOutlineSection(string? outline, string selectedText, string instructions,
+        AIModel model = AIModel.None);
 }

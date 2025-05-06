@@ -1,21 +1,26 @@
-﻿namespace AINovelWriter.Shared.Models;
+﻿using AINovelWriter.Shared.Models.Enums;
+
+namespace AINovelWriter.Shared.Models;
 
 public class NovelConcepts
 {
 	public GenreCategory Genre { get; set; }
     public string? GenreDescription => Genre.GetDescription();
-    public string AuthorStyle { get; set; } = "";
+    
 
     public string? SubGenre { get; set; }
 	public List<Genre> SubGenres { get; set; } = [];
     public string? Theme { get; set; }
+    public NovelTone Tone { get; set; } = NovelTone.None;
+    public NovelAudience Audience { get; set; } = NovelAudience.None;
+    public NovelLength Length { get; set; } = NovelLength.None;
     public string? Description => $"Genre:\n{Genre.ToString() + "\n" + Genre.GetDescription()}\n\n{(SubGenres.Count > 0 ? "Subgenres:\n" + string.Join("\n", SubGenres.Select(x => x.ToString())) : string.Empty)}\nTheme/Description: {Theme}";
     public string? Characters { get; set; }
     public string? PlotEvents { get; set; }
     public string? Title { get; set; }
     public string? AdditionalInstructions {get; set; }
     public int ChapterCount { get; set; } = 5;
-    public AIModel OutlineAIModel { get; set; }
+    public AIModel OutlineAIModel { get; set; } = AIModel.GeminiFlash;
 	public override string ToString()
 	{
         return $"""
@@ -23,10 +28,49 @@ public class NovelConcepts
 		        Genre: {Genre.ToString()} - {Genre.GetDescription()}
 		        {(SubGenres.Count > 0 ? "Subgenres: " + string.Join("\n", SubGenres.Select(x => x.ToString())) : string.Empty)}
 		        Theme: {Theme}
+		        Tone: {Tone.ToString()} - {Tone.GetDescription()}
+		        Audience: {Audience.ToString()} - {Audience.GetDescription()}
 		        Characters:{Characters}
 		        Primary Plot Events: {PlotEvents}
 		        """;
 	}
+
+    public string AvailableInformation()
+    {
+        var sections = new List<string>();
+
+        if (!string.IsNullOrWhiteSpace(Title))
+            sections.Add($"Title: {Title}");
+
+        if (Genre != GenreCategory.None)
+            sections.Add($"Genre: {Genre.ToString()} - {Genre.GetDescription()}");
+
+        if (SubGenres.Count > 0)
+            sections.Add($"Subgenres: {string.Join(", ", SubGenres.Select(x => x.ToString()))}");
+
+        if (!string.IsNullOrWhiteSpace(Theme))
+            sections.Add($"Theme: {Theme}");
+
+        if (Tone != NovelTone.None)
+            sections.Add($"Tone: {Tone.ToString()} - {Tone.GetDescription()}");
+
+        if (Audience != NovelAudience.None)
+            sections.Add($"Audience: {Audience.ToString()} - {Audience.GetDescription()}");
+
+        if (!string.IsNullOrWhiteSpace(Characters))
+            sections.Add($"Characters: {Characters}");
+
+        if (!string.IsNullOrWhiteSpace(PlotEvents))
+            sections.Add($"Primary Plot Events: {PlotEvents}");
+
+        if (!string.IsNullOrWhiteSpace(AdditionalInstructions))
+            sections.Add($"Additional Instructions: {AdditionalInstructions}");
+
+        if (Length != NovelLength.None)
+            sections.Add($"Chapter Count: {Length.GetDescription()}");
+
+        return string.Join("\n", sections);
+    }
 }
 
 public class NovelConceptOutput

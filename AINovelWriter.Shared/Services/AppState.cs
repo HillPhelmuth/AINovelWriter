@@ -33,6 +33,7 @@ public class AppState : INotifyPropertyChanged
             {
 				NovelConcepts = value.Concepts ?? new NovelConcepts { Title = value.Title, Theme = value.ConceptDescription };
             }
+			GeneratedImages.Clear();
             SetField(ref _novelInfo, value);
         }
     }
@@ -54,7 +55,7 @@ public class AppState : INotifyPropertyChanged
 		get => _userData;
 		set => SetField(ref _userData, value);
 	}
-
+	
 	public List<string> GeneratedImages { get; set; } = [];
 	public void NovelComplete()
 	{
