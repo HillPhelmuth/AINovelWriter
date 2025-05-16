@@ -48,7 +48,10 @@
 	margin-left: 4rem;
 	
 }
-.flipbook .page {
+.flipbook .double,
+.flipbook * double,
+.flipbook .page,
+.flipbook * .page {
 	-webkit-box-shadow: 0 0 20px 5px rgba(0,0,0,0.2);
 	-moz-box-shadow: 0 0 20px 5px rgba(0,0,0,0.2);
 	-ms-box-shadow: 0 0 20px 5px rgba(0,0,0,0.2);
@@ -78,6 +81,13 @@
     padding: 0;
     color: #333;
 }
+.flipbook-viewport .double h2 {
+	font-size: 1.1rem;
+	text-align: center;
+	margin: 0;
+	padding: 0;
+	color: #333;
+}
 .flipbook-viewport .shadow {
 	-webkit-transition: -webkit-box-shadow 0.5s;
 	-moz-transition: -moz-box-shadow 0.5s;
@@ -93,9 +103,10 @@
 .flipbook-viewport .double {
 	width: 56.25rem;
 	height: 36.375rem;
+	background-color: white;
 	background-size: 100% 100%;
 	user-select: none;
-	overflow-y:auto;
+	overflow-y: auto;
 	/*position:relative;*/
 }
 .cover-image-grid {
@@ -137,6 +148,8 @@
 	.flipbook-viewport .double {
 		width: 31.25rem;
 		/*height: 25rem;*/
+		background-color: white;
+		background-repeat: no-repeat;
 		background-size: 100% 100%;
 		user-select: none;
 		/*position:relative;*/
@@ -159,6 +172,62 @@
 		height: 410px;
 		overflow: auto;
 	}
+}
+
+
+/*.next-back {
+	width: 25rem;
+	margin-left: 0;
+}*/
+/*
+	Single page view selection
+*/
+.flipbook-viewport-single .flipbook {
+	width: 25rem;
+	/*height: 25rem;*/
+	left: -12.5rem;
+	top: -12.5rem;
+}
+.flipbook-viewport-single .container {
+	position: absolute;
+	top: 45%;
+	left: 47%;
+	margin: auto;
+	transform: translateX(-1%);
+}
+
+.flipbook-viewport-single .page {
+	width: 25rem;
+	height: 25rem;
+	background-color: white;
+	background-repeat: no-repeat;
+	background-size: 100% 100%;
+	user-select: none;
+	position:relative;
+}
+
+.flipbook-viewport-single .double {
+	width: 25rem;
+	height: 25rem;
+	background-color: white;
+	background-repeat: no-repeat;
+	background-size: 100% 100%;
+	user-select: none;
+	position: relative;
+}
+.flipbook-viewport-single .page img {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	/*margin: 0;*/
+	width: 420px;
+	height: 500px;
+	/*margin-top: 3px;
+	margin-left: 5px;
+	margin-bottom:20px;*/
 }
 @media (max-width: 499.98px) {
 	.flipbook-viewport .flipbook {

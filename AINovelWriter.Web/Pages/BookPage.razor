@@ -2,14 +2,15 @@
 @inherits AppComponentBase
 
 <div style="width:99vw; height:99vh; overflow:hidden; display:flex; flex-direction:column">
-    
+
     <RadzenCard Style="@_cardStyle" Variant="Variant.Text">
         <div class="next-back" style="display:flex; justify-content:space-around; align-items:center">
             <RadzenButton Size="ButtonSize.ExtraSmall" Icon="arrow_back" Click="Back" Text="Back"></RadzenButton>
             <RadzenNumeric Style="padding:1px 2px; font-size:.9rem; max-width:4rem" @bind-Value:after="HandleGoTo" @bind-Value="_pageInput" Step="1" Min="1" Max="@AppState.NovelInfo.TextPages.Count"></RadzenNumeric>
             <RadzenButton Size="ButtonSize.ExtraSmall" Icon="arrow_forward" Click="Next" Text="Next"></RadzenButton>
         </div>
-        <div class="flipbook-viewport">
+
+        <div class="@(ViewPortClass)" @oncontextmenu="ShowContextMenuWithItems" @oncontextmenu:preventDefault="true">
 
             <div class="container">
                 <div class="flipbook">
@@ -46,12 +47,59 @@
                     }
                 </div>
             </div>
-            <div style="position:absolute;bottom:-.8rem; left:35%;margin-top:4rem">
-                <RadzenButton Variant="Variant.Text" Text="Evaluate Novel" Click="ShowEvals" Icon="quiz" Size="ButtonSize.Small"></RadzenButton>
-                <RadzenButton Variant="Variant.Text" Text="Chat With Novel Characters" Click="ShowChatWithCharacter" Icon="psychology_alt" Size="ButtonSize.Small"></RadzenButton>
+            <div style="position:absolute;bottom:-.8rem; left:28.5%;margin-top:4rem; width:450px; display:flex; flex-direction:row; gap:4px; align-items:center">
+                <RadzenButton Variant="Variant.Filled" Style="border-radius:1rem; font-size:90%" ButtonStyle="ButtonStyle.Success" Text="Evaluate Novel" Click="ShowEvals" Icon="quiz" Size="ButtonSize.Small"></RadzenButton>
+                <RadzenButton Variant="Variant.Filled" Style="border-radius:1rem; font-size:90%" Text="Chat With Novel Characters" Click="ShowChatWithCharacter" Icon="psychology_alt" Size="ButtonSize.Small"></RadzenButton>
+                <RadzenButton Variant="Variant.Filled" Style="border-radius:1rem; font-size:95%" ButtonStyle="ButtonStyle.Dark" Text="Download" Click="ShowContextMenuWithContent" Icon="download" Size="ButtonSize.Small"></RadzenButton>
             </div>
         </div>
+
     </RadzenCard>
-    
+
 </div>
 <RadzenMediaQuery Query="(max-width: 640px)" Change="HandleMediaChange"></RadzenMediaQuery>
+@code
+{
+    void ShowContextMenuWithContent(MouseEventArgs args) => ContextMenuService.Open(args, ds =>
+    @<div style="display:flex;flex-direction:column; width:8rem; justify-content:center; padding:4px; margin-top:-1.5rem;margin-left:2.5rem">
+        <RadzenButton Size="ButtonSize.Small" Click="DownloadNovelToFile" Variant="Variant.Text" Icon="picture_as_pdf" Text="Pdf"></RadzenButton>
+        <RadzenButton Size="ButtonSize.Small" Click="DownloadNovelToEpub" Variant="Variant.Text" Icon="library_books" Text="eBook"></RadzenButton>
+    </div>
+    );
+
+    void ShowContextMenuWithItems(MouseEventArgs args)
+    {
+        ContextMenuService.Open(args,
+            new List<ContextMenuItem> {
+                new(){ Text = "Two Page View", Value = 1, Icon = "expand" },
+                new(){ Text = "One Page View", Value = 2, Icon = "collapse_all" },
+                            }, OnMenuItemClick);
+    }
+
+    private async void OnMenuItemClick(MenuItemEventArgs args)
+    {
+        try
+        {
+            if (args.Value.Equals(1))
+            {
+                await SetDisplay("double");
+                Console.WriteLine("Display set to double");
+            }
+
+            if (args.Value.Equals(2))
+            {
+                await SetDisplay("single");
+                Console.WriteLine("Display set to single");
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Error on single/double switch:\n {e}");
+        }
+        finally
+        {
+            ContextMenuService.Close();
+        }
+
+    }
+}

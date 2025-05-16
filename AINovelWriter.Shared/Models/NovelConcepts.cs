@@ -8,7 +8,6 @@ public class NovelConcepts
     public string? GenreDescription => Genre.GetDescription();
     
 
-    public string? SubGenre { get; set; }
 	public List<Genre> SubGenres { get; set; } = [];
     public string? Theme { get; set; }
     public NovelTone Tone { get; set; } = NovelTone.None;

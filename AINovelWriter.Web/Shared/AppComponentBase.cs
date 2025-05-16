@@ -8,7 +8,7 @@ using System.ComponentModel;
 using System.Text.Json;
 using Radzen;
 using static AINovelWriter.Shared.Models.EnumHelpers;
-
+using static AINovelWriter.Shared.Models.FileHelper;
 namespace AINovelWriter.Web.Shared;
 
 public abstract class AppComponentBase : ComponentBase, IDisposable
@@ -35,6 +35,27 @@ public abstract class AppComponentBase : ComponentBase, IDisposable
     [CascadingParameter]
     protected Task<AuthenticationState>? AuthenticationStateTask { get; set; }
     protected static AuthenticationState? AuthenticationState { get; set; }
+    [Inject]
+    private ImageGenService ImageGenService { get; set; } = default!;
+    protected async Task DownloadNovelToFile()
+    {
+        
+        if (string.IsNullOrEmpty(AppState.NovelInfo.Text)) return;
+
+        //var fileContent = await CreateAndCompressFilesAsync(AppState.NovelInfo.Text, AppState.NovelInfo.ImageUrl);
+        using var client = new HttpClient();
+
+        var imageBytes = await ImageGenService.GetImageBlob(AppState.NovelInfo.ImageUrl) /*await client.GetByteArrayAsync(AppState.NovelInfo.ImageUrl)*/;
+        var pdfData = CreatePdf(imageBytes, AppState.NovelInfo.ChapterOutlines.Where(x => !string.IsNullOrEmpty(x.FullText)).Select(x => x.FullText).ToList()!, AppState.NovelInfo.Title);
+        await JsRuntime.InvokeVoidAsync("downloadFile", $"{AppState.NovelInfo.Title}.pdf", pdfData);
+    }
+    protected async Task DownloadNovelToEpub()
+    {
+        if (string.IsNullOrEmpty(AppState.NovelInfo.Text)) return;
+        var imageBytes = await ImageGenService.GetImageBlob(AppState.NovelInfo.ImageUrl);
+        var epubData = CreateEpubFromNovel(AppState.NovelInfo, imageBytes);
+        await JsRuntime.InvokeVoidAsync("downloadFile", $"{AppState.NovelInfo.Title}.epub", epubData);
+    }
     protected static Dictionary<AIModel, string> AIModelDescriptions => GetEnumsWithDescriptions<AIModel>().ToDictionary(x => x.Key, y => y.Value);
     protected bool IsNovelComplete { get; set; }
     protected override async Task OnInitializedAsync()
@@ -42,29 +63,7 @@ public abstract class AppComponentBase : ComponentBase, IDisposable
         AppState.PropertyChanged += HandlePropertyChanged;
         NovelWriterService.SendChapterText += HandleChapterFullText;
         NovelWriterService.SendOutline += HandleChapterOutline;
-        //if (AuthenticationState is not null && !string.IsNullOrEmpty(AppState.UserData.UserName))
-        //{
-        //    var state = await AuthenticationState;
-
-        //    var userDataUserName = state?.User?.Identity?.Name;
-        //    var picture = state?.User?.Claims
-        //        .Where(c => c.Type.Equals("picture"))
-        //        .Select(c => c.Value)
-        //        .FirstOrDefault() ?? string.Empty;
-        //    var userProfile = await CosmosService.GetUserProfile(userDataUserName ?? string.Empty);
-        //    if (userProfile is not null)
-        //    {
-        //        AppState.UserData = userProfile;
-        //        AppState.UserData.ImagePath ??= picture;
-        //    }
-        //    else
-        //    {
-        //        AppState.UserData.UserName = userDataUserName ?? string.Empty;
-        //        AppState.UserData.ImagePath ??= picture;
-        //    }
-
-            
-        //}
+       
         await base.OnInitializedAsync();
     }
     protected override async Task OnAfterRenderAsync(bool firstRender)
