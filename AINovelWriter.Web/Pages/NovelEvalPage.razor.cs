@@ -10,7 +10,7 @@ namespace AINovelWriter.Web.Pages;
 
 public partial class NovelEvalPage
 {
-    private Dictionary<int, List<ResultScore>> _chapterResults = [];
+    private Dictionary<int, List<ResultScore<CustomEvalOutput>>> _chapterResults = [];
 
     //private List<FlatChapterEval> FlatChapterEvals => _chapterResults.SelectMany(x =>
     //        x.Value.Select(y => new FlatChapterEval { ChapterNumber = x.Key, EvalName = y.EvalName, Score = y.ProbScore })).ToList();
@@ -44,7 +44,7 @@ public partial class NovelEvalPage
             }
             else if (AppState.NovelInfo.ChapterOutlines.Count > 0)
             {
-                await EvaluateNovel();
+                await EvaluateNovelWithCriticalEvals();
                 
             }
             
@@ -58,6 +58,74 @@ public partial class NovelEvalPage
             return "";
         return AppState.NovelInfo.ChapterOutlines[eval.ChapterNumber - 1].FullText;
     }
+
+    private async Task EvaluateNovelWithCriticalEvals()
+    {
+        _chapterEvals.Clear();
+        IsBusy = true;
+        StateHasChanged();
+        await Task.Delay(1);
+        var kernel = Kernel.CreateBuilder()
+            .AddOpenAIChatCompletion("gpt-4o-mini", Configuration["OpenAI:ApiKey"]!).Build();
+        var service = new NovelEvalService(kernel);
+        var details = AppState.NovelInfo.ConceptDescription;
+        var novelInputs = service.CreateInputModels(AppState.NovelInfo.Text, details);
+        var novelResults = await service.ExecuteEvals(novelInputs);
+        AppState.NovelInfo.NovelEval = new FullNovelEval
+        {
+            CharacterDevelopment = novelResults.First(x => x.EvalName.StartsWith("GptCharacterDevelopment")).Score,
+            Clarity = novelResults.First(x => x.EvalName.StartsWith("GptClarity")).Score,
+            Creativity = novelResults.First(x => x.EvalName.StartsWith("GptCreativity")).Score,
+            Engagement = novelResults.First(x => x.EvalName.StartsWith("GptEngagement")).Score,
+            Style = novelResults.First(x => x.EvalName.StartsWith("GptRelevance")).Score,
+            WritingDetail = novelResults.First(x => x.EvalName.StartsWith("GptWritingDetail")).Score,
+
+        };
+        foreach (var chapter in AppState.NovelInfo.ChapterOutlines)
+        {
+            var text = chapter.FullText;
+
+            var inputs = service.CreateInputModels(text, details);
+            var results = await service.ExecuteEvals(inputs);
+            _chapterResults[AppState.NovelInfo.ChapterOutlines.IndexOf(chapter) + 1] = results;
+            var clarity = results.First(x => x.EvalName.StartsWith("GptClarity"));
+            var creativity = results.First(x => x.EvalName.StartsWith("GptCreativity"));
+            var engagement = results.First(x => x.EvalName.StartsWith("GptEngagement"));
+            var relevance = results.First(x => x.EvalName.StartsWith("GptRelevance"));
+            var writingDetail = results.First(x => x.EvalName.StartsWith("GptWritingDetail"));
+            var characterDevelopment = results.First(x => x.EvalName.StartsWith("GptCharacterDevelopment"));
+            var flatChapterEval = new FlatChapterEval
+            {
+                ChapterNumber = AppState.NovelInfo.ChapterOutlines.IndexOf(chapter) + 1,
+                Clarity = clarity.Score,
+                ClarityMajorWeaknesses = clarity.Result.MajorWeaknesses,
+                ClarityMinorWeaknesses = clarity.Result.MinorWeaknesses,
+                Creativity = creativity.Score,
+                CreativityMajorWeaknesses = creativity.Result.MajorWeaknesses,
+                CreativityMinorWeaknesses = creativity.Result.MinorWeaknesses,
+                Engagement = engagement.Score,
+                EngagementMajorWeaknesses = engagement.Result.MajorWeaknesses,
+                EngagementMinorWeaknesses = engagement.Result.MinorWeaknesses,
+                Style = relevance.Score,
+                StyleMajorWeaknesses = relevance.Result.MajorWeaknesses,
+                StyleMinorWeaknesses = relevance.Result.MinorWeaknesses,
+                WritingDetail = writingDetail.Score,
+                WritingDetailMajorWeaknesses = writingDetail.Result.MajorWeaknesses,
+                WritingDetailMinorWeaknesses = writingDetail.Result.MinorWeaknesses,
+                CharacterDevelopment = characterDevelopment.Score,
+                CharacterDevelopmentMajorWeaknesses = characterDevelopment.Result.MajorWeaknesses,
+                CharacterDevelopmentMinorWeaknesses = characterDevelopment.Result.MinorWeaknesses,
+                ChapterText = text
+            };
+            AppState.NovelInfo.NovelEval.ChapterEvals.Add(flatChapterEval);
+            StateHasChanged();
+            await _grid.Reload();
+        }
+        //AppState.NovelInfo.ChapterEvals = _chapterEvals;
+        //AppState.NovelInfo.NovelEval.ChapterEvals = _chapterEvals;
+        IsBusy = false;
+        StateHasChanged();
+    } 
     private async Task EvaluateNovel()
     {
         _chapterEvals.Clear();

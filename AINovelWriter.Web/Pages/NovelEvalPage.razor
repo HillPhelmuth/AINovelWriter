@@ -1,6 +1,6 @@
 ﻿@page "/eval"
 @inherits AppComponentBase
-<RadzenButton Size="ButtonSize.Small" Click="EvaluateNovel" Text="Evaluate" IsBusy="IsBusy" BusyText="Evaluating..."></RadzenButton>
+<RadzenButton Size="ButtonSize.Small" Click="EvaluateNovelWithCriticalEvals" Text="Evaluate" IsBusy="IsBusy" BusyText="Evaluating..."></RadzenButton>
 <RadzenRow>
     <RadzenColumn SizeLG="12" OffsetLG="0">
         <RadzenCard Style="padding-left:0;padding-right:0">
@@ -41,9 +41,32 @@
             <RadzenText TextStyle="TextStyle.Subtitle1" TextAlign="TextAlign.Center">Chapter Evaluations</RadzenText>
             <RadzenDataGrid @ref="_grid" Data="@(AppState.NovelInfo.NovelEval?.ChapterEvals ?? [])" TItem="FlatChapterEval" Density="Density.Compact" AllowPaging="true" PageSize="20" AllowSorting="true" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" ShowPagingSummary="true">
                 <Template Context="eval">
-                    <RadzenCard Style="overflow-wrap:break-word; white-space:pre-wrap">
-                        @((MarkupString)AsHtml(GetChapterText(eval)))
-                    </RadzenCard>
+                    <RadzenTabs>
+                        <Tabs>
+                            <RadzenTabsItem Text="Major Weaknesses">
+                                Charater Development: @eval.CharacterDevelopmentMajorWeaknesses<br />
+                                Clarity: @eval.ClarityMajorWeaknesses<br />
+                                Creativity: @eval.CreativityMajorWeaknesses<br />
+                                Engagement: @eval.EngagementMajorWeaknesses<br />
+                                Writing Detail: @eval.WritingDetailMajorWeaknesses<br />
+                                Style: @eval.StyleMajorWeaknesses<br />
+
+                            </RadzenTabsItem>
+                            <RadzenTabsItem Text="Minor Weaknesses">
+                                Character Development: @eval.CharacterDevelopmentMinorWeaknesses<br />
+                                Clarity: @eval.ClarityMinorWeaknesses<br />
+                                Creativity: @eval.CreativityMinorWeaknesses<br />
+                                Engagement: @eval.EngagementMinorWeaknesses<br />
+                                Writing Detail: @eval.WritingDetailMinorWeaknesses<br />
+                                Style: @eval.StyleMinorWeaknesses<br />
+                            </RadzenTabsItem>
+                            <RadzenTabsItem Text="Chapter Text">
+                                <RadzenCard Style="overflow-wrap:break-word; white-space:pre-wrap">
+                                    @((MarkupString)AsHtml(GetChapterText(eval)))
+                                </RadzenCard>
+                            </RadzenTabsItem>
+                        </Tabs>
+                    </RadzenTabs>
                 </Template>
                 <Columns>
                     <RadzenDataGridColumn TItem="FlatChapterEval" Property="@(nameof(FlatChapterEval.ChapterNumber))" Title="Chapter" Width="10%">

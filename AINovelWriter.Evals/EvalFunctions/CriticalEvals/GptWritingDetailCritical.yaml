@@ -1,0 +1,48 @@
+﻿name: GptWritingDetailCritical
+description: Measures how well the generated chapter adheres to the prompt for detailed descriptions and a slower pace. A score of 5 indicates that the chapter provides very detailed descriptions and a deliberately slow pace, while 1 suggests it lacks detail and moves too quickly.
+execution_settings:
+  default:
+    max_tokens: 128
+    temperature: 0.1
+    top_p: 0.1
+    presence_penalty: 0
+    frequency_penalty: 0
+input_variables:
+- name: chapter
+  description: The generated chapter to evaluate.
+  default: ''
+
+template: |
+ ## Evaluate Writing Detail & Pacing (1-10 Stars) - Critical Assessment 
+
+ **Focus:** Analyze the chapter's use of detail, sensory descriptions, and pacing. Does it effectively "show, don't tell"? Consider the richness of details about the setting, characters, and events, as well as the pacing's impact on immersion and engagement.
+
+ **Rating Scale (Provide ONLY the number):**
+
+ * **1-3 Stars:**  Lacks detail and depth.  Telling rather than showing.  Pacing may be rushed or uneven. Fails to immerse the reader.
+ * **4-6 Stars:**  Moderate level of detail. Some attempts at "showing," but may lack consistency or richness. Pacing may be adequate but not exceptional.
+ * **7-9 Stars:**  Good use of detail and sensory language. Effectively "shows" rather than "tells."  Pacing is well-managed and enhances the narrative. Immersive and engaging.
+ * **10 Stars:**  Exceptional use of detail and descriptive language. Creates a vivid and immersive experience for the reader. Masterful pacing that builds tension and enhances emotional impact.  
+
+ **Important:**  Avoid bias towards higher scores.  Actively look for instances where the writing lacks detail, relies on telling instead of showing, or where the pacing detracts from the reader's experience. Be honest and critical in your assessment.
+
+ **Chapter:** {{$chapter}}
+
+ ### Output Properties
+
+ | Property          | Type    | Description                                                                                                   |
+ |-------------------|---------|---------------------------------------------------------------------------------------------------------------|
+ | majorWeaknesses   | string  | Description of the most significant flaws in writing detail or pacing (e.g., lack of sensory description, rushed pacing, excessive telling instead of showing) that seriously undermine the vividness, immersion, or effectiveness of the chapter. |
+ | minorWeaknesses   | string  | Description of less critical or more subtle issues in writing detail or pacing (e.g., occasional flat description, minor lapses in immersive detail, or slight inconsistencies in pacing) that do not fundamentally harm the narrative. |
+ | score             | integer | Number of stars (1-10) indicating the writing detail and pacing rating                                        |
+
+ ### Output Format
+
+ Your output must strictly adhere to the following JSON format:
+ ```json
+ {
+  "majorWeaknesses": "[Description of the major character development weaknesses, if any]",
+  "minorWeaknesses": "[Description of the minor character development weaknesses, if any]",
+  "score": [integer from 1 to 10 indicating number of stars]
+ }
+ ``` 

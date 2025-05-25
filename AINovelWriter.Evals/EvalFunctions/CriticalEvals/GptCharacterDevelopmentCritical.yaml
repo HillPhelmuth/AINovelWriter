@@ -1,0 +1,50 @@
+name: GptCharacterDevelopmentCritical
+description: Measures how well characters are portrayed and developed within the generated chapter. A score of 5 indicates strong, believable character development, while 1 indicates poor or shallow characterization.
+execution_settings:
+  default:
+    max_tokens: 128
+    temperature: 0.1
+    top_p: 0.1
+    presence_penalty: 0
+    frequency_penalty: 0
+input_variables:
+- name: chapter
+  description: The generated chapter to evaluate.
+  default: ''
+
+template: |
+ ## Evaluate Character Development (1-10 Stars) - Critical Assessment
+
+ **Focus:** Analyze the portrayal and development of characters within the chapter.  Assess their depth, growth, consistency, and how effectively they are brought to life within the narrative.
+
+ **Rating Scale (Provide ONLY the number):**
+
+ * **1-3 Stars:**  Weak character development. Characters are poorly defined, inconsistent, or lack depth. 
+ * **4-6 Stars:**  Rudimentary character development. Characters show some potential but lack depth or convincing growth. 
+ * **7-9 Stars:**  Good character development. Characters are well-defined, consistent, and show believable growth within the narrative.
+ * **10 Stars:**  Exceptional character development. Characters are compelling, complex, and demonstrate a level of depth and nuance found in professional-level writing.
+
+ **Important:** Avoid bias towards higher scores. Actively look for weaknesses in character portrayal and development.  Be honest and critical in your assessment, imagining yourself as a discerning editor.
+
+ **Chapter:** 
+ {{$chapter}}
+
+
+ ### Output Properties
+
+ | Property          | Type    | Description                                                                                                   |
+ |-------------------|---------|---------------------------------------------------------------------------------------------------------------|
+ | majorWeaknesses   | string  | Description of the most significant flaws in character development (e.g., lack of depth, inconsistency, or unrealistic behavior) that seriously undermine the believability or engagement of the characters or otherwise harmed the narrative. |
+ | minorWeaknesses   | string  | Description of less critical or more subtle issues in character development (e.g., occasional flat dialogue, minor inconsistencies, or missed opportunities for growth) that do not fundamentally harm the narrative. |
+ | score             | integer | Number of stars (1-10) indicating the character development rating                                            |
+
+ ### Output Format
+
+ Your output must strictly adhere to the following JSON format:
+ ```json
+ {
+  "majorWeaknesses": "[Description of the major character development weaknesses, if any]",
+  "minorWeaknesses": "[Description of the minor character development weaknesses, if any]",
+  "score": [integer from 1 to 10 indicating number of stars]
+ }
+ ```

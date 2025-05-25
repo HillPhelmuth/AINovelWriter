@@ -1,0 +1,48 @@
+name: GptEngagementCritical
+description: Measures how captivating and engaging the generated chapter is. A score of 5 indicates that the chapter keeps the reader highly interested and eager to read more, while 1 suggests it fails to capture the reader's attention.
+execution_settings:
+  default:
+    max_tokens: 128
+    temperature: 0.1
+    top_p: 0.1
+    presence_penalty: 0
+    frequency_penalty: 0
+input_variables:
+- name: chapter
+  description: The generated chapter to evaluate.
+  default: ''
+
+template: |
+ ## Evaluate Chapter Engagement (1-10 Stars) - Critical Assessment
+
+ **Focus:**  Analyze the chapter's ability to captivate and engage the reader. Does it maintain interest and compel the reader to continue?  Consider the narrative's effectiveness, pacing, and ability to draw the reader in.
+
+ **Rating Scale (Provide ONLY the number):**
+
+ * **1-3 Stars:**  Fails to engage.  Dull, uninteresting, or actively repels the reader. 
+ * **4-6 Stars:**  Minimally engaging.  Some moments hold interest, but overall the chapter struggles to maintain reader engagement.  
+ * **7-9 Stars:**  Engaging and well-written.  Keeps the reader interested and invested in the narrative.
+ * **10 Stars:**  Exceptionally engaging and captivating.  Demonstrates mastery of storytelling, leaving the reader eager for more.  
+
+ **Important:**  Avoid bias towards higher scores.  Actively look for weaknesses and areas where the chapter fails to fully engage the reader.  Be honest and critical in your assessment. 
+
+ **Chapter:** {{$chapter}}
+
+ ### Output Properties
+
+ | Property          | Type    | Description                                                                                                   |
+ |-------------------|---------|---------------------------------------------------------------------------------------------------------------|
+ | majorWeaknesses   | string  | Description of the most significant flaws in engagement (e.g., lack of interest, poor pacing, inability to captivate) that seriously undermine the reader's attention or investment in the chapter. |
+ | minorWeaknesses   | string  | Description of less critical or more subtle issues in engagement (e.g., occasional slow sections, minor lapses in tension, or brief moments of disengagement) that do not fundamentally harm the narrative. |
+ | score             | integer | Number of stars (1-10) indicating the engagement rating                                                        |
+
+ ### Output Format
+
+ Your output must strictly adhere to the following JSON format:
+ ```json
+ {
+  "majorWeaknesses": "[Description of the major engagement weaknesses, if any]",
+  "minorWeaknesses": "[Description of the minor engagement weaknesses, if any]",
+  "score": [integer from 1 to 10 indicating number of stars]
+ }
+ ``` 

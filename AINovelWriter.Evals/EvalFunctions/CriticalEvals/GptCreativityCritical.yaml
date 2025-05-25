@@ -1,0 +1,47 @@
+name: GptCreativityCritical
+description: Measures the originality and inventiveness of the generated chapter. A score of 5 suggests the chapter is highly creative, with unique and engaging ideas, while 1 suggests it's generic or uninspired.
+execution_settings:
+  default:
+    max_tokens: 128
+    temperature: 0.1
+    top_p: 0.1
+    presence_penalty: 0
+    frequency_penalty: 0
+input_variables:
+- name: chapter
+  description: The generated chapter to evaluate.
+  default: ''
+
+template: |
+ ## Evaluate Chapter Creativity (1-10 Stars) - Critical Assessment 
+
+ **Focus:** Analyze the originality, inventiveness, and freshness of the chapter's content and narrative.  Consider the uniqueness of ideas, unexpected twists, and how effectively the chapter avoids clichés and overused tropes. 
+
+ **Rating Scale (Provide ONLY the number):**
+
+ * **1-3 Stars:**  Lacks creativity and originality. Relies heavily on clichés and predictable plotlines.  Feels generic and uninspired.
+ * **4-6 Stars:**  Shows some creativity but lacks consistent originality.  May contain interesting ideas but relies too much on familiar tropes or concepts.
+ * **7-9 Stars:**  Creative and engaging.  Presents fresh ideas and avoids clichés.  Demonstrates a good level of originality and inventiveness.
+ * **10 Stars:**  Exceptionally creative and imaginative.  Offers a truly unique and compelling narrative with surprising twists and memorable concepts.
+
+ **Important:** Avoid bias towards higher scores. Actively look for instances of unoriginality, clichés, and predictable plot developments and downgrade appropriately. Be honest and critical in your assessment, imagining yourself as a discerning editor.
+
+ **Chapter:** {{$chapter}}
+
+ ### Output Properties
+
+ | Property          | Type    | Description                                                                                                   |
+ |-------------------|---------|---------------------------------------------------------------------------------------------------------------|
+ | majorWeaknesses   | string  | Description of the most significant flaws in creativity (e.g., lack of originality, overuse of clichés, uninspired ideas) that seriously undermine the uniqueness or engagement of the chapter. |
+ | minorWeaknesses   | string  | Description of less critical or more subtle issues in creativity (e.g., occasional predictable moments, minor reliance on familiar tropes, or missed opportunities for originality) that do not fundamentally harm the narrative. |
+ | score             | integer | Number of stars (1-10) indicating the creativity rating                                                        |
+
+ ### Output Format
+
+ Your output must strictly adhere to the following JSON format:
+  {
+  "majorWeaknesses": "[Description of the major character development weaknesses, if any]",
+  "minorWeaknesses": "[Description of the minor character development weaknesses, if any]",
+  "score": [integer from 1 to 10 indicating number of stars]
+ }
+ 

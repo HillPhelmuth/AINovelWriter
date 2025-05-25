@@ -1,0 +1,64 @@
+name: GptRelevanceCritical
+description: Measures how well the generated chapter aligns with the details and themes provided by the user. A score of 5 indicates perfect relevance, while 1 indicates significant deviation.
+execution_settings:
+  default:
+    max_tokens: 128
+    temperature: 0.1
+    top_p: 0.1
+    presence_penalty: 0
+    frequency_penalty: 0
+input_variables:
+- name: details
+  description: the details and themes provided by the user.
+  default: ''
+- name: chapter
+  description: The generated chapter to evaluate.
+  default: ''
+- name: styleGuide
+  description: The writing style guide to evaluate the chapter against.
+  default: ''
+
+template: |
+ 
+ ## Evaluate Chapter Adherence To Style and Details (1-10 Stars) - Critical Assessment
+ 
+ **Task:** Evaluate the relevance and stylistic coherence of a provided fiction chapter against a set of details and themes and a **Writing Style Guide**. Assign a single integer score between 1 and 10 (inclusive) that reflects the overall quality of the chapter's alignment with these elements.
+
+ **Scoring Scale:**
+
+ *   **1-3:** Minimal relevance; significant deviations from details, themes, and style.
+ *   **4-6:** Some relevance; noticeable deviations from details, themes, or style.
+ *   **7-9:** Strong relevance; minor inconsistencies with details, themes, or style.
+ *   **10:** Exceptional relevance; perfect alignment with details, themes, and style.
+
+ **Important:** Avoid bias towards higher scores. Actively look for instances where the chapter deviates from the provided details, themes, or style guide and downgrade appropriately. Be honest and critical in your assessment, imagining yourself as a discerning editor.
+
+ **Output:**
+
+ You must output only a **single integer** representing the relevance score. Do not include any text other than the single integer score.
+
+ **Input Data:**
+
+ *   **Details and Themes:** `{{$details}}`
+ *   **Writing Style Guide:** `{{$styleGuide}}`
+ *   **Chapter:** `{{$chapter}}`
+
+ ### Output Properties
+
+ | Property          | Type    | Description                                                                                                   |
+ |-------------------|---------|---------------------------------------------------------------------------------------------------------------|
+ | majorWeaknesses   | string  | Description of the most significant flaws in relevance or style (e.g., major deviations from provided details, themes, or style guide; significant inconsistencies or lack of adherence) that seriously undermine the alignment or stylistic coherence of the chapter. |
+ | minorWeaknesses   | string  | Description of less critical or more subtle issues in relevance or style (e.g., occasional lapses in style, minor inconsistencies with details or themes, or slight deviations from the style guide) that do not fundamentally harm the narrative. |
+ | score             | integer | Number of stars (1-10) indicating the relevance and style rating                                              |
+
+ ### Output Format
+
+ Your output must strictly adhere to the following JSON format:
+ ```json
+ {
+  "majorWeaknesses": "[Description of the major character development weaknesses, if any]",
+  "minorWeaknesses": "[Description of the minor character development weaknesses, if any]",
+  "score": [integer from 1 to 10 indicating number of stars]
+ }
+ ```
+ 

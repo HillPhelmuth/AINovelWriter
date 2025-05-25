@@ -10,12 +10,24 @@ public class FlatChapterEval
 {
     public int ChapterNumber { get; set; }
     public double CharacterDevelopment { get; set; }
+    public string? CharacterDevelopmentMajorWeaknesses { get; set; }
+    public string? CharacterDevelopmentMinorWeaknesses { get; set; }
     public double Clarity { get; set; }
+    public string? ClarityMajorWeaknesses { get; set; }
+    public string? ClarityMinorWeaknesses { get; set; }
     public double Creativity { get; set; }
+    public string? CreativityMajorWeaknesses { get; set; }
+    public string? CreativityMinorWeaknesses { get; set; }
     public double Engagement { get; set; }
+    public string? EngagementMajorWeaknesses { get; set; }
+    public string? EngagementMinorWeaknesses { get; set; }
     [JsonProperty("Relevance")]
     public double Style { get; set; }
+    public string? StyleMajorWeaknesses { get; set; }
+    public string? StyleMinorWeaknesses { get; set; }
     public double WritingDetail { get; set; }
+    public string? WritingDetailMajorWeaknesses { get; set; }
+    public string? WritingDetailMinorWeaknesses { get; set; }
     public double Overall => (CharacterDevelopment + Clarity + Creativity + Engagement + Style + WritingDetail) / 6;
     [JsonIgnore]
     [Ignore]

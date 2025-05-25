@@ -1,0 +1,46 @@
+name: GptClarityCritical
+description: Measures how clear and easy to understand the generated chapter is. A score of 5 means the writing is clear and easy to follow, while 1 suggests it is confusing or poorly articulated.
+execution_settings:
+  default:
+    max_tokens: 128
+    temperature: 0.1
+    top_p: 0.1
+    presence_penalty: 0
+    frequency_penalty: 0
+input_variables:
+- name: chapter
+  description: The generated chapter to evaluate.
+  default: ''
+
+template: |
+ Clarity measures how clear and easy to understand the generated chapter is. It involves evaluating the readability, coherence, and overall articulation of the writing. When evaluating clarity, consider how well the chapter conveys its ideas and how easy it is to follow the narrative. Mercilessly score the clarity of the chapter between one to ten stars as if you were a writing critic using the following rating scale:
+
+    1 star: the chapter is confusing, poorly articulated, or difficult to follow
+    5 stars: the chapter is somewhat clear but may have minor issues that affect understanding
+    10 stars: the chapter is perfectly clear, well-articulated, and easy to follow
+
+    This rating value should always be an integer between 1 and 10. So, the rating produced should be 1, or 2, or 3, etc.
+    Respond ONLY with the number.
+
+        
+    ## Real Work
+    chapter: {{$chapter}}
+    
+ ### Output Properties
+
+ | Property          | Type    | Description                                                                                                   |
+ |-------------------|---------|---------------------------------------------------------------------------------------------------------------|
+ | majorWeaknesses   | string  | Description of the most significant flaws in clarity (e.g., confusing structure, poor articulation, lack of coherence) that seriously undermine the readability or understanding of the chapter. |
+ | minorWeaknesses   | string  | Description of less critical or more subtle issues in clarity (e.g., occasional awkward phrasing, minor ambiguities, or slight lapses in flow) that do not fundamentally harm the narrative. |
+ | score             | integer | Number of stars (1-10) indicating the clarity rating                                                          |
+
+ ### Output Format
+
+ Your output must strictly adhere to the following JSON format:
+ ```json
+ {
+  "majorWeaknesses": "[Description of the major clarity weaknesses, if any]",
+  "minorWeaknesses": "[Description of the minor clarity weaknesses, if any]",
+  "score": [integer from 1 to 10 indicating number of stars]
+ }
+ ```
