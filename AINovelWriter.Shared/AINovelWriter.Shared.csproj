@@ -8,24 +8,23 @@
 	</PropertyGroup>
 	
 	<ItemGroup>
-		<PackageReference Include="Markdig" Version="0.38.0" />
-		<PackageReference Include="Microsoft.CognitiveServices.Speech" Version="1.41.1" />
-		<PackageReference Include="Microsoft.Extensions.Http.Polly" Version="9.0.2" />
-		<PackageReference Include="Microsoft.SemanticKernel" Version="1.47.0" />
-		<PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="9.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="9.0.0" />
-		<PackageReference Include="Microsoft.SemanticKernel.Connectors.Amazon" Version="1.47.0-alpha" />
-		<PackageReference Include="Microsoft.SemanticKernel.Connectors.Google" Version="1.47.0-alpha" />
-		<PackageReference Include="Microsoft.SemanticKernel.Connectors.MistralAI" Version="1.47.0-alpha" />
+		<PackageReference Include="Markdig" Version="0.41.1" />
+		<PackageReference Include="Microsoft.CognitiveServices.Speech" Version="1.43.0" />
+		<PackageReference Include="Microsoft.Extensions.Http.Polly" Version="9.0.5" />
+		<PackageReference Include="Microsoft.SemanticKernel" Version="1.54.0" />
+		<PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="9.5.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="9.0.5" />
+		<PackageReference Include="Microsoft.SemanticKernel.Connectors.Amazon" Version="1.54.0-alpha" />
+		<PackageReference Include="Microsoft.SemanticKernel.Connectors.Google" Version="1.54.0-alpha" />
+		<PackageReference Include="Microsoft.SemanticKernel.Connectors.MistralAI" Version="1.54.0-alpha" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="PDFsharp" Version="6.1.1" />
 		<PackageReference Include="PDFsharp-MigraDoc" Version="6.1.1" />
-		<PackageReference Include="Polly.Extensions.Http" Version="3.0.0" />
 		<PackageReference Include="ReverseMarkdown" Version="4.6.0" />
 		<PackageReference Include="Tiktoken" Version="2.2.0" />
-		<PackageReference Include="Azure.Storage.Blobs" Version="12.23.0" />
-		<PackageReference Include="Microsoft.Extensions.Azure" Version="1.8.0" />
-		<PackageReference Include="Microsoft.Azure.Cosmos" Version="3.45.2" />
+		<PackageReference Include="Azure.Storage.Blobs" Version="12.24.0" />
+		<PackageReference Include="Microsoft.Extensions.Azure" Version="1.11.0" />
+		<PackageReference Include="Microsoft.Azure.Cosmos" Version="3.50.0" />
 	</ItemGroup>
 	
 	<ItemGroup>

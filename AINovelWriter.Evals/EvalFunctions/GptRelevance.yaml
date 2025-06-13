@@ -14,6 +14,9 @@ input_variables:
 - name: chapter
   description: The generated chapter to evaluate.
   default: ''
+- name: styleGuide
+  description: The writing style guide to evaluate the chapter against.
+  default: ''
 
 template: |
  

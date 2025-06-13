@@ -54,7 +54,7 @@
                 </RadzenRow>
                 <RadzenRow>
                     <RadzenColumn>
-                        <RadzenButton ButtonType="ButtonType.Submit" Text="Generate Idea"></RadzenButton>
+                        <RadzenButton ButtonType="ButtonType.Submit" Text="Add Genres"></RadzenButton>
                     </RadzenColumn>
                 </RadzenRow>
             </RadzenTemplateForm>
@@ -122,7 +122,7 @@
                         <RadzenRequiredValidator Component="Title"></RadzenRequiredValidator>
                     </Helper>
                 </RadzenFormField>
-                <RadzenButton Visible="@(AppState.NovelConcepts.Tone != NovelTone.None && AppState.NovelConcepts.Audience != NovelAudience.None)" Icon="lightbulb" Variant="Variant.Text" IconColor="green" Click="@(() => GenerateItem("Title"))"></RadzenButton>
+                <RadzenButton Visible="@(AppState.NovelConcepts.Tone != NovelTone.None && AppState.NovelConcepts.Audience != NovelAudience.None)" Icon="lightbulb" Variant="Variant.Text" IconColor="green" title="Create a Title for me!" Click="@(() => GenerateItem("Title"))"></RadzenButton>
             </div>
 
             <div style="display:grid;grid-template-columns:90% 10%">
@@ -134,7 +134,7 @@
                         <RadzenRequiredValidator Component="Theme"></RadzenRequiredValidator>
                     </Helper>
                 </RadzenFormField>
-                <RadzenButton Visible="@(AppState.NovelConcepts.Tone != NovelTone.None && AppState.NovelConcepts.Audience != NovelAudience.None)" Icon="lightbulb" Variant="Variant.Text" IconColor="green" Click="@(() => GenerateItem("Description"))"></RadzenButton>
+                <RadzenButton Visible="@(AppState.NovelConcepts.Tone != NovelTone.None && AppState.NovelConcepts.Audience != NovelAudience.None)" Icon="lightbulb" Variant="Variant.Text" IconColor="green" title="Create a Description for me!" Click="@(() => GenerateItem("Description"))"></RadzenButton>
             </div>
 
 
@@ -147,7 +147,7 @@
                         <RadzenText TextStyle="TextStyle.Caption" Text="Provide character names and descriptions that you want included in the novel"></RadzenText>
                     </Helper>
                 </RadzenFormField>
-                <RadzenButton Visible="@(AppState.NovelConcepts.Tone != NovelTone.None && AppState.NovelConcepts.Audience != NovelAudience.None)" Icon="lightbulb" Variant="Variant.Text" IconColor="green" Click="@(() => GenerateItem("Characters"))"></RadzenButton>
+                <RadzenButton Visible="@(AppState.NovelConcepts.Tone != NovelTone.None && AppState.NovelConcepts.Audience != NovelAudience.None)" Icon="lightbulb" Variant="Variant.Text" IconColor="green" title="Create Characters for me!" Click="@(() => GenerateItem("Characters"))"></RadzenButton>
             </div>
 
             <div style="display:grid;grid-template-columns:90% 10%">
@@ -159,7 +159,7 @@
                         <RadzenText TextStyle="TextStyle.Caption" Text="Provide plot events that you want included in the novel"></RadzenText>
                     </Helper>
                 </RadzenFormField>
-                <RadzenButton Visible="@(AppState.NovelConcepts.Tone != NovelTone.None && AppState.NovelConcepts.Audience != NovelAudience.None)" Icon="lightbulb" Variant="Variant.Text" IconColor="green" Click="@(() => GenerateItem("PlotEvents"))"></RadzenButton>
+                <RadzenButton Visible="@(AppState.NovelConcepts.Tone != NovelTone.None && AppState.NovelConcepts.Audience != NovelAudience.None)" Icon="lightbulb" Variant="Variant.Text" IconColor="green" title="Create Plot Events for me!" Click="@(() => GenerateItem("PlotEvents"))"></RadzenButton>
             </div>
 
             <RadzenFormField Style="width:100%" Text="Additional Instructions (optional)">
@@ -193,5 +193,5 @@
 @code
 {
     void ShowContextMenuWithContent(MouseEventArgs args, string section) => ContextMenuService.Open(args, ds =>
-    @<RadzenButton Size="ButtonSize.ExtraSmall" Variant="Variant.Text" Visible="@(AppState.NovelConcepts.Tone != NovelTone.None && AppState.NovelConcepts.Audience != NovelAudience.None)" Icon="prompt_suggestion" Text="Generate" Click="@(() => GenerateItem(section))"></RadzenButton>);
+    @<RadzenButton Size="ButtonSize.ExtraSmall" Variant="Variant.Text" Visible="@(AppState.NovelConcepts.Tone != NovelTone.None && AppState.NovelConcepts.Audience != NovelAudience.None)" Icon="prompt_suggestion" Text="@($"Generate {section}")" Click="@(() => GenerateItem(section))"></RadzenButton>);
 }

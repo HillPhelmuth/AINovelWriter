@@ -77,11 +77,11 @@ public enum AIModel
     [Description("Gemini 1.5 Pro")]
     [ModelProvidor("GoogleAI")]
 	Gemini15,
-	[ModelName("gemini-2.5-pro-exp-03-25")]
+	[ModelName("gemini-2.5-pro-preview-06-05")]
 	[Description("Gemini 2.5 Pro")]
 	[ModelProvidor("GoogleAI")]
 	Gemini25Exp,
-    [ModelName("gemini-2.5-flash-preview-04-17")]
+    [ModelName("gemini-2.5-flash-preview-05-20")]
     [Description("Gemini Flash 2.5")]
     [ModelProvidor("GoogleAI")]
     GeminiFlash25,

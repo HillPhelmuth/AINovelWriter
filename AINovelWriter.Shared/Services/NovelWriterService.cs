@@ -73,13 +73,13 @@ public class NovelWriterService : INovelWriter
                               ## Output
                               Your output must be in json using the following format:
                               ```json
-                              {
+                                                            {
                               	"Theme": "Theme of the Novel described in 1-3 sentances",
                                 "Characters": "paragraph describing 3 - 5 main Characters",
                                 "PlotEvents": "paragraph describing 3 - 5 primary Plot Events"
                               }
                               ```
-                              
+                                                            
                               ## Novel Outline
                               
                               {{ $novel }}
@@ -94,8 +94,7 @@ public class NovelWriterService : INovelWriter
         //var novelInfo = await reverseEngineerFunc.InvokeAsync<NovelInfo>(kernel, args);
         return novelInfo;
     }
-    public async Task<NovelConcepts> GenerateNovelIdea(GenreCategory genre, List<Genre> subgenres, NovelLength length,
-        NovelTone tone, NovelAudience audience)
+    private static AIModel RandomAIModel()
     {
         var random = new Random();
         var roll = random.Next(1, 9);
@@ -106,13 +105,19 @@ public class NovelWriterService : INovelWriter
             3 => AIModel.GeminiFlash,
             4 => AIModel.Gpt41,
             //5 => AIModel.OpenMistralNemo,
-            5 => AIModel.Gemini15,
+            5 => AIModel.GeminiFlash25,
             6 => AIModel.Gpt4OCurrent,
             7 => AIModel.Gpt41Nano,
             8 => AIModel.Grok3,
             _ => AIModel.Gpt4OMini
         };
-       
+        return aIModel;
+    }
+    public async Task<NovelConcepts> GenerateNovelIdea(GenreCategory genre, List<Genre> subgenres, NovelLength length,
+        NovelTone tone, NovelAudience audience)
+    {
+        var aIModel = RandomAIModel(); 
+
         var kernel = CreateKernel(aIModel);
         var rng = new Random();
         var personality = Enum.GetValues<Personality>()[rng.Next(Enum.GetValues<Personality>().Length)];
@@ -155,21 +160,7 @@ public class NovelWriterService : INovelWriter
 
     public async Task<string> GenerateNovelTitle(NovelConcepts concepts)
     {
-        var random = new Random();
-        var roll = random.Next(1, 9);
-        var aIModel = roll switch
-        {
-            1 => AIModel.Gpt41Mini,
-            2 => AIModel.Gpt4OMini,
-            3 => AIModel.GeminiFlash,
-            4 => AIModel.Gpt41,
-            //5 => AIModel.OpenMistralNemo,
-            5 => AIModel.Gemini15,
-            6 => AIModel.Gpt4OCurrent,
-            7 => AIModel.Gpt41Nano,
-            8 => AIModel.Grok3,
-            _ => AIModel.Gpt4OMini
-        };
+        var aIModel = RandomAIModel();
 
         var kernel = CreateKernel(aIModel);
         concepts.Title = "";
@@ -181,20 +172,7 @@ public class NovelWriterService : INovelWriter
 
     public async Task<string> GenerateNovelDescription(NovelConcepts concepts)
     {
-        var random = new Random();
-        var roll = random.Next(1, 9);
-        var aIModel = roll switch
-        {
-            1 => AIModel.Gpt41Mini,
-            2 => AIModel.Gpt4OMini,
-            3 => AIModel.GeminiFlash,
-            4 => AIModel.Gpt41,
-            5 => AIModel.Gemini15,
-            6 => AIModel.Gpt4OCurrent,
-            7 => AIModel.Gpt41Nano,
-            8 => AIModel.Grok3,
-            _ => AIModel.Gpt4OMini
-        };
+        var aIModel = RandomAIModel(); 
 
         var kernel = CreateKernel(aIModel);
         concepts.Theme = "";
@@ -205,20 +183,7 @@ public class NovelWriterService : INovelWriter
 
     public async Task<string> GenerateNovelCharacters(NovelConcepts concepts)
     {
-        var random = new Random();
-        var roll = random.Next(1, 9);
-        var aIModel = roll switch
-        {
-            1 => AIModel.Gpt41Mini,
-            2 => AIModel.Gpt4OMini,
-            3 => AIModel.GeminiFlash,
-            4 => AIModel.Gpt41,
-            5 => AIModel.Gemini15,
-            6 => AIModel.Gpt4OCurrent,
-            7 => AIModel.Gpt41Nano,
-            8 => AIModel.Grok3,
-            _ => AIModel.Gpt4OMini
-        };
+        var aIModel = RandomAIModel(); 
 
         var kernel = CreateKernel(aIModel);
         concepts.Characters = "";
@@ -229,20 +194,7 @@ public class NovelWriterService : INovelWriter
 
     public async Task<string> GenerateNovelPlotEvents(NovelConcepts concepts)
     {
-        var random = new Random();
-        var roll = random.Next(1, 9);
-        var aIModel = roll switch
-        {
-            1 => AIModel.Gpt41Mini,
-            2 => AIModel.Gpt4OMini,
-            3 => AIModel.GeminiFlash,
-            4 => AIModel.Gpt41,
-            5 => AIModel.Gemini15,
-            6 => AIModel.Gpt4OCurrent,
-            7 => AIModel.Gpt41Nano,
-            8 => AIModel.Grok3,
-            _ => AIModel.Gpt4OMini
-        };
+        var aIModel = RandomAIModel(); 
 
         var kernel = CreateKernel(aIModel);
         concepts.PlotEvents = "";
@@ -289,7 +241,6 @@ public class NovelWriterService : INovelWriter
     public async IAsyncEnumerable<string> WriteFullNovel(string outline, AIModel aiModel = AIModel.Gpt41,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        //var chapterOutline = JsonSerializer.Deserialize<ChapterOutline>(outline.Replace("```json","").Replace("```","").Trim('\n'));
         var chapters = SplitMarkdownByHeaders(outline);
         var kernel = CreateKernel(aiModel);
         var summerizeKernel = CreateKernel(AIModel.Gpt41Mini);

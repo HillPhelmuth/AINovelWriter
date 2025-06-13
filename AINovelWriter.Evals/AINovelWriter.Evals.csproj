@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="EvalFunctions\CriticalEvals\**" />
+    <EmbeddedResource Remove="EvalFunctions\CriticalEvals\**" />
+    <None Remove="EvalFunctions\CriticalEvals\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="EvalFunctions\GptCharacterDevelopment.yaml" />
     <None Remove="EvalFunctions\GptClarity.yaml" />
     <None Remove="EvalFunctions\GptCreativity.yaml" />
@@ -28,10 +34,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="HillPhelmuth.SemanticKernel.LlmAsJudgeEvals" Version="1.0.4" />
-    <PackageReference Include="Microsoft.SemanticKernel" Version="1.47.0" />
-    <PackageReference Include="Microsoft.SemanticKernel.Plugins.Memory" Version="1.47.0-alpha" />
-    <PackageReference Include="Microsoft.SemanticKernel.Yaml" Version="1.47.0" />
+    <PackageReference Include="HillPhelmuth.SemanticKernel.LlmAsJudgeEvals" Version="1.1.0" />
+    <PackageReference Include="Microsoft.SemanticKernel" Version="1.54.0" />
+    <PackageReference Include="Microsoft.SemanticKernel.Plugins.Memory" Version="1.54.0-alpha" />
+    <PackageReference Include="Microsoft.SemanticKernel.Yaml" Version="1.54.0" />
   </ItemGroup>
 
 
