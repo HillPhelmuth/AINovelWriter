@@ -21,6 +21,8 @@ namespace AINovelWriter.Shared.Models
             
             **Getting Started:**
             
+            Before engaging the user, retrieve a full coverage review by invoking `GetFullNovelSummary` and review the evals by invoking `GetNovelEvals`. This will provide you with a comprehensive understanding of the novel's strengths, weaknesses, and areas for improvement. Use this information to inform your editing approach.
+            
             Begin by understanding the user's current stage in the writing process and their goals for the novel. 
             
             * Ask the user about their manuscript: 
@@ -314,13 +316,13 @@ namespace AINovelWriter.Shared.Models
 			
 			12. The chaper should start with the chapter name and number in the format: `## Chapter 1: {first chapter name}.`
 			
-			## Style Guide
+			## Story Description, Characters, Key Events and Other Details
 			
-			{{{CondensedStyleGuide}}}
+			**Developer Note: If provided pay particular attention to the writing style.** 
 			
-			## Story Description, Characters and Key Events
-			        
+			```        
 			{{ $storyDescription }}
+			```
 			        
 			## Summary of Novel so far
 			        
@@ -433,107 +435,116 @@ namespace AINovelWriter.Shared.Models
             {{ $additionalInstructions }}
             """;
 
-		public const string OutlineWriterPrompt =
+        public const string OutlineWriterPrompt =
             """
-			# Objective
-			
-			Create a novel outline using the provided theme, characters, and plot events. Ensure the outline is structured and coherent, adhering to the specified format.
-			
-			# Story Details
-			
-			## Title
-			
-			{{ $novelTitle }}
-			
-			## Theme or Topic
-			
-			{{ $theme }}
-			
-			### Tone
-			
-			{{ $tone }}
-			
-			## Audience
-			
-			{{ $audience }}
-			
-			## Character Details
-			
-			{{ $characterDetails }}
-			
-			## Plot Events
-			
-			{{ $plotEvents }}
-			
-			# Instructions
-			
-			- The outline should consist of {{ $chapterCount }} chapters.
-			- Use markdown format for the entire outline.
-			- Structure each chapter using header level 2 (`##`).
-			- Do not include any preamble, novel title, or explanations in the output.
-			- If necessary, split the response into multiple parts to accommodate token limitations, ensuring coherence across parts.
-			- Ensure the complete outline is developed over multiple responses if required, maintaining logical flow and continuity.
-			
-			**Important Note:** Achieving a comprehensive {{ $chapterCount }} chapter outline is crucial. Partial outlines will compromise both our objectives. Under no circumstances should you provide a partial outline. It must be a full {{ $chapterCount }} chapter outline.
-			
-			# Outline Template for Each Chapter
-			
-			## Chapter {Chapter Number}: {Chapter Title}
-			
-			1. **POV Character**: {Name of the character whose perspective the chapter is written from, if applicable}
-			
-			2. **Setting and Atmosphere**:
-			
-			   - **Description**: Use sensory details to vividly depict the chapter's setting.
-			   - **Impact**: Explain how the setting influences the events or characters.
-			
-			3. **Character Development**:
-			
-			   - **Growth**: Detail how the characters evolve or reveal new aspects of themselves.
-			   - **Relevance**: Ensure their actions and decisions drive the story forward.
-			
-			4. **Plot Developments**:
-			
-			   - **Key Events**: Provide 4–5 meaningful events that include external actions, internal conflicts, or pivotal moments.
-			   - **Conflict and Tension**: Introduce or escalate conflict to maintain reader engagement.
-			   - **Purpose**: Ensure each event contributes to the overall narrative.
-			
-			# Example Chapter Outline
-			
-			## Chapter 1: The Beginning
-			
-			1. **POV Character**: John Doe
-			
-			2. **Setting and Atmosphere**:
-			
-			   - **Description**: A bustling city street at night, with neon lights reflecting off wet pavement.
-			   - **Impact**: The chaotic environment mirrors John's internal conflict and sets the stage for his encounter with the antagonist.
-			
-			3. **Character Development**:
-			
-			   - **Growth**: John begins to question his loyalty to the organization he works for.
-			   - **Relevance**: This internal conflict drives his decision to confront his boss later in the story.
-			
-			4. **Plot Developments**:
-			
-			   - **Key Events**:
-			     1. John receives a mysterious message warning him of danger.
-			     2. He narrowly escapes an ambush by unknown assailants.
-			     3. A chance encounter with a stranger provides him with a crucial clue.
-			     4. John decides to investigate the source of the message, setting the main plot in motion.
-			
-			   - **Conflict and Tension**: The ambush introduces immediate danger, while the message creates intrigue and raises stakes.
-			   - **Purpose**: This chapter establishes the protagonist's motivation and sets up the central conflict.
-			
-			# Additional Context
-			
-			- Consider the novel's genre and intended audience to further refine the tone and style of the outline.
-			- Ensure clarity and consistency in narrative style across chapters.
-			- If user inputs are incomplete or vague, use default assumptions or prompt for clarification to maintain outline quality.
-			
-			{{ $additionalInstructions }}
-			
-			""";
+            # Objective
+
+            Create a novel outline using the provided theme, characters, and plot events. Ensure the outline is structured and coherent, adhering to the specified format.
+
+            # Story Details
+
+            ## Title
+
+            {{ $novelTitle }}
+
+            ## Theme or Topic
+
+            {{ $theme }}
+
+            ## Tone
+
+            {{ $tone }}
+            
+            ## Narrative Perspective
+            
+            {{ $narrativePerspective }}
+
+            ## Audience
+
+            {{ $audience }}
+
+            ## Character Details
+
+            {{ $characterDetails }}
+
+            ## Plot Events
+
+            {{ $plotEvents }}
+
+            # Instructions
+
+            - The outline should consist of {{ $chapterCount }} chapters.
+            - Use markdown format for the entire outline.
+            - Start each chapter using header level 2 (`##`).
+            - Do not include any preamble, novel title, or explanations in the output.
+
+            **Important Note:** Achieving a comprehensive {{ $chapterCount }} chapter outline is crucial.
+
+            # Outline Template for Each Chapter
+
+            ## Chapter {Chapter Number}: {Chapter Title}
+
+            1. **Setting and Atmosphere**:
+
+               - **Description**: Use sensory details to vividly depict the chapter's setting.
+               - **Impact**: Explain how the setting influences the events or characters.
+
+            2. **Character Development**:
+
+               - **Growth**: Detail how the characters evolve or reveal new aspects of themselves.
+               - **Relevance**: Ensure their actions and decisions drive the story forward.
+
+            3. **Plot Developments**:
+
+               - **Key Events**: Provide 4–5 meaningful events that include external actions, internal conflicts, or pivotal moments.
+               - **Conflict and Tension**: Introduce or escalate conflict to maintain reader engagement.
+               - **Purpose**: Ensure each event contributes to the overall narrative.
+               
+            4a. **Foreshadowing or Set-up (early chapters only)**:
+               - **Future Events**: Include hints or clues that set up future plot developments.
+               - **Character Arcs Setup**: Introduce elements that will be important for character growth later in the story.
+            4b. **Payoff or Resolution (later chapters only)**:
+               - **Foreshadowed or Set-up Event**: Describe how a previously hinted event comes to fruition.
+               - **Character Growth**: Show how the chapter resolves character arcs or relationships.
+               
+            # Example Chapter Outline
+
+            ## Chapter 1: The Beginning
+
+            1. **POV Character**: John Doe
+
+            2. **Setting and Atmosphere**:
+
+               - **Description**: A bustling city street at night, with neon lights reflecting off wet pavement.
+               - **Impact**: The chaotic environment mirrors John's internal conflict and sets the stage for his encounter with the antagonist.
+
+            3. **Character Development**:
+
+               - **Growth**: John begins to question his loyalty to the organization he works for.
+               - **Relevance**: This internal conflict drives his decision to confront his boss later in the story.
+
+            4. **Plot Developments**:
+
+               - **Key Events**:
+                 1. John receives a mysterious message warning him of danger.
+                 2. He narrowly escapes an ambush by unknown assailants.
+                 3. A chance encounter with a stranger provides him with a crucial clue.
+                 4. John decides to investigate the source of the message, setting the main plot in motion.
+
+               - **Conflict and Tension**: The ambush introduces immediate danger, while the message creates intrigue and raises stakes.
+               - **Purpose**: This chapter establishes the protagonist's motivation and sets up the central conflict.
+
+            # Additional Context
+
+            - Consider the novel's genre and intended audience to further refine the tone and style of the outline.
+            - Always be consistent with the narrative perspective and character details provided.
+            - Ensure clarity and consistency in narrative style across chapters.
+            - If user inputs are incomplete or vague, use default assumptions or prompt for clarification to maintain outline quality.
+            - Aim for a well-rounded outline that balances character development, plot progression, and thematic elements with plenty of setup and payoff.
+
+            {{ $additionalInstructions }}
+
+            """;
 		public const string OutlineReversePrompt =
 			"""
 			Write an outline of the chapter using the format below. Only include accurate information from the Chapter Text

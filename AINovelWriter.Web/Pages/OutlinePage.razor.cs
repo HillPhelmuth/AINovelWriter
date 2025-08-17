@@ -20,10 +20,24 @@ public partial class OutlinePage
         public AIModel AIModel { get; set; } = AIModel.Gpt41;
     }
     private ModifyOutlineSectionForm _modifyOutlineSectionForm = new();
+    private string _originalOutlineText = "";
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _originalOutlineText = AppState.NovelOutline.Outline ?? "";
+        }
+        base.OnAfterRender(firstRender);
+    }
+
     private async Task GenerateNovel(NovelOutline novelWriter)
     {
         IsBusy = true;
-
+        if (_originalOutlineText == novelWriter.Outline)
+        {
+            var chapterOutlineLines = NovelWriterServiceStatic.SplitMarkdownByHeaders(AppState.NovelOutline.Outline);
+            HandleChapterOutline(JsonSerializer.Serialize(chapterOutlineLines));
+        }
         StateHasChanged();
         AppState.NovelOutline = novelWriter;
         AppState.WriterModel = novelWriter.WriterAIModel;

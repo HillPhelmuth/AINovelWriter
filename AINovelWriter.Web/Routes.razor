@@ -1,4 +1,6 @@
-﻿@using AINovelWriter.Shared.Services
+﻿@using System.Text.Json
+@using AINovelWriter.Shared.Services
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
 <CascadingAuthenticationState>
     <Router AppAssembly="@typeof(App).Assembly" OnNavigateAsync="HandleNavigate">
         <Found Context="routeData">
@@ -9,7 +11,7 @@
                 <NotAuthorized>
                     <h1>Sorry</h1>
                     <p>You're not authorized to reach this page. You need to <a href="Account/Login?redirectUri=/">Log in</a> to continue</p>
-                    
+
                 </NotAuthorized>
             </AuthorizeRouteView>
             <FocusOnNavigate RouteData="@routeData" Selector="h1" />
@@ -26,10 +28,19 @@
 @code {
     [Inject]
     private AppState AppState { get; set; } = default!;
+    [Inject]
+    private ProtectedLocalStorage ProtectedLocalStorage { get; set; } = default!;
 
-    private void HandleNavigate(NavigationContext navigationContext)
+    private async void HandleNavigate(NavigationContext navigationContext)
     {
-        var page = navigationContext.Path;
-        AppState.CurrentPage = page;
+        try
+        {
+            var page = navigationContext.Path;
+            AppState.CurrentPage = page;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Error in HandleNavigation: {e.Message}");
+        }
     }
-}                      
+}

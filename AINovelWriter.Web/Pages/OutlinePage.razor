@@ -9,7 +9,7 @@
             <RadzenTemplateForm TItem="NovelOutline" Data="AppState.NovelOutline" Submit="GenerateNovel">
                 <RadzenFormField Style="width:100%" Text="Outline">
                     <ChildContent>
-                        <RadzenTextArea @ref="_textArea" @onselect="OnSelect" Style="width:100%; font-size:.9rem; height:24rem" @bind-Value="@AppState.NovelOutline.Outline"></RadzenTextArea>
+                        <RadzenTextArea @ref="_textArea" @onselect="OnSelect" Style="width:100%; font-size:.9rem; height:24rem" @bind-Value="@AppState.NovelOutline.Outline" ></RadzenTextArea>
                     </ChildContent>
                     <Helper>
                         <RadzenText TextStyle="TextStyle.Caption" Text="Modify the outline as desired - just be sure each chapter starts with a markdown header (ex. ## Chapter 1). If you want the AI to modify the outline, select the section and use the form to modify."></RadzenText>

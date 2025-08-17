@@ -11,7 +11,7 @@
         {
             <RadzenButton class="@_buttonClass" Style="margin-left:35%" Icon="palette" Text="Choose your cover" Click="@(() => NavigationManager.NavigateTo("cover"))"></RadzenButton>
         }
-		
+        <RadzenText TextStyle="TextStyle.Caption">@(TimeSpan.FromMilliseconds(_elapsed).ToString("g"))</RadzenText>
         <RadzenCard Style="height:74vh; overflow:auto; position:relative" Variant="Variant.Text">
 			
             <BookReader Text="@AppState.NovelInfo.Text"></BookReader>

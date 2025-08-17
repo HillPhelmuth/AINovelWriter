@@ -1,25 +1,80 @@
-﻿.user {
-    background: radial-gradient(ellipse, #C19A6B, #9F6C3F, #b45918);
-    background-size: 50% 50%;
-    color: black;
-    font-weight: bold;
-    width: 93%;
-    margin-right: auto;
-    border-radius: 30px 30px 30px 0;
+﻿
+/* Chat container styling */
+.chat-container {
+    background: linear-gradient(180deg, #e3eaf7 0%, #f7fafd 100%);
+    padding: 32px 0 32px 0;
+    border-radius: 24px;
+    box-shadow: 0 4px 24px 0 rgba(80, 80, 120, 0.08);
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
 }
 
-.assistant {
-    background: radial-gradient(ellipse, black, #181000, #181000, #000000);
-    background-size: 50% 50%;
-    color: white;
-    width: 93%;
-    margin-left: auto;
-    border-radius: 30px 30px 0 30px;
+/* Message card base */
+.message-card {
+    max-width: 80%;
+    margin-bottom: 8px;
+    padding: 18px 24px 12px 24px;
+    border-radius: 24px 24px 24px 8px;
+    box-shadow: 0 2px 8px 0 rgba(80, 80, 120, 0.07);
+    font-size: 1.08rem;
+    line-height: 1.6;
+    word-break: break-word;
+    transition: background 0.2s;
+    position: relative;
 }
-.assistant h1,
-.assistant h2,
-.assistant h3,
-.assistant h4,
-.assistant h5 {
-	color: white !important;
+
+/* User message styling */
+.user-message {
+    background: linear-gradient(135deg, #e6d3b3 0%, #c19a6b 100%);
+    color: #3d2a13;
+    font-weight: 500;
+    margin-left: auto;
+    border-radius: 24px 24px 8px 24px;
+    border: 1px solid #e6d3b3;
+}
+
+/* Assistant message styling */
+.assistant-message {
+    background: linear-gradient(135deg, #b6c6e3 0%, #7e8fa6 100%);
+    color: #181000;
+    margin-right: auto;
+    border-radius: 24px 24px 24px 8px;
+    border: 1px solid #b6c6e3;
+}
+
+/* Message content */
+.message-content {
+    width: 100%;
+    padding-bottom: 6px;
+}
+
+/* Message image */
+.message-image {
+    max-height: 160px;
+    max-width: 160px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    display: block;
+    box-shadow: 0 2px 8px 0 rgba(80, 80, 120, 0.10);
+}
+
+/* Timestamp styling */
+.message-timestamp {
+    font-size: 0.85rem;
+    color: #7e8fa6;
+    text-align: right;
+    margin-top: 4px;
+    letter-spacing: 0.04em;
+}
+
+/* Headings in assistant messages */
+.assistant-message h1,
+.assistant-message h2,
+.assistant-message h3,
+.assistant-message h4,
+.assistant-message h5 {
+    color: #181000 !important;
+    font-family: inherit;
 }

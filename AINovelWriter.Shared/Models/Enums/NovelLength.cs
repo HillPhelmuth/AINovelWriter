@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace AINovelWriter.Shared.Models;
+namespace AINovelWriter.Shared.Models.Enums;
 
 public enum NovelLength
 {

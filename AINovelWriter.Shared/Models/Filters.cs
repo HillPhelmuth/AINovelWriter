@@ -20,10 +20,14 @@ public class PromptFilter : IPromptRenderFilter
 
 public class AutoFilter : IAutoFunctionInvocationFilter
 {
+    public event Action<AutoFunctionInvocationContext>? AutoFunctionInvoked;
+    public event Action<AutoFunctionInvocationContext>? AutoFunctionCompleted;
     public async Task OnAutoFunctionInvocationAsync(AutoFunctionInvocationContext context, Func<AutoFunctionInvocationContext, Task> next)
     {
         Console.WriteLine($"Auto Function Invoked:\n--------------------------------------\n{context.Function.Name}\n---------------------------------\n");
+        AutoFunctionInvoked?.Invoke(context);
         await next(context);
+        AutoFunctionCompleted?.Invoke(context);
 
     }
 }

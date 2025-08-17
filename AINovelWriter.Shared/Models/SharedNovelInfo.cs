@@ -1,4 +1,6 @@
-﻿namespace AINovelWriter.Shared.Models;
+﻿using AINovelWriter.Shared.Models.Enums;
+
+namespace AINovelWriter.Shared.Models;
 
 public class SharedNovelInfo
 {

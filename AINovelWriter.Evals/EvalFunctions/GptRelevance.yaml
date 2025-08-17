@@ -35,7 +35,7 @@ template: |
 
  **Output:**
 
- You must output only a **single integer** representing the relevance score. Do not include any text other than the single integer score.
+ Be sure to include both strenghts and weaknessess in your explanation and thought steps.
 
  **Input Data:**
 

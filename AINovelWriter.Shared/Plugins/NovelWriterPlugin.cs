@@ -5,6 +5,7 @@ using Microsoft.SemanticKernel.Connectors.Google;
 using Microsoft.SemanticKernel.Connectors.MistralAI;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
 using System.ComponentModel;
+using AINovelWriter.Shared.Models.Enums;
 using AINovelWriter.Shared.Services;
 using Microsoft.Extensions.AI;
 using Microsoft.SemanticKernel.Connectors.Amazon;
@@ -59,7 +60,7 @@ public class NovelWriterPlugin(AIModel aIModel = AIModel.Gpt41)
 	[KernelFunction, Description("Summarize all the character details and plot events in the novel chapter")]
 	public async Task<string> SummarizeChapter(Kernel kernel, [Description("Chapter text to summarize")] string chapterText)
 	{
-		var settings = new OpenAIPromptExecutionSettings { Store = true, Metadata = new Dictionary<string, string>() { ["Function"] = nameof(SummarizeChapter)}, MaxTokens = 1028};
+		var settings = new OpenAIPromptExecutionSettings { Store = true, Metadata = new Dictionary<string, string>() { ["Function"] = nameof(SummarizeChapter)}, MaxTokens = 2500};
 		var args = new KernelArguments(settings)
 		{
 			["novel_chapter"] = chapterText
@@ -68,7 +69,18 @@ public class NovelWriterPlugin(AIModel aIModel = AIModel.Gpt41)
 		return response;
 	}
 	[KernelFunction, Description("Create an outline for a novel")]
-	public async Task<string> CreateNovelOutline(Kernel kernel, [Description("The central topic or theme of the story")] string theme, [Description("A list of character details that must be included in the outline")] string characterDetails = "", [Description("Plot events that must occurr in the outline")] string plotEvents = "", [Description("The title of the novel")] string novelTitle = "", [Description("Number of chapters to include")] int chapters = 15, string additionalInstructions = "", [Description("The intended audience of the novel")] NovelAudience audience = NovelAudience.None, [Description("The tone of the novel")]NovelTone tone = NovelTone.None, [Description("Genre info")] string genre = "")
+	public async Task<string> CreateNovelOutline(Kernel kernel, 
+        [Description("The central topic or theme of the story")] string theme, 
+        [Description("A list of character details that must be included in the outline")] string characterDetails = "",
+        [Description("Plot events that must occurr in the outline")] string plotEvents = "", 
+        [Description("The title of the novel")] string novelTitle = "", 
+        [Description("Number of chapters to include")] int chapters = 15, 
+        string additionalInstructions = "", 
+        [Description("The intended audience of the novel")] NovelAudience audience = NovelAudience.None, 
+        [Description("The tone of the novel")]NovelTone tone = NovelTone.None, 
+        [Description("Genre info")] string genre = "",
+        [Description("Narrative Perspective")]NarrativePerspective narrativePerspective = NarrativePerspective.None,
+        WritingStyle writingStyle = WritingStyle.None)
 	{
 		var promptFilter = new PromptFilter();
 		var kernelClone = kernel.Clone();
@@ -81,9 +93,10 @@ public class NovelWriterPlugin(AIModel aIModel = AIModel.Gpt41)
 			["plotEvents"] = plotEvents,
 			["novelTitle"] = novelTitle,
 			["chapterCount"] = chapters,
-            ["audience"] = audience,
-            ["tone"] = tone,
-            ["genre"] = genre
+            ["audience"] = audience.GetDescription(),
+            ["tone"] = tone.GetDescription(),
+            ["genre"] = genre,
+			["narrativePerspective"] = narrativePerspective.GetPromptText()
         };
         var instructions = string.IsNullOrEmpty(additionalInstructions) ? "" : $"## Additional User Instructions\n\n{additionalInstructions}\n";
         args["additionalInstructions"] = instructions;
@@ -127,7 +140,12 @@ public class NovelWriterPlugin(AIModel aIModel = AIModel.Gpt41)
 	private PromptExecutionSettings GetPromptExecutionSettingsFromModel(AIModel model, double tempurature = 1.0)
 	{
 		var providor = model.GetModelProvidors().FirstOrDefault();
-		return providor switch
+        if (model is AIModel.O3 or AIModel.O4Mini or AIModel.Gpt5Mini or AIModel.Gpt5Nano or AIModel.Gpt5)
+        {
+
+            return new OpenAIPromptExecutionSettings { Store = true, MaxTokens = 34000, ReasoningEffort = "low" };
+        }
+        return providor switch
 		{
 			"GoogleAI" => new GeminiPromptExecutionSettings {  Temperature = tempurature },
 			"MistralAI" => new MistralAIPromptExecutionSettings {  Temperature = tempurature },

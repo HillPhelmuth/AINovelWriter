@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Text.Json.Serialization;
 
-namespace AINovelWriter.Shared.Models;
+namespace AINovelWriter.Shared.Models.Enums;
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum NovelTone
 {
@@ -29,6 +29,9 @@ public enum NovelTone
 
     [Description("Mysterious, enigmatic, and puzzle-like tone")]
     Mysterious,
+
+    [Description("Funny, entertaining tone. Non-stop hilarity.")]
+    Comedic,
 
     [Description("Hopeful, positive, and inspiring emotional quality")]
     Uplifting,

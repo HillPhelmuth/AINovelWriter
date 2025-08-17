@@ -8,7 +8,7 @@
     <BusyOverlay Message="@_busyText"></BusyOverlay>
 }
 <RadzenRow>
-    <RadzenColumn SizeLG="8" OffsetLG="2" Size="12" Style="overflow:auto">
+    <RadzenColumn SizeLG="10" OffsetLG="1" Size="12" Style="overflow:auto">
         <RadzenText Text="Provide some story details to generate an outline" TextAlign="TextAlign.Center" TextStyle="TextStyle.H6"></RadzenText>
         @*  <RadzenButton IsBusy="_isBusy" BusyText="Fine, generating idea..." @ref="_button" Size="ButtonSize.ExtraSmall" Text="Ugh, even this is too much work!" Click="@(args => _popup.ToggleAsync(_button.Element))" /> *@
         <Popup @ref="_popup" Lazy="false" Style="display:none;position:absolute;height:300px;width:700px;padding:5px;border:var(--rz-panel-border);background-color:var(--rz-panel-background-color);right:10vw">
@@ -61,12 +61,12 @@
         </Popup>
         <RadzenTemplateForm TItem="NovelConcepts" Data="AppState.NovelConcepts" Submit="CreateOutline">
             <div style="display:flex;gap:.5rem">
-                <RadzenFormField Text="Tone" Style="width:27%">
+                <RadzenFormField Text="Tone" Style="width:15%">
                     <ChildContent>
                         <RadzenDropDown Name="Tone" TValue="NovelTone" Data="@(Enum.GetValues<NovelTone>())" @bind-Value="AppState.NovelConcepts.Tone">
                             <Template Context="tone">
                                 <RadzenText TextStyle="TextStyle.Body2" Text="@(tone.ToString())" title="@(EnumHelpers.GetDescription(tone))"></RadzenText>
-                               @*  <RadzenText TextStyle="TextStyle.Caption" Text="@(EnumHelpers.GetDescription(tone))"></RadzenText>
+                                @*  <RadzenText TextStyle="TextStyle.Caption" Text="@(EnumHelpers.GetDescription(tone))"></RadzenText>
                                 <Line></Line> *@
                             </Template>
                         </RadzenDropDown>
@@ -75,9 +75,9 @@
                         <RadzenCompareValidator Operator="CompareOperator.NotEqual" Value="@NovelTone.None" Component="Tone" Text="Please select a tone" Popup="true" Style="position:absolute"></RadzenCompareValidator>
                     </Helper>
                 </RadzenFormField>
-                <RadzenFormField Text="Audience" @ref="_formField" Style="width:27%">
+                <RadzenFormField Text="Audience" @ref="_formField" Style="width:15%">
                     <ChildContent>
-                        <RadzenDropDown Style="width:27%" Name="Audience" TValue="NovelAudience" Data="@(Enum.GetValues<NovelAudience>())" @bind-Value="AppState.NovelConcepts.Audience">
+                        <RadzenDropDown Name="Audience" TValue="NovelAudience" Data="@(Enum.GetValues<NovelAudience>())" @bind-Value="AppState.NovelConcepts.Audience">
                             <Template Context="audience">
                                 <RadzenText TextStyle="TextStyle.Body2" Text="@(audience.ToString())" title="@(EnumHelpers.GetDescription(audience))"></RadzenText>
                                 @* <RadzenText TextStyle="TextStyle.Caption" Text="@(EnumHelpers.GetDescription(audience))"></RadzenText> *@
@@ -88,7 +88,7 @@
                         <RadzenCompareValidator Operator="CompareOperator.NotEqual" Value="@NovelAudience.None" Component="Audience" Text="Please select an audience" Popup="true" Style="position:absolute"></RadzenCompareValidator>
                     </Helper>
                 </RadzenFormField>
-                <RadzenFormField Text="Length" Style="width:20%">
+                <RadzenFormField Text="Length" Style="width:15%">
                     <ChildContent>
                         <RadzenDropDown Data="@(Enum.GetValues<NovelLength>())" TValue="NovelLength" Name="Length" @bind-Value="AppState.NovelConcepts.Length">
                             <Template Context="length">
@@ -101,7 +101,30 @@
                         <RadzenCompareValidator Operator="CompareOperator.NotEqual" Value="@NovelLength.None" Component="Length" Text="Please select a novel length" Popup="true" Style="position:absolute"></RadzenCompareValidator>
                     </Helper>
                 </RadzenFormField>
-
+                <RadzenFormField Text="Writing Style" Style="width:15%">
+                    <ChildContent>
+                        <RadzenDropDown Data="@(Enum.GetValues<WritingStyle>())" TValue="WritingStyle" Name="WritingStyle" @bind-Value="AppState.NovelConcepts.WritingStyle">
+                            <Template Context="style">
+                                <RadzenText TextStyle="TextStyle.Body2" Text="@(style.ToString())" title="@(EnumHelpers.GetDescription(style))"></RadzenText>
+                            </Template>
+                        </RadzenDropDown>
+                    </ChildContent>
+                    <Helper>
+                        <RadzenCompareValidator Operator="CompareOperator.NotEqual" Value="@WritingStyle.None" Component="WritingStyle" Text="Please select a writing style" Popup="true" Style="position:absolute"></RadzenCompareValidator>
+                    </Helper>
+                </RadzenFormField>
+                <RadzenFormField Text="Narrative Perspective" Style="width:15%">
+                    <ChildContent>
+                        <RadzenDropDown Data="@(Enum.GetValues<NarrativePerspective>())" TValue="NarrativePerspective" Name="Perspective" @bind-Value="AppState.NovelConcepts.NarrativePerspective">
+                            <Template Context="category">
+                                <RadzenText TextStyle="TextStyle.Body2" Text="@EnumHelpers.GetDescription(category)"></RadzenText>
+                            </Template>
+                        </RadzenDropDown>
+                    </ChildContent>
+                    <Helper>
+                        <RadzenCompareValidator Operator="CompareOperator.NotEqual" Value="@NarrativePerspective.None" Component="Perspective" Text="Please select a Perspective" Popup="true" Style="position:absolute"></RadzenCompareValidator>
+                    </Helper>
+                </RadzenFormField>
                 <div style="display:flex;flex-direction:column;justify-content:center;align-items:center">
                     <RadzenButton @ref="_button" Size="ButtonSize.ExtraSmall" Icon="add" Style="padding:0" Text="Add Genres" Variant="Variant.Text" Click="@(args => _popup.ToggleAsync(_formField.Element))" />
                     @if (AppState.NovelConcepts.Genre != GenreCategory.None)

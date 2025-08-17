@@ -12,6 +12,8 @@ using AINovelWriter.Web.Shared;
 using static AINovelWriter.Shared.Models.FileHelper;
 using static AINovelWriter.Shared.Services.NovelWriterService;
 using System.Security;
+using System.Text.Json;
+
 // ReSharper disable FieldCanBeMadeReadOnly.Local
 
 namespace AINovelWriter.Web.Components;
@@ -49,6 +51,15 @@ public partial class UserProfile
 			
 		}
 	}
+
+    private async Task Restore()
+    {
+        var infoResult = await ProtectedLocalStorage.GetAsync<string>(nameof(AppState.NovelInfo));
+		var novelJson = infoResult is { Success: true, Value: not null } ? infoResult.Value : "";
+        if (!string.IsNullOrEmpty(novelJson))
+            AppState.NovelInfo = JsonSerializer.Deserialize<NovelInfo>(novelJson) ?? new NovelInfo();
+		StateHasChanged();
+    }
 	private async Task DownloadNovelToFile(UserNovelData userNovelData)
 	{
 		AppState.NovelInfo = await CosmosService.GetUserNovel(AppState.UserData.UserName!, userNovelData.NovelId);

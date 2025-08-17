@@ -20,7 +20,8 @@ template: |
     10 stars: the chapter is perfectly clear, well-articulated, and easy to follow
 
     This rating value should always be an integer between 1 and 10. So, the rating produced should be 1, or 2, or 3, etc.
-    Respond ONLY with the number.
+    
+    Be sure to include both strenghts and weaknessess in your explanation and thought steps.
 
         
     ## Real Work

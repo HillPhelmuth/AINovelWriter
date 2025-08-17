@@ -29,10 +29,10 @@ public partial class Home
         AppState.NovelInfo.IsComplete = true;
         AppState.NovelOutline.Outline = AppState.NovelInfo.Outline;
         IsBusy = false;
-       var isNavigate = await DialogService.Confirm("Sometimes and epub file will be extracted with unnecessary chapters and sections. It's often best to modify or remove them.<br/> Do you want to edit to the uploaded novel?", "Edit Novel Upload");
+       var isNavigate = await DialogService.Confirm("Sometimes and epub file will be extracted with unnecessary chapters and sections. It's often best to modify or remove them.\n\n Do you want to edit to the uploaded novel?", "Edit Novel Upload");
         if (isNavigate == true)
         {
-            NavigationManager.NavigateTo("/edit/2");
+            NavigationManager.NavigateTo("/edit/3");
         }
 		StateHasChanged();
 	}

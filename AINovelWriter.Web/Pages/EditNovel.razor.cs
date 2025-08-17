@@ -5,6 +5,7 @@ using Radzen;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using AINovelWriter.Shared.Models.Enums;
 using static AINovelWriter.Shared.Models.EnumHelpers;
 
 namespace AINovelWriter.Web.Pages;

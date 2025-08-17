@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
 using System.ComponentModel;
 using System.Text.Json;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Radzen;
 using static AINovelWriter.Shared.Models.EnumHelpers;
 using static AINovelWriter.Shared.Models.FileHelper;
@@ -37,6 +38,8 @@ public abstract class AppComponentBase : ComponentBase, IDisposable
     protected static AuthenticationState? AuthenticationState { get; set; }
     [Inject]
     private ImageGenService ImageGenService { get; set; } = default!;
+    [Inject]
+    protected ProtectedLocalStorage ProtectedLocalStorage { get; set; } = default!;
     protected async Task DownloadNovelToFile()
     {
         
@@ -105,6 +108,8 @@ public abstract class AppComponentBase : ComponentBase, IDisposable
     protected void HandleChapterOutline(string text)
     {
         var chapters = JsonSerializer.Deserialize<List<string>>(text);
+        if (chapters == null || chapters.Count == 0) return;
+        AppState.NovelInfo.ChapterOutlines.Clear();
         foreach (var chapter in chapters)
         {
             var title = chapter.Split("\n")[0];

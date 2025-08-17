@@ -25,6 +25,8 @@ template: |
  * **10 Stars:**  Exceptionally creative and imaginative.  Offers a truly unique and compelling narrative with surprising twists and memorable concepts.
 
  **Important:** Avoid bias towards higher scores. Actively look for instances of unoriginality, clichés, and predictable plot developments and downgrade appropriately. Be honest and critical in your assessment, imagining yourself as a discerning editor.
+ 
+ Be sure to include both strenghts and weaknessess in your explanation and thought steps.
 
  **Chapter:** {{$chapter}}
 

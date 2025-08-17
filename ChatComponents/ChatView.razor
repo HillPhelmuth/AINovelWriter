@@ -1,4 +1,4 @@
-﻿<div @ref=_chatColumn style="@($"height:{Height}; overflow:auto; width:100%")">
+﻿<div @ref=_chatColumn class="chat-container" style="@($"height:{Height}; overflow:auto;")">
     @foreach (var message in ChatState?.ChatMessages ?? [])
     {
         <MessageView Message="message"></MessageView>

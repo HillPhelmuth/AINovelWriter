@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Text.Json.Serialization;
 
-namespace AINovelWriter.Shared.Models;
+namespace AINovelWriter.Shared.Models.Enums;
 
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum NovelAudience

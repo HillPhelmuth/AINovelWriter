@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AINovelWriter.Shared.Models.Enums;
 using AINovelWriter.Shared.Services;
 
 

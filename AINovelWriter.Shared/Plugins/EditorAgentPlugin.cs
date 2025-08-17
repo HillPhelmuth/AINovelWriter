@@ -5,6 +5,7 @@ using Microsoft.SemanticKernel.Connectors.Google;
 using Microsoft.SemanticKernel.Connectors.MistralAI;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
 using System.ComponentModel;
+using AINovelWriter.Shared.Models.Enums;
 using AINovelWriter.Shared.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.CognitiveServices.Speech.Diagnostics.Logging;
@@ -28,7 +29,7 @@ public class EditorAgentPlugin(AppState appState, AIModel aIModel = AIModel.Gpt4
     public async Task<string> GetFullNovelSummary(Kernel kernel,[Description("The type or context of the summary request")] ReviewContext summaryType = ReviewContext.FullCoverage)
     {
         var builder = Kernel.CreateBuilder();
-        NovelWriterService.AddDefaultKernelServices(AIModel.Gpt41Nano, builder);
+        NovelWriterService.AddDefaultKernelServices(AIModel.Gpt41Mini, builder);
 		var tempKernel = builder.Build();
         var novel = appState.NovelInfo;
         var promptTemplate =  Prompts.NovelContextSpecificReviewPrompt;
@@ -99,7 +100,23 @@ public class EditorAgentPlugin(AppState appState, AIModel aIModel = AIModel.Gpt4
         summary.FullText = newChapterText;
         return "Chapter replaced successfully.";
     }
+    [KernelFunction, Description("Suggest edits to a specific section of text of a chapter")]
+    public string SuggestEditsToChapterText([Description("Chapter number")] int chapterNumber, [Description("The section of text to edit")] string sectionText, [Description("Additional notes for the editor")] string suggestions)
+    {
+        var outlines = appState.NovelInfo.ChapterOutlines;
+        if (outlines.Count == 0)
+        {
+            return "No chapters found. Please create or select the novel.";
+        }
+        if (chapterNumber < 1 || chapterNumber > outlines.Count)
+        {
+            return "Invalid chapter number. Please enter a valid chapter number.";
+        }
 
+        var chapterOutline = appState.NovelInfo.ChapterOutlines.Find(ch => ch.ChapterNumber == chapterNumber);
+        chapterOutline?.AddEditorNote(sectionText, suggestions);
+        return $"Editor note added to chapter {chapterNumber}";
+    }
     private PromptExecutionSettings GetPromptExecutionSettingsKernel(Kernel kernel)
     {
         var chatType = kernel.Services.GetRequiredService<IChatCompletionService>();

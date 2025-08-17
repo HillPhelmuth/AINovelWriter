@@ -25,8 +25,8 @@ public static class EnumHelpers
         var memberInfo = type.GetMember(model.ToString()).FirstOrDefault();
         if (memberInfo != null)
         {
-            var attributes = memberInfo.GetCustomAttributes(typeof(ModelProvidorAttribute), false);
-            return attributes.Select(attr => ((ModelProvidorAttribute)attr).Providor);
+            var attributes = memberInfo.GetCustomAttributes(typeof(ModelProviderAttribute), false);
+            return attributes.Select(attr => ((ModelProviderAttribute)attr).Provider);
         }
         return [];
     }
@@ -96,5 +96,11 @@ public static class EnumHelpers
         }
         var subGenres = attributes[0].SubGenres;
         return subGenres.Split(',').Select(x => x.Trim()).ToList();
+    }
+
+    public static bool IsReasoningModel(this AIModel aiModel)
+    {
+        return aiModel is AIModel.O3 or AIModel.Grok3Mini or AIModel.O4Mini or AIModel.Gpt5Mini or AIModel.Gpt5Nano
+            or AIModel.Gpt5 or AIModel.Grok4;
     }
 }

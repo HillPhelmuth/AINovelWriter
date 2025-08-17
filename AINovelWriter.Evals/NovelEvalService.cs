@@ -35,7 +35,7 @@ public class NovelEvalService
         {
 	        try
 	        {
-		        var result = await evalService.ExecuteEval(input);
+                var result = await evalService.ExecuteScorePlusEval(input);
 		        resultScores.Add(result);
 	        }
 			catch (Exception e)
@@ -52,6 +52,18 @@ public class NovelEvalService
         foreach (var eval in _evals)
         {
             var yaml = ExtractFromAssembly<string>($"{eval}.yaml");
+            var formatAppend = """
+                                   ### Output Format
+                                   Output must be in the following json format
+                                   ```json
+                                   {
+                                     "thoughtChain": "Let's think step by step: [Step-by-step explanation of strenghts and weakness (must include a sentance for each)]",
+                                     "explanation": "[Reasons for the rating score based on strengths and weaknesses]",
+                                     "score": [number 1 - 5]
+                                   }
+                                   ```
+                               """;
+            yaml = $"{yaml}\n\n{formatAppend}";
             var function = kernel.CreateFunctionFromPromptYaml(yaml);
             evalFunctions[eval] = function;
         }

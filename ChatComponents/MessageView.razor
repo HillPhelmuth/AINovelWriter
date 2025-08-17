@@ -1,8 +1,8 @@
-﻿<RadzenCard class="@Message.CssClass">
+﻿<div class="message-card @Message.CssClass @(Message.Role == Role.User ? "user-message" : "assistant-message")">
     @if (!string.IsNullOrEmpty(Message.ImageUrl))
     {
-        <img src="@Message.ImageUrl" style="max-height:200px; max-width:200px;" alt="input image" />
+        <img src="@Message.ImageUrl" class="message-image" alt="input image" />
     }
-    <div @ref=_ref style="@(Message.Role == Role.User ? "width:100%" : "width:100%; color:white")">@((MarkupString)AsHtml(Message.Content))</div>
-    <RadzenText Style="color:white" TextStyle="TextStyle.Overline">@Message.TimeStamp.ToString("g")</RadzenText>
-</RadzenCard>
+    <div @ref=_ref class="message-content">@((MarkupString)AsHtml(Message.Content))</div>
+    <div class="message-timestamp">@Message.TimeStamp.ToString("g")</div>
+</div>

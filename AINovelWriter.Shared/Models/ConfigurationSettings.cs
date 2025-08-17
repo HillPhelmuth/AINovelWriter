@@ -55,6 +55,13 @@ public class ConfigurationSettings
         get => _grokAI ?? LoadSection<GrokAIConfig>();
         set => _grokAI = value;
     }
+	private static OpenRouterConfig? _openRouter;
+
+    public static OpenRouterConfig? OpenRouter
+    {
+        get => _openRouter ?? LoadSection<OpenRouterConfig>();
+		set => _openRouter = value;
+    }
     private static T? LoadSection<T>([CallerMemberName] string? caller = null)
 	{
 		if (s_instance == null)
@@ -92,4 +99,9 @@ public class AnthropicAIConfig
 public class GrokAIConfig
 {
     public string ApiKey { get; set; }
+}
+
+public class OpenRouterConfig
+{
+	public string ApiKey { get; set; }
 }

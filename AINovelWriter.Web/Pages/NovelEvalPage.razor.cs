@@ -13,7 +13,7 @@ public partial class NovelEvalPage
     private Dictionary<int, List<ResultScore>> _chapterResults = [];
 
     //private List<FlatChapterEval> FlatChapterEvals => _chapterResults.SelectMany(x =>
-    //        x.Value.Select(y => new FlatChapterEval { ChapterNumber = x.Key, EvalName = y.EvalName, Score = y.ProbScore })).ToList();
+    //        x.Value.Select(y => new FlatChapterEval { ChapterNumber = x.Key, EvalName = y.EvalName, Score = y.AsEvalScore() })).ToList();
     private List<FlatChapterEval> _chapterEvals = [];
     private RadzenDataGrid<FlatChapterEval>? _grid;
 
@@ -58,6 +58,53 @@ public partial class NovelEvalPage
             return "";
         return AppState.NovelInfo.ChapterOutlines[eval.ChapterNumber - 1].FullText;
     }
+
+    private async Task ReEvaluateNovelChapter(int chapterNumber)
+    {
+        var chapter = AppState.NovelInfo.ChapterOutlines.FirstOrDefault(x => x.ChapterNumber == chapterNumber);
+        if (chapter == null)
+        {
+            Console.WriteLine($"Chapter {chapterNumber} not found in ChapterOutlines.");
+            return;
+        }
+        var kernel = Kernel.CreateBuilder()
+            .AddOpenAIChatCompletion("gpt-4.1-nano", Configuration["OpenAI:ApiKey"]!).Build();
+        var service = new NovelEvalService(kernel);
+        var details = AppState.NovelInfo.ConceptDescription;
+        var text = chapter.FullText;
+        var inputs = service.CreateInputModels(text, details);
+        var results = await service.ExecuteEvals(inputs);
+        var clarity = results.First(x => x.EvalName == "GptClarity").AsEvalScore();
+        var creativity = results.First(x => x.EvalName == "GptCreativity").AsEvalScore();
+        var engagement = results.First(x => x.EvalName == "GptEngagement").AsEvalScore();
+        var relevance = results.First(x => x.EvalName == "GptRelevance").AsEvalScore();
+        var writingDetail = results.First(x => x.EvalName == "GptWritingDetail").AsEvalScore();
+        var characterDevelopment = results.First(x => x.EvalName == "GptCharacterDevelopment").AsEvalScore();
+        var flatChapterEval = new FlatChapterEval
+        {
+            ChapterNumber = AppState.NovelInfo.ChapterOutlines.IndexOf(chapter) + 1,
+            Clarity = clarity,
+            Creativity = creativity,
+            Engagement = engagement,
+            Style = relevance,
+            WritingDetail = writingDetail,
+            CharacterDevelopment = characterDevelopment,
+            ChapterText = text
+        };
+        // Replace the existing chapter eval.
+        var existingEvalIndex = AppState.NovelInfo.NovelEval?.ChapterEvals.FindIndex(x => x.ChapterNumber == chapterNumber) ?? -1;
+        if (existingEvalIndex >= 0)
+        {
+            AppState.NovelInfo.NovelEval.ChapterEvals[existingEvalIndex] = flatChapterEval;
+        }
+        else
+        {
+            AppState.NovelInfo.NovelEval?.ChapterEvals.Add(flatChapterEval);
+        }
+        StateHasChanged();
+        await _grid.Reload();
+
+    }
     private async Task EvaluateNovel()
     {
         _chapterEvals.Clear();
@@ -65,20 +112,19 @@ public partial class NovelEvalPage
 		StateHasChanged();
         await Task.Delay(1);
 		var kernel = Kernel.CreateBuilder()
-            .AddOpenAIChatCompletion("gpt-4o-mini", Configuration["OpenAI:ApiKey"]!).Build();
+            .AddOpenAIChatCompletion("gpt-4.1-nano", Configuration["OpenAI:ApiKey"]!).Build();
         var service = new NovelEvalService(kernel); 
         var details = AppState.NovelInfo.ConceptDescription;
         var novelInputs = service.CreateInputModels(AppState.NovelInfo.Text, details);
         var novelResults = await service.ExecuteEvals(novelInputs);
         AppState.NovelInfo.NovelEval = new FullNovelEval
 		{
-			CharacterDevelopment = novelResults.First(x => x.EvalName == "GptCharacterDevelopment").ProbScore,
-			Clarity = novelResults.First(x => x.EvalName == "GptClarity").ProbScore,
-			Creativity = novelResults.First(x => x.EvalName == "GptCreativity").ProbScore,
-			Engagement = novelResults.First(x => x.EvalName == "GptEngagement").ProbScore,
-			Style = novelResults.First(x => x.EvalName == "GptRelevance").ProbScore,
-			WritingDetail = novelResults.First(x => x.EvalName == "GptWritingDetail").ProbScore,
-			
+			CharacterDevelopment = novelResults.First(x => x.EvalName == "GptCharacterDevelopment").AsEvalScore(),
+			Clarity = novelResults.First(x => x.EvalName == "GptClarity").AsEvalScore(),
+			Creativity = novelResults.First(x => x.EvalName == "GptCreativity").AsEvalScore(),
+			Engagement = novelResults.First(x => x.EvalName == "GptEngagement").AsEvalScore(),
+			Style = novelResults.First(x => x.EvalName == "GptRelevance").AsEvalScore(),
+			WritingDetail = novelResults.First(x => x.EvalName == "GptWritingDetail").AsEvalScore()
 		};
 		foreach (var chapter in AppState.NovelInfo.ChapterOutlines)
         {
@@ -87,12 +133,12 @@ public partial class NovelEvalPage
             var inputs = service.CreateInputModels(text, details);
             var results = await service.ExecuteEvals(inputs);
             _chapterResults[AppState.NovelInfo.ChapterOutlines.IndexOf(chapter) + 1] = results;
-            var clarity = results.First(x => x.EvalName == "GptClarity").ProbScore;
-            var creativity = results.First(x => x.EvalName == "GptCreativity").ProbScore;
-            var engagement = results.First(x => x.EvalName == "GptEngagement").ProbScore;
-            var relevance = results.First(x => x.EvalName == "GptRelevance").ProbScore;
-            var writingDetail = results.First(x => x.EvalName == "GptWritingDetail").ProbScore;
-            var characterDevelopment = results.First(x => x.EvalName == "GptCharacterDevelopment").ProbScore;
+            var clarity = results.First(x => x.EvalName == "GptClarity").AsEvalScore();
+            var creativity = results.First(x => x.EvalName == "GptCreativity").AsEvalScore();
+            var engagement = results.First(x => x.EvalName == "GptEngagement").AsEvalScore();
+            var relevance = results.First(x => x.EvalName == "GptRelevance").AsEvalScore();
+            var writingDetail = results.First(x => x.EvalName == "GptWritingDetail").AsEvalScore();
+            var characterDevelopment = results.First(x => x.EvalName == "GptCharacterDevelopment").AsEvalScore();
             var flatChapterEval = new FlatChapterEval
             {
                 ChapterNumber = AppState.NovelInfo.ChapterOutlines.IndexOf(chapter) + 1,

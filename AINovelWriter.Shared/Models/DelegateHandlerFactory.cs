@@ -16,6 +16,8 @@ public class DelegateHandlerFactory
             return new SystemToDeveloperRoleHandler(new HttpClientHandler(), output);
         if (typeof(T) == typeof(LoggingHandler))
             return new LoggingHandler(new HttpClientHandler(), output);
+        if (typeof(T) == typeof(OpenRouterReasoningHandler))
+            return new OpenRouterReasoningHandler(new HttpClientHandler(), output);
 
         throw new NotSupportedException($"The type {typeof(T).Name} is not supported.");
     }

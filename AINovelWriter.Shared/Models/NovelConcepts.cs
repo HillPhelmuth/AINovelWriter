@@ -13,6 +13,7 @@ public class NovelConcepts
     public NovelTone Tone { get; set; } = NovelTone.None;
     public NovelAudience Audience { get; set; } = NovelAudience.None;
     public NovelLength Length { get; set; } = NovelLength.None;
+    public NarrativePerspective NarrativePerspective { get; set; } = NarrativePerspective.ThirdPersonLimited;
     public string? Description => $"Genre:\n{Genre.ToString() + "\n" + Genre.GetDescription()}\n\n{(SubGenres.Count > 0 ? "Subgenres:\n" + string.Join("\n", SubGenres.Select(x => x.ToString())) : string.Empty)}\nTheme/Description: {Theme}";
     public string? Characters { get; set; }
     public string? PlotEvents { get; set; }
@@ -20,7 +21,8 @@ public class NovelConcepts
     public string? AdditionalInstructions {get; set; }
     public int ChapterCount { get; set; } = 5;
     public AIModel OutlineAIModel { get; set; } = AIModel.GeminiFlash;
-	public override string ToString()
+    public WritingStyle WritingStyle { get; set; }
+    public override string ToString()
 	{
         return $"""
 		        Title: {Title}
@@ -29,6 +31,8 @@ public class NovelConcepts
 		        Theme: {Theme}
 		        Tone: {Tone.ToString()} - {Tone.GetDescription()}
 		        Audience: {Audience.ToString()} - {Audience.GetDescription()}
+		        Writing Style: {WritingStyle.ToString()} - {WritingStyle.GetDescription()}
+		        Perspective: {NarrativePerspective.GetPromptText()}
 		        Characters:{Characters}
 		        Primary Plot Events: {PlotEvents}
 		        """;
