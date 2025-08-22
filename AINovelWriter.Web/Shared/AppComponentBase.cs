@@ -35,7 +35,7 @@ public abstract class AppComponentBase : ComponentBase, IDisposable
     protected bool IsBusy;
     [CascadingParameter]
     protected Task<AuthenticationState>? AuthenticationStateTask { get; set; }
-    protected static AuthenticationState? AuthenticationState { get; set; }
+    protected AuthenticationState? AuthenticationState { get; set; }
     [Inject]
     private ImageGenService ImageGenService { get; set; } = default!;
     [Inject]
